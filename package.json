@@ -10,11 +10,16 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/klee-one": "^0.2.3",
+    "@expo-google-fonts/noto-sans-jp": "^0.2.3",
     "expo": "~49.0.15",
+    "expo-font": "~11.4.0",
+    "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
-    "react-native": "0.72.6"
+    "react-native": "0.72.6",
+    "react-native-gesture-handler": "~2.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
