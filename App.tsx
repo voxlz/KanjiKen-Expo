@@ -22,6 +22,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DragContextProvider from "./src/contexts/DragContextProvider";
 import DropLocation from "./src/components/DropLocation";
 import Alternative from "./src/components/Alternative";
+import AltTray from "./src/components/AltTray";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -45,29 +46,54 @@ export default function App() {
     return null;
   }
 
+  const alts = ["a", "b", "c", "d", "e", "f", "g", "h"];
+
   return (
     <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
       <GestureHandlerRootView>
         <StatusBar style="auto" />
         <DragContextProvider>
-          <View
-            className="flex flex-col justify-center items-center gap-y-4 w-full h-full"
-            style={{ position: "relative" }} // needed for z-index to matter
-          >
-            <View className="h-64 w-64 bg-red-50 relative items-center z-10">
-              <Alternative text={"x"} />
+          <View className="flex-col items-center py-20 px-9 gap-y-4 bg-yellow-500 w-full h-full">
+            <DropLocation text="a">
+              <Outline text="a" />
+            </DropLocation>
+            <Draggable>
+              <Interactable text="a" />
+            </Draggable>
+            {/* <View
+              className="flex flex-col justify-center"
+              style={{ position: "relative" }} // needed for z-index to matter
+            >
+              <View className="h-64 w-64 bg-blue-50 items-center z-0">
+                <DropLocation text="a">
+                  <Outline text="a" />
+                </DropLocation>
+                <DropLocation text="b">
+                  <Outline text="b" style={{ height: 128 }} />
+                </DropLocation>
+                <DropLocation text="c">
+                  <Outline text="c" style={{ height: 128, width: 56 }} />
+                </DropLocation>
+              </View>
             </View>
-            <View className="h-64 w-64 bg-blue-50 items-center z-0">
-              <DropLocation text="a">
-                <Outline text="a" />
-              </DropLocation>
-              <DropLocation text="b">
-                <Outline text="b" style={{ height: 128 }} />
-              </DropLocation>
-              <DropLocation text="c">
-                <Outline text="c" style={{ height: 128, width: 56 }} />
-              </DropLocation>
-            </View>
+            <View className="w-full ">
+              <View className="flex-row bg-red-500 z-10">
+                {alts
+                  .map((alt) => ({ glyph: alt }))
+                  .filter((v, i) => i < 4)
+                  .map((alt) => (
+                    <Alternative text={alt.glyph} />
+                  ))}
+              </View>
+              <View className="flex-row bg-red-300 relative items-center z-10 justify-between">
+                {alts
+                  .map((alt) => ({ glyph: alt }))
+                  .filter((v, i) => i > 3)
+                  .map((alt) => (
+                    <Alternative text={alt.glyph} />
+                  ))}
+              </View>
+            </View> */}
           </View>
         </DragContextProvider>
       </GestureHandlerRootView>

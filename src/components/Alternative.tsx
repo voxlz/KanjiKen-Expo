@@ -11,13 +11,13 @@ type Props = {
 
 /** Draggable on top of an outline */
 const Alternative: FC<Props> = ({ text }) => (
-  <View className="items-center">
-    <DropLocation className="absolute" text={text}>
-      <Outline text={text} style={{ height: 56, width: 56 }} />
-    </DropLocation>
-    <Draggable>
+  <View className="flex-grow">
+    {/* <DropLocation text={text}> */}
+    <Outline text={text} />
+    {/* </DropLocation> */}
+    {/* <Draggable>
       <Interactable text={text} />
-    </Draggable>
+    </Draggable> */}
   </View>
 );
 

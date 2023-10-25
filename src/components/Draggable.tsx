@@ -1,18 +1,15 @@
 import React, { FC, useContext, useRef, useState } from "react";
 import {
-  AnimatableNumericValue,
   Animated,
   LayoutAnimation,
   LayoutRectangle,
   NativeModules,
   View,
-  Text,
   Platform,
   ViewProps,
 } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import { DragContext, XY } from "../contexts/DragContextProvider";
-import Interactable from "../displays/Interactable";
+import { DragContext } from "../contexts/DragContextProvider";
 
 type Props = {
   children?: React.ReactNode;
@@ -32,7 +29,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
   const localTransform = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsCurrentDrag] = useState(false); // is draggable being dragging?
   const [startBound, setStartBound] = useState<LayoutRectangle>(); // Track inital size of draggable
-  const [size, setCurrentSize] = useState({ height: 56, width: 56 }); // Set current size of the draggable
+  const [size, setCurrentSize] = useState<{ height: number; width: number }>(); // Set current size of the draggable
   let geometry = useRef<View>(null);
   const [beforeDragTransform, setBeforeDragTransform] = useState({
     x: 0,
@@ -49,7 +46,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
   };
 
   return (
-    <View {...props}>
+    <View {...props} className="bg-red-400 flex-grow self-stretch">
       <PanGestureHandler
         onGestureEvent={(drag) => {
           const trans = {
@@ -111,7 +108,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
         }}
       >
         <Animated.View
-          className="self-center"
+          className="flex-grow"
           style={{
             transform: [
               { translateX: localTransform.x },
@@ -136,8 +133,10 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
             });
           }}
         >
-          {/* <View className="bg-black h-1 w-1" /> */}
-          <View style={{ height: size.height, width: size.width }}>
+          <View
+            className="flex-grow"
+            style={size ? { height: size.height, width: size.width } : {}}
+          >
             {children}
           </View>
         </Animated.View>

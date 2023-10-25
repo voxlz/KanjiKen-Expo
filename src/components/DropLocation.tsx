@@ -13,6 +13,7 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
   let geometry = useRef<View>(null);
   return (
     <View
+      className="self-stretch flex-grow"
       {...props}
       style={[
         {
