@@ -56,7 +56,6 @@ const DragContextProvider: FC<Props> = ({ children }) => {
             return true;
           }
         }
-        console.log("not droppable");
       }
     });
   };

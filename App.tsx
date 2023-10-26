@@ -48,18 +48,56 @@ export default function App() {
 
   const alts = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
+  const Dragable = (
+    <Draggable>
+      <Interactable />
+    </Draggable>
+  );
+
   return (
     <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
       <GestureHandlerRootView>
         <StatusBar style="auto" />
         <DragContextProvider>
-          <View className="flex-col items-center py-20 px-9 gap-y-4 bg-yellow-500 w-full h-full">
-            <DropLocation text="a">
-              <Outline text="a" />
-            </DropLocation>
-            <Draggable>
-              <Interactable text="a" />
-            </Draggable>
+          <View className="flex-col items-center py-20 px-9 gap-y-3 bg-yellow-500 w-full h-full ">
+            <View className="w-1/2 h-auto aspect-square">
+              <DropLocation text="a">
+                <Outline text="a" />
+              </DropLocation>
+            </View>
+            <View className="flex-grow" />
+            <View
+              style={{ gap: 12 }}
+              className="flex-row h-auto max-w-full bg-purple-500 overflow-hidden"
+            >
+              {Dragable}
+              {Dragable}
+              {Dragable}
+              {Dragable}
+            </View>
+            <View
+              style={{ gap: 12 }}
+              className="flex-row h-auto max-w-full bg-purple-500 "
+            >
+              {Dragable}
+              {Dragable}
+              {Dragable}
+              {Dragable}
+            </View>
+            {/* <View className="flex-row">
+              <Draggable>
+                <Interactable text="a" />
+              </Draggable>
+              <Draggable>
+                <Interactable text="a" />
+              </Draggable>
+              <Draggable>
+                <Interactable text="a" />
+              </Draggable>
+              <Draggable>
+                <Interactable text="a" />
+              </Draggable>
+            </View> */}
             {/* <View
               className="flex flex-col justify-center"
               style={{ position: "relative" }} // needed for z-index to matter

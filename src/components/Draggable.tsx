@@ -25,12 +25,12 @@ if (Platform.OS === "android") {
 
 /** Makes children draggable. */
 const Draggable: FC<Props> = ({ children, ...props }) => {
-  const dragContext = useContext(DragContext);
+  const dragContext = useContext(DragContext); // Access the drag logic
+  const viewRef = useRef<View>(null); // Ref to view
   const localTransform = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
-  const [isBeingDragged, setIsCurrentDrag] = useState(false); // is draggable being dragging?
-  const [startBound, setStartBound] = useState<LayoutRectangle>(); // Track inital size of draggable
+  const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
+  const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
   const [size, setCurrentSize] = useState<{ height: number; width: number }>(); // Set current size of the draggable
-  let geometry = useRef<View>(null);
   const [beforeDragTransform, setBeforeDragTransform] = useState({
     x: 0,
     y: 0,
@@ -46,7 +46,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
   };
 
   return (
-    <View {...props} className="bg-red-400 flex-grow self-stretch">
+    <View {...props} className="bg-red-400 flex-grow self-stretch flex-shrink">
       <PanGestureHandler
         onGestureEvent={(drag) => {
           const trans = {
@@ -65,7 +65,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
           dragContext?.setLocation(loc);
 
           // Set local variables
-          setIsCurrentDrag(true);
+          setIsBeingDragged(true);
         }}
         onEnded={(_) => {
           const goalRect = dragContext?.isDroppable();
@@ -81,15 +81,18 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
               goalRect.width / 2 -
               startBound.width / 2;
             const yTrans = goalRect.y - startBound.y;
-            console.log("trans", xTrans, yTrans);
-            setCurrentSize({
+            const newSize = {
               width: goalRect.width,
               height: goalRect.height,
-            });
-            moveTo({
+            };
+            const newTrans = {
               x: xTrans,
               y: yTrans,
-            });
+            };
+            console.log("new Trans", newTrans);
+            console.log("new Size", newSize);
+            setCurrentSize(newSize);
+            moveTo(newTrans);
           } else {
             moveTo({
               x: 0,
@@ -104,7 +107,7 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
             }
           }
           dragContext?.setLocation();
-          setIsCurrentDrag(false);
+          setIsBeingDragged(false);
         }}
       >
         <Animated.View
@@ -118,24 +121,25 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
             zIndex: isBeingDragged ? 10 : 1,
             elevation: isBeingDragged ? 10 : 1,
           }}
-          ref={geometry}
+          ref={viewRef}
           onLayout={(_) => {
-            geometry.current?.measure((x, y, width, height, pagex, pagey) => {
+            viewRef.current?.measure((x, y, width, height, pagex, pagey) => {
               const bound = {
                 x: pagex,
                 y: pagey,
                 width: width,
                 height: height,
               };
-              console.log("BOUND", bound);
 
-              if (!startBound) setStartBound(bound);
+              // Set current bound only if not set before.
+              setStartBound((currBound) => currBound ?? bound);
+              console.log("BOUND", bound, startBound);
             });
           }}
         >
           <View
             className="flex-grow"
-            style={size ? { height: size.height, width: size.width } : {}}
+            style={size ? { maxHeight: size.height, maxWidth: size.width } : {}}
           >
             {children}
           </View>

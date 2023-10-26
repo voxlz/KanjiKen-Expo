@@ -24,15 +24,17 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
       ]}
       ref={geometry}
       onLayout={(_) => {
-        geometry.current?.measure((x, y, width, height, pagex, pagey) =>
-          dragContext?.updateDropRect({
+        geometry.current?.measure((x, y, width, height, pagex, pagey) => {
+          const dropRect = {
             x: pagex,
             y: pagey,
             width: width,
             height: height,
             glyph: text,
-          })
-        );
+          };
+          console.log(dropRect);
+          dragContext?.updateDropRect(dropRect);
+        });
       }}
     >
       {children}
