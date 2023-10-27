@@ -1,7 +1,8 @@
-import React, { FC, useContext, useEffect, useRef } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { View, ViewProps } from "react-native";
 import { DragContext } from "../contexts/DragContextProvider";
 import { useMeasure } from "../functions/useMeasure";
+import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -10,7 +11,9 @@ type Props = {
 
 /** Make this component a possible drop location */
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
-  const { updateDropRect, isDroppable } = useContext(DragContext);
+  const { updateDropRect, hoverDropPos } = useContext(DragContext);
+  const { getNextAnswer } = useContext(ChallengeContext);
+
   const { ref, onLayout, measure } = useMeasure();
 
   useEffect(() => {
@@ -19,12 +22,16 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
 
   return (
     <View
-      className="self-stretch flex-grow"
+      className="flex-grow flex-shrink rounded-lg"
       {...props}
       style={[
         {
           backgroundColor:
-            isDroppable?.()?.x === measure?.x ? "blue" : undefined,
+            hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y
+              ? "#EEEEEE"
+              : getNextAnswer?.() === text
+              ? "#DDEAF582"
+              : undefined,
         },
         props.style,
       ]}

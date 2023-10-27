@@ -16,14 +16,21 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import Interactable from "./src/displays/Interactable";
 import Outline from "./src/displays/Outline";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Draggable from "./src/components/Draggable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DragContextProvider from "./src/contexts/DragContextProvider";
 import DropLocation from "./src/components/DropLocation";
 import Alternative from "./src/components/Alternative";
-import AltTray from "./src/components/AltTray";
-import LockSize from "./src/utils/LockSize";
+import KanjiComps from "./src/components/KanjiComps";
+import {
+  glyphDict as gd,
+  glyphDict,
+  glyphDictType,
+} from "./src/data_loading/glyphDict";
+import { shuffle } from "./src/functions/shuffle";
+import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
+import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -37,6 +44,12 @@ export default function App() {
     KleeOne_600SemiBold,
   });
 
+  const [glyphDict, setGlyphDict] = useState<glyphDictType>({});
+
+  useEffect(() => {
+    setGlyphDict(gd());
+  }, []);
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -47,38 +60,16 @@ export default function App() {
     return null;
   }
 
-  const alts = ["あ", "べ", "ぜ", "で", "え", "ふ", "ぐ", "へ"];
-
-  const Dragable = (
-    <View className="absolute">
-      <Draggable>
-        <Interactable />
-      </Draggable>
-    </View>
-  );
 
   return (
     <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
       <GestureHandlerRootView>
         <StatusBar style="auto" />
-        <DragContextProvider>
-          <View className="flex-col items-center py-20 px-9 gap-y-3 w-full h-full flex-grow">
-            <View className="w-1/2 h-auto aspect-square">
-              <DropLocation text="あ">
-                <Outline text="あ" />
-              </DropLocation>
-            </View>
-            <View className="flex-grow" />
-            <View
-              style={{ gap: 12 }}
-              className="flex-row max-w-full flex-shrink flex-wrap "
-            >
-              {alts.map((alt) => (
-                <Alternative text={alt} key={alt} />
-              ))}
-            </View>
-          </View>
-        </DragContextProvider>
+        <ChallengeContextProvider>
+          <DragContextProvider>
+            <CompKanjiChallenge />
+          </DragContextProvider>
+        </ChallengeContextProvider>
       </GestureHandlerRootView>
     </View>
   );

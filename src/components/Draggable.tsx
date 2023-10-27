@@ -9,6 +9,7 @@ import {
 import { DragContext } from "../contexts/DragContextProvider";
 import { MeasureType } from "./Alternative";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 
 const { UIManager } = NativeModules;
 
@@ -31,8 +32,9 @@ type Size = {
 
 /** Makes children draggable. */
 const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
-  const { setLocation, isDroppable, updateDropRect, resetContainsDroppable } =
+  const { setLocation, updateDropRect, resetContainsDroppable, hoverDropPos } =
     useContext(DragContext); // Access the drag logic
+  const { checkAnswer } = useContext(ChallengeContext);
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
@@ -61,20 +63,32 @@ const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
   });
 
   pan.onEnd(() => {
-    const dropPos = isDroppable?.();
     LayoutAnimation.configureNext({
       duration: 300,
       update: { type: "spring", springDamping: 1 },
     }); // Animate next layout change
 
     // Drop successful
-    if (dropPos && anchor && !dropPos.contains) {
-      const newSize = { width: dropPos.width, height: dropPos.height };
-      const newTrans = { x: dropPos.x - anchor.x, y: dropPos.y - anchor.y };
+    if (
+      hoverDropPos &&
+      anchor &&
+      !hoverDropPos.contains &&
+      checkAnswer?.(glyph)
+    ) {
+      const newSize = {
+        width: hoverDropPos.width,
+        height: hoverDropPos.height,
+      };
+      const newTrans = {
+        x: hoverDropPos.x - anchor.x,
+        y: hoverDropPos.y - anchor.y,
+      };
       setCurrentSize(newSize);
       moveTo(newTrans);
-      dropPos.contains = glyph;
-      updateDropRect?.(dropPos);
+      hoverDropPos.contains = glyph;
+      updateDropRect?.(hoverDropPos);
+
+      console.log("newSize", newSize);
     }
     // Drop failed.
     else {

@@ -10,7 +10,7 @@ const Interactable = ({ text, style }: Props) => {
   return (
     <View
       style={style}
-      className="self-stretch flex-grow flex-shrink aspect-square flex-col bg-gray-200 rounded-lg border-2 border-b-4 border-neutral-400"
+      className="flex-grow flex-shrink flex-col bg-gray-200 rounded-lg border-2 border-b-4 border-neutral-400"
     >
       <View className="flex-grow" />
       <View className="flex-row">

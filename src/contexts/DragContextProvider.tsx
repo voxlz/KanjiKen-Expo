@@ -1,8 +1,6 @@
 import React, { FC, useState } from "react";
 import { MeasureType } from "../components/Alternative";
 
-type Props = { children?: React.ReactNode };
-
 export type XY = {
   x: number;
   y: number;
@@ -14,26 +12,31 @@ export type DropPos = {
 } & MeasureType;
 
 type DragContextType = {
-  dragLocation?: XY;
   setLocation?: (loc?: XY) => void;
-  dropPositions?: DropPos[];
   updateDropRect?: (rect: DropPos) => void;
-  isDroppable?: () => DropPos | undefined;
-  resetContainsDroppable?: (glyph: string) => void;
+  resetContainsDroppable?: (glyph: string) => void; // Reset contains glyph tracking for a given glyph
+  hoverDropPos?: DropPos; // What dropPos are we hovering?
 };
 
 export const DragContext = React.createContext<DragContextType>({});
 
 /** Provides the drag context to elements that need it */
-const DragContextProvider: FC<Props> = ({ children }) => {
-  const [dragLocation, setLocation] = useState<XY>();
+const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const [dropPositions, setDropPositions] = useState<DropPos[]>([]);
+  const [hoverDropPos, setHoverDropPos] = useState<DropPos>();
 
   // Update droppable regions
   const updateDropRect = (dropPos: DropPos) => {
     setDropPositions((dp) => {
       if (dp) {
-        const index = dp?.indexOf(dropPos);
+        const index = dp?.findIndex(
+          (dp) =>
+            dp.glyph === dropPos.glyph &&
+            dp.x === dropPos.x &&
+            dp.y === dropPos.y
+        );
         if (index != -1) {
           dp[index] = dropPos;
         } else [(dp = dp.concat([dropPos]))];
@@ -41,9 +44,16 @@ const DragContextProvider: FC<Props> = ({ children }) => {
       }
       return [dropPos];
     });
+    console.log("Drop positions", dropPositions.length);
+  };
+
+  const setLocation = (loc?: XY) => {
+    // setDragLocation(loc);
+    setHoverDropPos(loc ? isDroppable(loc) : undefined);
   };
 
   // Reset 'containsDroppable' field for dropPos with matching glyph.
+  // TODO might be two identical glyphs in the same kanji
   const resetContainsDroppable = (glyph: string) => {
     setDropPositions((dropPositions) =>
       dropPositions.map((dropPos) => {
@@ -55,29 +65,20 @@ const DragContextProvider: FC<Props> = ({ children }) => {
   };
 
   /** Is the currently dragged object droppable on a certain rect? Return if so. */
-  const isDroppable = () => {
-    return dropPositions.find((rect) => {
-      if (dragLocation) {
-        if (dragLocation.x >= rect.x && dragLocation.x <= rect.x + rect.width) {
-          if (
-            dragLocation.y >= rect.y &&
-            dragLocation.y <= rect.y + rect.height
-          ) {
-            console.log("droppable", dragLocation, rect);
-            return true;
-          }
-        }
-      }
-    });
-  };
+  const isDroppable = (loc: XY) =>
+    dropPositions.find(
+      (rect) =>
+        loc.x >= rect.x &&
+        loc.x <= rect.x + rect.width &&
+        loc.y >= rect.y &&
+        loc.y <= rect.y + rect.height
+    );
 
   const context = {
-    dragLocation,
     setLocation,
     updateDropRect,
-    dropPositions,
-    isDroppable,
     resetContainsDroppable,
+    hoverDropPos,
   };
   return <DragContext.Provider value={context} children={children} />;
 };
