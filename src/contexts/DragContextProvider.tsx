@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { LayoutRectangle } from "react-native";
+import { MeasureType } from "../components/Alternative";
 
 type Props = { children?: React.ReactNode };
 
@@ -8,44 +8,55 @@ export type XY = {
   y: number;
 };
 
-export type DropRect = {
+export type DropPos = {
   glyph: string;
-} & LayoutRectangle;
+  contains?: string; // Is something dropped here or not
+} & MeasureType;
 
 type DragContextType = {
   dragLocation?: XY;
-  setLocation: (loc?: XY) => void;
-  dropRects: DropRect[];
-  updateDropRect: (rect: DropRect) => void;
-  isDroppable: () => DropRect | undefined;
+  setLocation?: (loc?: XY) => void;
+  dropPositions?: DropPos[];
+  updateDropRect?: (rect: DropPos) => void;
+  isDroppable?: () => DropPos | undefined;
+  resetContainsDroppable?: (glyph: string) => void;
 };
 
-export const DragContext = React.createContext<DragContextType | undefined>(
-  undefined
-);
+export const DragContext = React.createContext<DragContextType>({});
 
 /** Provides the drag context to elements that need it */
 const DragContextProvider: FC<Props> = ({ children }) => {
   const [dragLocation, setLocation] = useState<XY>();
-  const [dropRects, setDropRects] = useState<DropRect[]>([]);
+  const [dropPositions, setDropPositions] = useState<DropPos[]>([]);
 
   // Update droppable regions
-  const updateDropRect = (rect: DropRect) => {
-    setDropRects((dropRects) => {
-      if (dropRects) {
-        const index = dropRects?.indexOf(rect);
+  const updateDropRect = (dropPos: DropPos) => {
+    setDropPositions((dp) => {
+      if (dp) {
+        const index = dp?.indexOf(dropPos);
         if (index != -1) {
-          dropRects[index] = rect;
-        } else [(dropRects = dropRects.concat([rect]))];
-        return dropRects;
+          dp[index] = dropPos;
+        } else [(dp = dp.concat([dropPos]))];
+        return dp;
       }
-      return [rect];
+      return [dropPos];
     });
+  };
+
+  // Reset 'containsDroppable' field for dropPos with matching glyph.
+  const resetContainsDroppable = (glyph: string) => {
+    setDropPositions((dropPositions) =>
+      dropPositions.map((dropPos) => {
+        dropPos.contains =
+          dropPos.contains === glyph ? undefined : dropPos.contains;
+        return dropPos;
+      })
+    );
   };
 
   /** Is the currently dragged object droppable on a certain rect? Return if so. */
   const isDroppable = () => {
-    return dropRects.find((rect) => {
+    return dropPositions.find((rect) => {
       if (dragLocation) {
         if (dragLocation.x >= rect.x && dragLocation.x <= rect.x + rect.width) {
           if (
@@ -61,11 +72,12 @@ const DragContextProvider: FC<Props> = ({ children }) => {
   };
 
   const context = {
-    dragLocation: dragLocation,
-    setLocation: setLocation,
-    updateDropRect: updateDropRect,
-    dropRects: dropRects,
+    dragLocation,
+    setLocation,
+    updateDropRect,
+    dropPositions,
     isDroppable,
+    resetContainsDroppable,
   };
   return <DragContext.Provider value={context} children={children} />;
 };

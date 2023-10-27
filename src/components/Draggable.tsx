@@ -2,18 +2,13 @@ import React, { FC, useContext, useRef, useState } from "react";
 import {
   Animated,
   LayoutAnimation,
-  LayoutRectangle,
   NativeModules,
-  View,
   Platform,
   ViewProps,
 } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
 import { DragContext } from "../contexts/DragContextProvider";
-
-type Props = {
-  children?: React.ReactNode;
-} & ViewProps;
+import { MeasureType } from "./Alternative";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 const { UIManager } = NativeModules;
 
@@ -23,22 +18,78 @@ if (Platform.OS === "android") {
   }
 }
 
+type Props = {
+  anchor?: MeasureType; // Default position / size
+  children?: React.ReactNode;
+  text?: string;
+} & ViewProps;
+
+type Size = {
+  height: number;
+  width: number;
+};
+
 /** Makes children draggable. */
-const Draggable: FC<Props> = ({ children, ...props }) => {
-  const dragContext = useContext(DragContext); // Access the drag logic
-  const viewRef = useRef<View>(null); // Ref to view
-  const localTransform = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
+  const { setLocation, isDroppable, updateDropRect, resetContainsDroppable } =
+    useContext(DragContext); // Access the drag logic
+  const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
-  const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
-  const [size, setCurrentSize] = useState<{ height: number; width: number }>(); // Set current size of the draggable
-  const [beforeDragTransform, setBeforeDragTransform] = useState({
+
+  // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
+  const [currSize, setCurrentSize] = useState<Size>(); // Set current size of the draggable
+  const [dragStart, setBeforeDragTransform] = useState({
     x: 0,
     y: 0,
   });
 
+  const pan = Gesture.Pan();
+
+  pan.onBegin(() => {
+    resetContainsDroppable?.(glyph ?? "");
+  });
+
+  pan.onChange((drag) => {
+    setIsBeingDragged(true);
+    const trans = {
+      x: dragStart.x + drag.translationX,
+      y: dragStart.y + drag.translationY,
+    };
+    const loc = { x: drag.absoluteX, y: drag.absoluteY };
+    translation.setValue(trans);
+    setLocation?.(loc);
+  });
+
+  pan.onEnd(() => {
+    const dropPos = isDroppable?.();
+    LayoutAnimation.configureNext({
+      duration: 300,
+      update: { type: "spring", springDamping: 1 },
+    }); // Animate next layout change
+
+    // Drop successful
+    if (dropPos && anchor && !dropPos.contains) {
+      const newSize = { width: dropPos.width, height: dropPos.height };
+      const newTrans = { x: dropPos.x - anchor.x, y: dropPos.y - anchor.y };
+      setCurrentSize(newSize);
+      moveTo(newTrans);
+      dropPos.contains = glyph;
+      updateDropRect?.(dropPos);
+    }
+    // Drop failed.
+    else {
+      moveTo({ x: 0, y: 0 });
+      if (anchor) {
+        setCurrentSize({ width: anchor.width, height: anchor.height });
+      }
+    }
+    setLocation?.();
+    setIsBeingDragged(false);
+  });
+
   // Move to new default position
   const moveTo = (newpan: { x: number; y: number }) => {
-    Animated.spring(localTransform, {
+    Animated.spring(translation, {
       toValue: newpan,
       useNativeDriver: true,
     }).start();
@@ -46,106 +97,25 @@ const Draggable: FC<Props> = ({ children, ...props }) => {
   };
 
   return (
-    <View {...props} className="bg-red-400 flex-grow self-stretch flex-shrink">
-      <PanGestureHandler
-        onGestureEvent={(drag) => {
-          const trans = {
-            x: beforeDragTransform.x + drag.nativeEvent.translationX,
-            y: beforeDragTransform.y + drag.nativeEvent.translationY,
-          };
-          const loc = {
-            x: drag.nativeEvent.absoluteX,
-            y: drag.nativeEvent.absoluteY,
-          };
-
-          // Set local translation
-          localTransform.setValue(trans);
-
-          // Set absolute position
-          dragContext?.setLocation(loc);
-
-          // Set local variables
-          setIsBeingDragged(true);
-        }}
-        onEnded={(_) => {
-          const goalRect = dragContext?.isDroppable();
-          LayoutAnimation.configureNext({
-            duration: 300,
-            update: { type: "spring", springDamping: 1 },
-          }); // Animate next layout change
-
-          if (goalRect && startBound) {
-            const xTrans =
-              goalRect.x -
-              startBound.x +
-              goalRect.width / 2 -
-              startBound.width / 2;
-            const yTrans = goalRect.y - startBound.y;
-            const newSize = {
-              width: goalRect.width,
-              height: goalRect.height,
-            };
-            const newTrans = {
-              x: xTrans,
-              y: yTrans,
-            };
-            console.log("new Trans", newTrans);
-            console.log("new Size", newSize);
-            setCurrentSize(newSize);
-            moveTo(newTrans);
-          } else {
-            moveTo({
-              x: 0,
-              y: 0,
-            });
-            if (startBound) {
-              console.log("RESET SIZE", startBound);
-              setCurrentSize({
-                width: startBound.width,
-                height: startBound.height,
-              });
-            }
-          }
-          dragContext?.setLocation();
-          setIsBeingDragged(false);
+    <GestureDetector gesture={pan}>
+      <Animated.View
+        className="absolute"
+        style={{
+          transform: [
+            { translateX: translation.x },
+            { translateY: translation.y },
+          ],
+          zIndex: isBeingDragged ? 10 : 1,
+          elevation: isBeingDragged ? 10 : 1,
+          height: currSize ? currSize.height : anchor?.height,
+          width: currSize ? currSize.width : anchor?.width,
+          top: anchor?.top,
+          left: anchor?.left,
         }}
       >
-        <Animated.View
-          className="flex-grow"
-          style={{
-            transform: [
-              { translateX: localTransform.x },
-              { translateY: localTransform.y },
-            ],
-            position: "relative",
-            zIndex: isBeingDragged ? 10 : 1,
-            elevation: isBeingDragged ? 10 : 1,
-          }}
-          ref={viewRef}
-          onLayout={(_) => {
-            viewRef.current?.measure((x, y, width, height, pagex, pagey) => {
-              const bound = {
-                x: pagex,
-                y: pagey,
-                width: width,
-                height: height,
-              };
-
-              // Set current bound only if not set before.
-              setStartBound((currBound) => currBound ?? bound);
-              console.log("BOUND", bound, startBound);
-            });
-          }}
-        >
-          <View
-            className="flex-grow"
-            style={size ? { maxHeight: size.height, maxWidth: size.width } : {}}
-          >
-            {children}
-          </View>
-        </Animated.View>
-      </PanGestureHandler>
-    </View>
+        {children}
+      </Animated.View>
+    </GestureDetector>
   );
 };
 

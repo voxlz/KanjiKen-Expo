@@ -23,6 +23,7 @@ import DragContextProvider from "./src/contexts/DragContextProvider";
 import DropLocation from "./src/components/DropLocation";
 import Alternative from "./src/components/Alternative";
 import AltTray from "./src/components/AltTray";
+import LockSize from "./src/utils/LockSize";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -46,12 +47,14 @@ export default function App() {
     return null;
   }
 
-  const alts = ["a", "b", "c", "d", "e", "f", "g", "h"];
+  const alts = ["あ", "べ", "ぜ", "で", "え", "ふ", "ぐ", "へ"];
 
   const Dragable = (
-    <Draggable>
-      <Interactable />
-    </Draggable>
+    <View className="absolute">
+      <Draggable>
+        <Interactable />
+      </Draggable>
+    </View>
   );
 
   return (
@@ -59,79 +62,21 @@ export default function App() {
       <GestureHandlerRootView>
         <StatusBar style="auto" />
         <DragContextProvider>
-          <View className="flex-col items-center py-20 px-9 gap-y-3 bg-yellow-500 w-full h-full ">
+          <View className="flex-col items-center py-20 px-9 gap-y-3 w-full h-full flex-grow">
             <View className="w-1/2 h-auto aspect-square">
-              <DropLocation text="a">
-                <Outline text="a" />
+              <DropLocation text="あ">
+                <Outline text="あ" />
               </DropLocation>
             </View>
             <View className="flex-grow" />
             <View
               style={{ gap: 12 }}
-              className="flex-row h-auto max-w-full bg-purple-500 overflow-hidden"
+              className="flex-row max-w-full flex-shrink flex-wrap "
             >
-              {Dragable}
-              {Dragable}
-              {Dragable}
-              {Dragable}
+              {alts.map((alt) => (
+                <Alternative text={alt} key={alt} />
+              ))}
             </View>
-            <View
-              style={{ gap: 12 }}
-              className="flex-row h-auto max-w-full bg-purple-500 "
-            >
-              {Dragable}
-              {Dragable}
-              {Dragable}
-              {Dragable}
-            </View>
-            {/* <View className="flex-row">
-              <Draggable>
-                <Interactable text="a" />
-              </Draggable>
-              <Draggable>
-                <Interactable text="a" />
-              </Draggable>
-              <Draggable>
-                <Interactable text="a" />
-              </Draggable>
-              <Draggable>
-                <Interactable text="a" />
-              </Draggable>
-            </View> */}
-            {/* <View
-              className="flex flex-col justify-center"
-              style={{ position: "relative" }} // needed for z-index to matter
-            >
-              <View className="h-64 w-64 bg-blue-50 items-center z-0">
-                <DropLocation text="a">
-                  <Outline text="a" />
-                </DropLocation>
-                <DropLocation text="b">
-                  <Outline text="b" style={{ height: 128 }} />
-                </DropLocation>
-                <DropLocation text="c">
-                  <Outline text="c" style={{ height: 128, width: 56 }} />
-                </DropLocation>
-              </View>
-            </View>
-            <View className="w-full ">
-              <View className="flex-row bg-red-500 z-10">
-                {alts
-                  .map((alt) => ({ glyph: alt }))
-                  .filter((v, i) => i < 4)
-                  .map((alt) => (
-                    <Alternative text={alt.glyph} />
-                  ))}
-              </View>
-              <View className="flex-row bg-red-300 relative items-center z-10 justify-between">
-                {alts
-                  .map((alt) => ({ glyph: alt }))
-                  .filter((v, i) => i > 3)
-                  .map((alt) => (
-                    <Alternative text={alt.glyph} />
-                  ))}
-              </View>
-            </View> */}
           </View>
         </DragContextProvider>
       </GestureHandlerRootView>

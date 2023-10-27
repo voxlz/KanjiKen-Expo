@@ -1,6 +1,7 @@
-import React, { FC, useContext, useRef } from "react";
+import React, { FC, useContext, useEffect, useRef } from "react";
 import { View, ViewProps } from "react-native";
 import { DragContext } from "../contexts/DragContextProvider";
+import { useMeasure } from "../functions/useMeasure";
 
 type Props = {
   children: React.ReactNode;
@@ -9,8 +10,13 @@ type Props = {
 
 /** Make this component a possible drop location */
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
-  const dragContext = useContext(DragContext);
-  let geometry = useRef<View>(null);
+  const { updateDropRect, isDroppable } = useContext(DragContext);
+  const { ref, onLayout, measure } = useMeasure();
+
+  useEffect(() => {
+    if (measure) updateDropRect?.({ glyph: text, ...measure });
+  }, [measure]);
+
   return (
     <View
       className="self-stretch flex-grow"
@@ -18,24 +24,12 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
       style={[
         {
           backgroundColor:
-            dragContext?.isDroppable()?.glyph === text ? "blue" : undefined,
+            isDroppable?.()?.x === measure?.x ? "blue" : undefined,
         },
         props.style,
       ]}
-      ref={geometry}
-      onLayout={(_) => {
-        geometry.current?.measure((x, y, width, height, pagex, pagey) => {
-          const dropRect = {
-            x: pagex,
-            y: pagey,
-            width: width,
-            height: height,
-            glyph: text,
-          };
-          console.log(dropRect);
-          dragContext?.updateDropRect(dropRect);
-        });
-      }}
+      ref={ref}
+      onLayout={onLayout}
     >
       {children}
     </View>

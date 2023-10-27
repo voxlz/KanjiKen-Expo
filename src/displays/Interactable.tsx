@@ -10,7 +10,7 @@ const Interactable = ({ text, style }: Props) => {
   return (
     <View
       style={style}
-      className="self-stretch flex-grow aspect-square flex-col bg-gray-200 rounded-lg border-2 border-b-4 border-neutral-400"
+      className="self-stretch flex-grow flex-shrink aspect-square flex-col bg-gray-200 rounded-lg border-2 border-b-4 border-neutral-400"
     >
       <View className="flex-grow" />
       <View className="flex-row">
@@ -18,7 +18,7 @@ const Interactable = ({ text, style }: Props) => {
         <View>
           <Text
             style={{ fontFamily: "KleeOne_600SemiBold" }}
-            className=" text-black text-3xl leading-none"
+            className=" text-black text-4xl leading-none"
           >
             {text}
           </Text>
