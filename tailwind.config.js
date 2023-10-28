@@ -29,7 +29,7 @@ module.exports = {
           text: "#000000",
         },
         highlight: {
-          gray: "#EEEEEE",
+          gray: "#FEFEFE",
           blue: "#EEF4FA",
         },
       },

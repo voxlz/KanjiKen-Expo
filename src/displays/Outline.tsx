@@ -10,7 +10,7 @@ const Outline: FC<Props> = ({ text, style }) => {
   return (
     <View
       style={style}
-      className="flex-grow flex-shrink bg-none rounded-xl border-2 border-ui-disabled border-dashed items-center justify-center"
+      className="flex-grow flex-shrink bg-none rounded-xl border-[3px] border-ui-disabled border-dashed items-center justify-center"
     >
       <Text
         style={{ fontFamily: "KleeOne_600SemiBold" }}

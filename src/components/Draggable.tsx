@@ -23,6 +23,8 @@ type Props = {
   anchor?: MeasureType; // Default position / size
   children?: React.ReactNode;
   text?: string;
+  dragOpacity?: Animated.Value;
+  dragScale?: Animated.Value;
 } & ViewProps;
 
 type Size = {
@@ -31,7 +33,14 @@ type Size = {
 };
 
 /** Makes children draggable. */
-const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
+const Draggable: FC<Props> = ({
+  children,
+  anchor,
+  text: glyph,
+  dragOpacity,
+  dragScale,
+  ...props
+}) => {
   const { setLocation, updateDropRect, resetContainsDroppable, hoverDropPos } =
     useContext(DragContext); // Access the drag logic
   const { checkAnswer } = useContext(ChallengeContext);
@@ -113,6 +122,7 @@ const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
   return (
     <GestureDetector gesture={pan}>
       <Animated.View
+        id="animate_position"
         className="absolute"
         style={{
           transform: [
@@ -127,7 +137,15 @@ const Draggable: FC<Props> = ({ children, anchor, text: glyph, ...props }) => {
           left: anchor?.left,
         }}
       >
-        {children}
+        <Animated.View
+          className="flex-grow"
+          style={{
+            opacity: dragOpacity,
+            transform: [{ scale: dragScale ?? 1 }],
+          }}
+        >
+          {children}
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );

@@ -23,11 +23,11 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
   return (
     <View
       className={
-        "flex-grow flex-shrink rounded-lg " +
+        "flex-grow flex-shrink rounded-xl " +
         (hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y
           ? "bg-highlight-blue"
           : getNextAnswer?.() === text
-          ? "bg-highlight-gray"
+          ? "bg-gray-100"
           : "")
       }
       {...props}

@@ -24,13 +24,14 @@ import DropLocation from "./src/components/DropLocation";
 import Alternative from "./src/components/Alternative";
 import KanjiComps from "./src/components/KanjiComps";
 import {
-  glyphDict as gd,
-  glyphDict,
+  glyphDictLoader as gd,
+  glyphDictLoader,
   glyphDictType,
 } from "./src/data_loading/glyphDict";
 import { shuffle } from "./src/functions/shuffle";
 import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
+import TextBox from "./src/utils/TextBox";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -60,16 +61,15 @@ export default function App() {
     return null;
   }
 
-
   return (
     <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView className="w-full h-full">
         <StatusBar style="auto" />
-        <ChallengeContextProvider>
-          <DragContextProvider>
+        <DragContextProvider>
+          <ChallengeContextProvider>
             <CompKanjiChallenge />
-          </DragContextProvider>
-        </ChallengeContextProvider>
+          </ChallengeContextProvider>
+        </DragContextProvider>
       </GestureHandlerRootView>
     </View>
   );

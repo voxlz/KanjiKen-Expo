@@ -16,6 +16,7 @@ type DragContextType = {
   updateDropRect?: (rect: DropPos) => void;
   resetContainsDroppable?: (glyph: string) => void; // Reset contains glyph tracking for a given glyph
   hoverDropPos?: DropPos; // What dropPos are we hovering?
+  clearDropContext?: () => void; // Clear drop rects, usually between exercises
 };
 
 export const DragContext = React.createContext<DragContextType>({});
@@ -44,7 +45,12 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
       }
       return [dropPos];
     });
-    console.log("Drop positions", dropPositions.length);
+  };
+
+  const clearDropContext = () => {
+    setDropPositions([]);
+    setLocation();
+    resetContainsDroppable();
   };
 
   const setLocation = (loc?: XY) => {
@@ -54,11 +60,15 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
 
   // Reset 'containsDroppable' field for dropPos with matching glyph.
   // TODO might be two identical glyphs in the same kanji
-  const resetContainsDroppable = (glyph: string) => {
+  const resetContainsDroppable = (glyph?: string) => {
     setDropPositions((dropPositions) =>
       dropPositions.map((dropPos) => {
-        dropPos.contains =
-          dropPos.contains === glyph ? undefined : dropPos.contains;
+        if (glyph) {
+          dropPos.contains =
+            dropPos.contains === glyph ? undefined : dropPos.contains;
+        } else {
+          dropPos.contains = undefined;
+        }
         return dropPos;
       })
     );
@@ -79,6 +89,7 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
     updateDropRect,
     resetContainsDroppable,
     hoverDropPos,
+    clearDropContext,
   };
   return <DragContext.Provider value={context} children={children} />;
 };

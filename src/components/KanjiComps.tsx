@@ -12,6 +12,7 @@ type Props = {
 /** Places the dropLocations in accordance with position object.
  */
 const KanjiComps: FC<Props> = ({ pos }) => {
+  console.log("pos", pos);
 
   return (
     <View className="flex-grow flex-shrink">

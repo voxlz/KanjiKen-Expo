@@ -24,6 +24,7 @@ export type Word = {
 
 export type glyphDictType = {
   [char: string]: {
+    glyph?: string;
     code: string;
     comps: {
       order: string[];
@@ -51,7 +52,7 @@ export type glyphDictType = {
   };
 };
 
-export const glyphDict = (): glyphDictType => {
+export const glyphDictLoader = (): glyphDictType => {
   var startTime = performance.now();
 
   const json = JSON.parse(jsonGlyphDictStr);
