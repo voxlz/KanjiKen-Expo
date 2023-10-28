@@ -22,19 +22,16 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
 
   return (
     <View
-      className="flex-grow flex-shrink rounded-lg"
+      className={
+        "flex-grow flex-shrink rounded-lg " +
+        (hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y
+          ? "bg-highlight-blue"
+          : getNextAnswer?.() === text
+          ? "bg-highlight-gray"
+          : "")
+      }
       {...props}
-      style={[
-        {
-          backgroundColor:
-            hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y
-              ? "#EEEEEE"
-              : getNextAnswer?.() === text
-              ? "#DDEAF582"
-              : undefined,
-        },
-        props.style,
-      ]}
+      style={[props.style]}
       ref={ref}
       onLayout={onLayout}
     >

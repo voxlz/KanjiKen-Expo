@@ -5,6 +5,7 @@ import KanjiComps from "../components/KanjiComps";
 import { glyphDict } from "../data_loading/glyphDict";
 import { shuffle } from "../functions/shuffle";
 import { ChallengeContext } from "../contexts/ChallengeContextProvider";
+import KanjiMeaning from "../displays/KanjiMeaning";
 
 type Props = {};
 
@@ -13,14 +14,15 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   const { setGlyph } = useContext(ChallengeContext);
   const [alts, setAlts] = useState<string[]>([]);
   const gd = glyphDict();
+  const glyphInfo = gd["食"];
 
   useEffect(() => {
-    setGlyph?.(gd["鬱"]);
+    setGlyph?.(glyphInfo);
   }, []);
 
-  const order = gd["鬱"].comps.order;
-  const position = gd["鬱"].comps.position;
-  const meaning = gd["鬱"].meanings.primary;
+  const order = glyphInfo.comps.order;
+  const position = glyphInfo.comps.position;
+  const meaning = glyphInfo.meanings.primary;
 
   useEffect(() => {
     setAlts(
@@ -37,10 +39,10 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   return (
     <View className="flex-col items-center py-20 px-9 gap-y-3 w-full h-full flex-grow">
       <View className="flex-grow" />
-      <View style={{ gap: 12 }} className="w-2/3 h-auto aspect-square">
+      <View style={{ gap: 12 }} className="w-1/2 h-auto aspect-square">
         <KanjiComps pos={position} />
       </View>
-      <Text className="text-4xl capitalize">{meaning}</Text>
+      <KanjiMeaning text={meaning} />
       <View className="flex-grow" />
       <View className="flex-grow" />
       <View
