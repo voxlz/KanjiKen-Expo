@@ -1,14 +1,20 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { glyphDictLoader, glyphDictType } from "../data_loading/glyphDict";
+import {
+  glyphDictLoader,
+  GlyphDictType as GlyphDictType,
+} from "../data_loading/glyphDict";
 import { DragContext } from "./DragContextProvider";
+import { shuffle } from "../functions/shuffle";
+export type GlyphInfo = GlyphDictType[0];
 
 type ChallengeContextType = {
   setGlyph?: (glyph?: string) => void;
   getNextAnswer?: () => string | undefined;
   checkAnswer?: (input?: string) => boolean;
   isFinished: boolean;
-  glyphInfo?: glyphDictType[0];
+  glyphInfo?: GlyphDictType[0];
   challengeId: number;
+  alts?: GlyphInfo[];
 };
 
 export const ChallengeContext = React.createContext<ChallengeContextType>({
@@ -21,40 +27,59 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const { clearDropContext: clearDropRects } = useContext(DragContext);
-  const [gd, setGd] = useState<glyphDictType>();
+  const [glyphDict, setGlyphDict] = useState<GlyphDictType>();
   const [correctOrder, setCorrectOrder] = useState<string[]>();
   const [orderIdx, setOrderIdx] = useState(0);
-  const [glyphInfo, setGlyphInfo] = useState<glyphDictType[0]>();
+
+  const [glyphInfo, setGlyphInfo] = useState<GlyphInfo>();
   const [isFinished, setIsFinished] = useState(false);
   const [challengeId, setChallengeId] = useState(0); // Used to keep apart different challanges. Used in key's for example.
+  const [alts, setAlts] = useState<GlyphInfo[]>([]);
+
+  const getFromDict = (glyph: string, dict: GlyphDictType) => {
+    const info = dict[glyph];
+    info.glyph = glyph;
+    return info;
+  };
+
+  const getRandomGlyphInfo = (dict: GlyphDictType) => {
+    const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length);
+    const possibleGlyphs = Object.keys(dict);
+    const glyph = possibleGlyphs.at(randIdx())!;
+    return getFromDict(glyph, dict);
+  };
 
   const setGlyph = (glyph?: string) => {
-    let newGd;
+    let dict = glyphDict;
 
     // Load glyphDict if not already loaded
-    if (!gd) {
-      newGd = glyphDictLoader();
-      setGd(newGd);
-    } else {
-      newGd = gd;
+    if (!dict) {
+      dict = glyphDictLoader();
+      setGlyphDict(dict);
     }
 
     // Load glyphInfo
-    let info;
+    let info: GlyphInfo;
     if (!glyph) {
-      const possibleGlyphs = Object.keys(newGd);
-      const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length);
       do {
-        glyph = possibleGlyphs.at(randIdx());
-        info = newGd[glyph!];
-        console.log("pos", info.comps.position, info.glyph);
+        info = getRandomGlyphInfo(dict);
       } while (!info?.comps.position);
-
-      console.log(glyph);
+    } else {
+      info = getFromDict(glyph, dict);
     }
 
+    // Set alts
+    let altInfos = info.comps.order.map((alt) => getFromDict(alt, dict!));
+    let findRandom = 8 - altInfos.length;
+    do {
+      altInfos = altInfos.concat(getRandomGlyphInfo(dict));
+      findRandom -= 1;
+    } while (findRandom > 0);
+    console.log(altInfos.length, "should be 8");
+    setAlts(shuffle(altInfos));
+    console.log(glyph);
+
     // Update state
-    if (info) info.glyph = glyph;
     setGlyphInfo(info);
     setCorrectOrder(info?.comps.order);
     setOrderIdx(0);
@@ -87,6 +112,7 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
     isFinished,
     glyphInfo,
     challengeId,
+    alts,
   };
   return <ChallengeContext.Provider value={context} children={children} />;
 };

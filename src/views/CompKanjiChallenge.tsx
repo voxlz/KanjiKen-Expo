@@ -11,9 +11,8 @@ type Props = {};
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<Props> = ({}) => {
-  const { setGlyph, isFinished, glyphInfo, challengeId } =
+  const { setGlyph, isFinished, glyphInfo, challengeId, alts } =
     useContext(ChallengeContext);
-  const [alts, setAlts] = useState<string[]>([]);
 
   useEffect(() => {
     setGlyph?.();
@@ -31,19 +30,6 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   }, [isFinished]);
 
   const position = glyphInfo?.comps.position;
-
-  useEffect(() => {
-    const order = glyphInfo?.comps.order ?? [];
-    setAlts(
-      shuffle(
-        order.concat(
-          shuffle(["あ", "べ", "ぜ", "で", "え", "ふ", "ぐ", "へ"]).filter(
-            (_, i) => i < 8 - order.length
-          )
-        )
-      )
-    );
-  }, [glyphInfo?.comps.order]);
 
   const builderScale = useRef(new Animated.Value(1)).current;
   const kanjiScale = useRef(new Animated.Value(0.5)).current;
@@ -133,15 +119,17 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         style={{ gap: 12 }}
         className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9"
       >
-        {alts.map((alt, i) => (
+        {alts?.map((alt, i) => (
           <Alternative
-            key={i + alt + challengeId} // TODO make unique per challenge
-            text={alt}
+            key={i + alt.glyph! + challengeId} // TODO make unique per challenge
+            text={alt.glyph!}
             dragOpacity={
-              glyphInfo?.comps.order.includes(alt) ? opacity : undefined
+              glyphInfo?.comps.order.includes(alt.glyph!) ? opacity : undefined
             }
             dragScale={
-              glyphInfo?.comps.order.includes(alt) ? builderScale : undefined
+              glyphInfo?.comps.order.includes(alt.glyph!)
+                ? builderScale
+                : undefined
             }
           />
         ))}

@@ -22,7 +22,7 @@ export type Word = {
   };
 };
 
-export type glyphDictType = {
+export type GlyphDictType = {
   [char: string]: {
     glyph?: string;
     code: string;
@@ -52,7 +52,7 @@ export type glyphDictType = {
   };
 };
 
-export const glyphDictLoader = (): glyphDictType => {
+export const glyphDictLoader = (): GlyphDictType => {
   var startTime = performance.now();
 
   const json = JSON.parse(jsonGlyphDictStr);

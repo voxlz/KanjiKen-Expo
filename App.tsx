@@ -26,7 +26,7 @@ import KanjiComps from "./src/components/KanjiComps";
 import {
   glyphDictLoader as gd,
   glyphDictLoader,
-  glyphDictType,
+  GlyphDictType,
 } from "./src/data_loading/glyphDict";
 import { shuffle } from "./src/functions/shuffle";
 import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
@@ -45,7 +45,7 @@ export default function App() {
     KleeOne_600SemiBold,
   });
 
-  const [glyphDict, setGlyphDict] = useState<glyphDictType>({});
+  const [glyphDict, setGlyphDict] = useState<GlyphDictType>({});
 
   useEffect(() => {
     setGlyphDict(gd());
@@ -67,7 +67,20 @@ export default function App() {
         <StatusBar style="auto" />
         <DragContextProvider>
           <ChallengeContextProvider>
-            <CompKanjiChallenge />
+            {/* <CompKanjiChallenge /> */}
+            <View className="justify-center self-stretch items-center flex-grow  w-full">
+              <View className="h-24 w-24">
+                <Outline text="a" />
+                <View
+                  id="hint"
+                  className="absolute bg-blue-500 h-10 w-20 left-2 -top-12 rounded-lg shadow-sm"
+                ></View>
+                <View
+                  className="absolute w-0 h-0 border-transparent border-t-[10px] border-b-0 border-x-[10px] border-t-blue-500
+                 left-9 -top-2"
+                ></View>
+              </View>
+            </View>
           </ChallengeContextProvider>
         </DragContextProvider>
       </GestureHandlerRootView>
