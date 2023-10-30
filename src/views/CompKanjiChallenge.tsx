@@ -2,7 +2,6 @@ import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { View, Text, Animated } from "react-native";
 import Alternative from "../components/Alternative";
 import KanjiComps from "../components/KanjiComps";
-import { shuffle } from "../functions/shuffle";
 import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
 import Button from "../components/Button";
@@ -121,8 +120,8 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
       >
         {alts?.map((alt, i) => (
           <Alternative
-            key={i + alt.glyph! + challengeId} // TODO make unique per challenge
-            text={alt.glyph!}
+            key={i + alt.glyph! + challengeId}
+            altInfo={alt}
             dragOpacity={
               glyphInfo?.comps.order.includes(alt.glyph!) ? opacity : undefined
             }
@@ -149,13 +148,13 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
             }}
           />
         </View>
-        {/* Hacky bottom bar that does not take up any real space. To ensure the spring animation does not show white at the bottom. */}
         <View
           className="absolute h-40 bg-forest-500 w-full bottom-0 -z-10"
           style={{
             transform: [{ translateY: 150 }],
           }}
         />
+        {/* ^ Hacky bottom bar that extends the bg below the screen. Does not take up any space. To ensure the spring animation does not show white at the bottom. */}
       </Animated.View>
     </Animated.View>
   );

@@ -32,6 +32,7 @@ import { shuffle } from "./src/functions/shuffle";
 import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
 import TextBox from "./src/utils/TextBox";
+import HelpBox from "./src/components/HelpBox";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -67,20 +68,14 @@ export default function App() {
         <StatusBar style="auto" />
         <DragContextProvider>
           <ChallengeContextProvider>
-            {/* <CompKanjiChallenge /> */}
-            <View className="justify-center self-stretch items-center flex-grow  w-full">
-              <View className="h-24 w-24">
-                <Outline text="a" />
-                <View
-                  id="hint"
-                  className="absolute bg-blue-500 h-10 w-20 left-2 -top-12 rounded-lg shadow-sm"
-                ></View>
-                <View
-                  className="absolute w-0 h-0 border-transparent border-t-[10px] border-b-0 border-x-[10px] border-t-blue-500
-                 left-9 -top-2"
-                ></View>
+            <CompKanjiChallenge />
+            {/* <View className="justify-center self-stretch items-center flex-grow  w-full">
+              <View className="h-20 w-20">
+                <HelpBox meaning="hello">
+                  <Outline text="a" />
+                </HelpBox>
               </View>
-            </View>
+            </View> */}
           </ChallengeContextProvider>
         </DragContextProvider>
       </GestureHandlerRootView>

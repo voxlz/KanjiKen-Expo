@@ -15,6 +15,7 @@ type ChallengeContextType = {
   glyphInfo?: GlyphDictType[0];
   challengeId: number;
   alts?: GlyphInfo[];
+  getGlyphInfo?: (glyph: string, dict?: GlyphDictType) => GlyphInfo;
 };
 
 export const ChallengeContext = React.createContext<ChallengeContextType>({
@@ -36,8 +37,9 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
   const [challengeId, setChallengeId] = useState(0); // Used to keep apart different challanges. Used in key's for example.
   const [alts, setAlts] = useState<GlyphInfo[]>([]);
 
-  const getFromDict = (glyph: string, dict: GlyphDictType) => {
-    const info = dict[glyph];
+  const getGlyphInfo = (glyph: string, dict?: GlyphDictType) => {
+    const d = dict ? dict : glyphDict!;
+    const info = d[glyph];
     info.glyph = glyph;
     return info;
   };
@@ -46,7 +48,7 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
     const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length);
     const possibleGlyphs = Object.keys(dict);
     const glyph = possibleGlyphs.at(randIdx())!;
-    return getFromDict(glyph, dict);
+    return getGlyphInfo(glyph, dict);
   };
 
   const setGlyph = (glyph?: string) => {
@@ -65,11 +67,11 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
         info = getRandomGlyphInfo(dict);
       } while (!info?.comps.position);
     } else {
-      info = getFromDict(glyph, dict);
+      info = getGlyphInfo(glyph, dict);
     }
 
     // Set alts
-    let altInfos = info.comps.order.map((alt) => getFromDict(alt, dict!));
+    let altInfos = info.comps.order.map((alt) => getGlyphInfo(alt, dict!));
     let findRandom = 8 - altInfos.length;
     do {
       altInfos = altInfos.concat(getRandomGlyphInfo(dict));
@@ -113,6 +115,7 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
     glyphInfo,
     challengeId,
     alts,
+    getGlyphInfo,
   };
   return <ChallengeContext.Provider value={context} children={children} />;
 };

@@ -4,25 +4,30 @@ import Draggable from "./Draggable";
 import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
+import { GlyphInfo } from "../contexts/ChallengeContextProvider";
+import HelpBox from "./HelpBox";
 
 type Props = {
-  text: string;
+  altInfo: GlyphInfo;
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
 };
 
 /** Draggable on top of an outline */
-const Alternative: FC<Props> = ({ text, dragOpacity, dragScale }) => {
+const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale }) => {
   const { ref, measure, onLayout } = useMeasure();
+  const text = altInfo.glyph;
   return (
     <>
       <View
         id={"anchor-" + text}
-        className="aspect-square flex-grow flex-shrink basis-1/5"
+        className="aspect-square flex-grow flex-shrink basis-1/5 "
         ref={ref}
         onLayout={onLayout}
       >
-        <Outline text={text} />
+        <HelpBox meaning={altInfo.meanings.primary}>
+          <Outline text={text} />
+        </HelpBox>
       </View>
       <Draggable
         anchor={measure}
