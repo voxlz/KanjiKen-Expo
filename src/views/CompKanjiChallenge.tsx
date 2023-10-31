@@ -76,6 +76,8 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
     ]),
   ]); // start the sequence group
 
+  console.log("alts", alts?.length);
+
   // px-9
   return (
     <Animated.View
