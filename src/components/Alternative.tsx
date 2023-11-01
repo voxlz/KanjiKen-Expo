@@ -1,11 +1,10 @@
-import React, { FC, useLayoutEffect, useRef, useState } from "react";
+import React, { FC, useState } from "react";
 import { Animated, View, Text, Pressable } from "react-native";
 import Draggable from "./Draggable";
 import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
 import { GlyphInfo } from "../contexts/ChallengeContextProvider";
-import HelpBox from "./HelpBox";
 
 type Props = {
   altInfo: GlyphInfo;
@@ -31,7 +30,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       className="aspect-square flex-grow flex-shrink"
       style={{ width: width }}
     >
-      {/* Outline - Bottom layer */}
+      {/* ----------- Outline - Bottom layer-------------- */}
       <Pressable
         className="aspect-square flex-grow flex-shrink basis-1/5 z-0"
         style={{ width: width }}
@@ -41,7 +40,8 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       >
         <Outline text={glyph} />
       </Pressable>
-      {/* Interactable - Middle layer */}
+
+      {/* ------------- Interactable - Middle layer --------------*/}
       <View className="absolute z-10">
         <Draggable
           anchor={measure}
@@ -53,7 +53,8 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
           <Interactable text={glyph} />
         </Draggable>
       </View>
-      {/* Help box - Top Layer */}
+
+      {/* ------------ Help box - Top Layer -------------- */}
       {measure && (
         <View
           style={{
@@ -63,7 +64,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
             width: show ? text?.width ?? 1000 : 0,
             height: show ? text?.height : 0,
           }}
-          className="absolute w-32 h-16 z-20 bg-red-500"
+          className="absolute w-32 h-16 z-20"
         >
           <View
             id="hint"

@@ -37,9 +37,9 @@ import HelpBox from "./src/components/HelpBox";
 export default function App() {
   let [fontsLoaded] = useFonts({
     NotoSansJP_100Thin,
-    NotoSansJP_300Light,
+    // NotoSansJP_300Light,
     NotoSansJP_400Regular,
-    NotoSansJP_500Medium,
+    // NotoSansJP_500Medium,
     NotoSansJP_700Bold,
     NotoSansJP_900Black,
     KleeOne_400Regular,

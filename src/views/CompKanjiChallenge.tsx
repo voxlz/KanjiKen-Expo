@@ -6,12 +6,14 @@ import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
 import Button from "../components/Button";
 import { useWindowDimensions } from "react-native";
+import HealthBar from "../components/HealthBar";
+import StatusBar from "../components/StatusBar";
 
 type Props = {};
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<Props> = ({}) => {
-  const { height, width } = useWindowDimensions();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const { setGlyph, isFinished, glyphInfo, challengeId, alts } =
     useContext(ChallengeContext);
 
@@ -82,7 +84,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
 
   const margin = 36 * 2;
   const gap = 3 * 12;
-  const altWidth = (width - margin - gap) / 4;
+  const altWidth = (windowWidth - margin - gap) / 4;
 
   // px-9
   return (
@@ -92,6 +94,8 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         "flex-col items-center pt-20   w-full h-full flex-grow  border-forest-500 rounded-[44px] "
       }
     >
+      <HealthBar altWidth={altWidth} />
+      <StatusBar />
       <View className="flex-grow" />
       <View className="w-1/2 h-auto aspect-square ">
         <Animated.View
@@ -150,7 +154,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         }}
         className=" bg-forest-500 w-full h-auto py-6  mt-4"
       >
-        <View className="px-8 h-20 ">
+        <View style={{ height: 0.85714285714 * altWidth }} className="px-8 ">
           <Button
             text="Continue"
             onPress={() => {
