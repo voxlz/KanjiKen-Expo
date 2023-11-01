@@ -20,12 +20,12 @@ const HealthBar: FC<Props> = ({ altWidth }) => {
       />
       <View
         style={{ height: height }}
-        className="flex-grow bg-forest-600 rounded-lg border-forest-900 border-2 items-end justify-center px-1"
+        className="flex-grow bg-forest-600 rounded-lg border-forest-900 border-[3px] items-end justify-center px-1"
       >
         {/* <Text className=" text-forest-200">300</Text> */}
         <View
           style={{
-            height: height - 4,
+            height: height - 6,
             width: `${progress * 100}%`,
           }}
           className="absolute bg-forest-200 rounded-md items-end justify-center px-1 inset-3 self-start"

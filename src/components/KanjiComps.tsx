@@ -1,9 +1,8 @@
-import React, { FC, useContext } from "react";
+import React, { FC } from "react";
 import { Position } from "../data_loading/glyphDict";
 import { View } from "react-native";
 import Outline from "../displays/Outline";
 import DropLocation from "./DropLocation";
-import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 
 type Props = {
   pos: Position | undefined;

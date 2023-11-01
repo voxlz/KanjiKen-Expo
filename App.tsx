@@ -33,6 +33,7 @@ import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
 import TextBox from "./src/utils/TextBox";
 import HelpBox from "./src/components/HelpBox";
+import HealthContextProvider from "./src/contexts/HealthContextProvider";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -66,18 +67,20 @@ export default function App() {
     <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
       <GestureHandlerRootView className="w-full h-full">
         <StatusBar style="auto" />
-        <DragContextProvider>
-          <ChallengeContextProvider>
-            <CompKanjiChallenge />
-            {/* <View className="justify-center self-stretch items-center flex-grow  w-full">
+        <HealthContextProvider>
+          <DragContextProvider>
+            <ChallengeContextProvider>
+              <CompKanjiChallenge />
+              {/* <View className="justify-center self-stretch items-center flex-grow  w-full">
               <View className="h-20 w-20">
                 <HelpBox meaning="hello">
                   <Outline text="a" />
                 </HelpBox>
               </View>
             </View> */}
-          </ChallengeContextProvider>
-        </DragContextProvider>
+            </ChallengeContextProvider>
+          </DragContextProvider>
+        </HealthContextProvider>
       </GestureHandlerRootView>
     </View>
   );

@@ -96,8 +96,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
     >
       <HealthBar altWidth={altWidth} />
       <StatusBar />
-      <View className="flex-grow" />
-      <View className="w-1/2 h-auto aspect-square ">
+      <View className="w-2/4  h-auto aspect-square  flex-shrink flex-grow">
         <Animated.View
           style={{
             gap: 12,
@@ -152,7 +151,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
           aspectRatio: "20 / 7",
           transform: [{ translateY: continueTranslateY }],
         }}
-        className=" bg-forest-500 w-full h-auto py-6  mt-4"
+        className="  w-full h-auto py-6  mt-4"
       >
         <View style={{ height: 0.85714285714 * altWidth }} className="px-8 ">
           <Button
@@ -163,7 +162,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
           />
         </View>
         <View
-          className="absolute h-40 bg-forest-500 w-full bottom-0 -z-10"
+          className="absolute h-40  w-full bottom-0 -z-10"
           style={{
             transform: [{ translateY: 150 }],
           }}

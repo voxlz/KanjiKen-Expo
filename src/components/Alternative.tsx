@@ -76,7 +76,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
             onLayout={() => {
               if (show) textOnLayout();
             }}
-            className="bg-ui-normal  self-start rounded-lg shadow-xl "
+            className="bg-ui-light  self-start rounded-lg"
           >
             <Text className="mx-4 my-3 text-xl capitalize">{meaning}</Text>
           </View>

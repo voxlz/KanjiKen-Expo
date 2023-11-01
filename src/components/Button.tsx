@@ -37,7 +37,7 @@ const Button: FC<Props> = ({ text, style = "forest", onPress }) => {
     >
       <Text
         style={{ fontFamily: "NotoSansJP_400Regular" }}
-        className={`text-center text-xl text-${theme.text}`}
+        className={`text-center text-xl -mt-1 text-${theme.text}`}
       >
         {text}
       </Text>
