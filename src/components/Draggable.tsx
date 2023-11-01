@@ -25,6 +25,7 @@ type Props = {
   text?: string;
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
+  width: number;
 } & ViewProps;
 
 type Size = {
@@ -36,6 +37,7 @@ type Size = {
 const Draggable: FC<Props> = ({
   children,
   anchor,
+  width,
   text: glyph,
   dragOpacity,
   dragScale,
@@ -131,10 +133,8 @@ const Draggable: FC<Props> = ({
           ],
           zIndex: isBeingDragged ? 10 : 1,
           elevation: isBeingDragged ? 10 : 1,
-          height: currSize ? currSize.height : anchor?.height,
-          width: currSize ? currSize.width : anchor?.width,
-          top: anchor?.top,
-          left: anchor?.left,
+          height: currSize ? currSize.height : width,
+          width: currSize ? currSize.width : width,
         }}
       >
         <Animated.View

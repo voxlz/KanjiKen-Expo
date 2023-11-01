@@ -5,11 +5,13 @@ import KanjiComps from "../components/KanjiComps";
 import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
 import Button from "../components/Button";
+import { useWindowDimensions } from "react-native";
 
 type Props = {};
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<Props> = ({}) => {
+  const { height, width } = useWindowDimensions();
   const { setGlyph, isFinished, glyphInfo, challengeId, alts } =
     useContext(ChallengeContext);
 
@@ -78,6 +80,10 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
 
   console.log("alts", alts?.length);
 
+  const margin = 36 * 2;
+  const gap = 3 * 12;
+  const altWidth = (width - margin - gap) / 4;
+
   // px-9
   return (
     <Animated.View
@@ -95,8 +101,9 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
             transform: [{ scale: builderScale }],
           }}
           className="flex-grow"
-          children={<KanjiComps pos={position} key={challengeId} />}
-        />
+        >
+          <KanjiComps pos={position} key={challengeId} />
+        </Animated.View>
         <Animated.View
           style={{
             opacity: Animated.subtract(1, opacity),
@@ -132,6 +139,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
                 ? builderScale
                 : undefined
             }
+            width={altWidth}
           />
         ))}
       </View>

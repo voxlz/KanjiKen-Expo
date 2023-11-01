@@ -11,16 +11,11 @@ type Props = {
   altInfo: GlyphInfo;
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
-  windowRef?: React.RefObject<View>;
+  width: number;
 };
 
 /** Draggable on top of an outline */
-const Alternative: FC<Props> = ({
-  altInfo,
-  dragOpacity,
-  dragScale,
-  windowRef,
-}) => {
+const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
   const glyph = altInfo.glyph;
   const { measure, onLayout, ref } = useMeasure();
   const {
@@ -32,10 +27,14 @@ const Alternative: FC<Props> = ({
   const meaning = altInfo.meanings.primary;
 
   return (
-    <>
+    <View
+      className="aspect-square flex-grow flex-shrink"
+      style={{ width: width }}
+    >
       {/* Outline - Bottom layer */}
       <Pressable
         className="aspect-square flex-grow flex-shrink basis-1/5 z-0"
+        style={{ width: width }}
         ref={ref}
         onLayout={onLayout}
         onPress={() => setShow((state) => !state)}
@@ -46,6 +45,7 @@ const Alternative: FC<Props> = ({
       <View className="absolute z-10">
         <Draggable
           anchor={measure}
+          width={width}
           text={glyph}
           dragOpacity={dragOpacity}
           dragScale={dragScale}
@@ -60,22 +60,22 @@ const Alternative: FC<Props> = ({
             opacity: show ? 1 : 0,
             left: measure.left - ((text?.width ?? 0) - measure.width) / 2,
             top: measure.top - (text?.height ?? 0) - 10,
-            width: show ? text?.width : 0,
-            height: text?.height,
+            width: show ? text?.width ?? 1000 : 0,
+            height: show ? text?.height : 0,
           }}
-          className="absolute h-16 z-20"
+          className="absolute w-32 h-16 z-20 bg-red-500"
         >
           <View
             id="hint"
-            style={{
-              width: show ? undefined : 0,
-              height: show ? undefined : 0,
-            }}
+            // style={{
+            //   width: show ? undefined : 0,
+            //   height: show ? undefined : 0,
+            // }}
             ref={textContRef}
             onLayout={() => {
               if (show) textOnLayout();
             }}
-            className="bg-ui-normal  self-start rounded-lg "
+            className="bg-ui-normal  self-start rounded-lg shadow-xl "
           >
             <Text className="mx-4 my-3 text-xl capitalize">{meaning}</Text>
           </View>
@@ -84,12 +84,11 @@ const Alternative: FC<Props> = ({
               left: (text?.width ?? 0) / 2 - 10,
               top: 0,
             }}
-            className="w-0 h-0 border-transparent border-t-[10px] border-b-0 border-x-[10px] border-t-ui-normal
-		"
+            className="w-0 h-0 border-transparent border-t-[10px] border-b-0 border-x-[10px] border-t-ui-normal"
           />
         </View>
       )}
-    </>
+    </View>
   );
 };
 
