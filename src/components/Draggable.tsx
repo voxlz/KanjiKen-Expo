@@ -1,6 +1,5 @@
 import React, { FC, useContext, useRef, useState } from "react";
 import {
-  Animated,
   LayoutAnimation,
   NativeModules,
   Platform,
@@ -11,6 +10,12 @@ import { MeasureType } from "./Alternative";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { ChallengeContext } from "../contexts/ChallengeContextProvider";
 import GlyphHint from "./GlyphHint";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 const { UIManager } = NativeModules;
 
@@ -46,14 +51,26 @@ const Draggable: FC<Props> = ({
 }) => {
   const {
     setDragLoc,
-    updateDropInfo: updateDropRect,
+    updateDropInfo,
     resetContainsDroppable,
     getDropInfo,
-    hoverDropInfo: hoverDropPos,
+    hoverDropInfo,
   } = useContext(DragContext); // Access the drag logic
   const { isGlyphNext, advanceOrder, getGlyphInfo } =
     useContext(ChallengeContext);
-  const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  // const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const tranX = useSharedValue(0);
+  const tranY = useSharedValue(0);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: withSpring(tranX.value, { duration: 50 }) },
+      { translateY: withSpring(tranY.value, { duration: 50 }) },
+    ],
+    height: currSize ? currSize.height : width,
+    width: currSize ? currSize.width : width,
+  }));
+
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
   // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
@@ -65,6 +82,7 @@ const Draggable: FC<Props> = ({
 
   const tap = Gesture.Tap();
   const drag = Gesture.Pan();
+  drag.minDistance(0);
   const composed = Gesture.Simultaneous(tap, drag);
 
   tap.onEnd(() => {
@@ -90,7 +108,7 @@ const Draggable: FC<Props> = ({
       setCurrentSize(newSize);
       moveTo(newTrans);
       dropInfo.containsGlyph = glyph;
-      updateDropRect?.(dropInfo);
+      updateDropInfo?.(dropInfo);
     }
   });
 
@@ -101,12 +119,14 @@ const Draggable: FC<Props> = ({
 
   drag.onChange((drag) => {
     setIsBeingDragged(true);
+    tranX.value = dragStart.x + drag.translationX;
+    tranY.value = dragStart.y + drag.translationY;
     const trans = {
       x: dragStart.x + drag.translationX,
-      y: dragStart.y + drag.translationY,
+      y: dragStart.y + drag.translationY - 100,
     };
     const loc = { x: drag.absoluteX, y: drag.absoluteY };
-    translation.setValue(trans);
+    // translation.setValue(trans);
     setDragLoc?.(loc);
   });
 
@@ -118,25 +138,25 @@ const Draggable: FC<Props> = ({
 
     // Drop successful
     if (
-      !!hoverDropPos &&
+      !!hoverDropInfo &&
       anchor &&
-      !hoverDropPos.containsGlyph &&
+      !hoverDropInfo.containsGlyph &&
       isGlyphNext?.(glyph)
     ) {
       advanceOrder?.();
 
       const newSize = {
-        width: hoverDropPos.width,
-        height: hoverDropPos.height,
+        width: hoverDropInfo.width,
+        height: hoverDropInfo.height,
       };
       const newTrans = {
-        x: hoverDropPos.x - anchor.x,
-        y: hoverDropPos.y - anchor.y,
+        x: hoverDropInfo.x - anchor.x,
+        y: hoverDropInfo.y - anchor.y,
       };
       setCurrentSize(newSize);
       moveTo(newTrans);
-      hoverDropPos.containsGlyph = glyph;
-      updateDropRect?.(hoverDropPos);
+      hoverDropInfo.containsGlyph = glyph;
+      updateDropInfo?.(hoverDropInfo);
     }
     // Drop failed.
     else {
@@ -151,10 +171,22 @@ const Draggable: FC<Props> = ({
 
   // Move to new default position
   const moveTo = (newpan: { x: number; y: number }) => {
-    Animated.spring(translation, {
-      toValue: newpan,
-      useNativeDriver: true,
-    }).start();
+    tranX.value = withSpring(newpan.x, {
+      mass: 1,
+      damping: 24,
+      stiffness: 341,
+      overshootClamping: false,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 2,
+    });
+    tranY.value = withSpring(newpan.y, {
+      mass: 1,
+      damping: 24,
+      stiffness: 341,
+      overshootClamping: false,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 2,
+    });
     setBeforeDragTransform(newpan);
   };
 
@@ -163,23 +195,20 @@ const Draggable: FC<Props> = ({
       <Animated.View
         id="animate_position"
         className="absolute"
-        style={{
-          transform: [
-            { translateX: translation.x },
-            { translateY: translation.y },
-          ],
-          zIndex: isBeingDragged ? 10 : 1,
-          elevation: isBeingDragged ? 10 : 1,
-          height: currSize ? currSize.height : width,
-          width: currSize ? currSize.width : width,
-        }}
+        style={[
+          {
+            zIndex: isBeingDragged ? 10 : 1,
+            elevation: isBeingDragged ? 10 : 1,
+          },
+          animatedStyles,
+        ]}
       >
         <Animated.View
           className="flex-grow"
-          style={{
-            opacity: dragOpacity,
-            transform: [{ scale: dragScale ?? 1 }],
-          }}
+          // style={{
+          //   opacity: dragOpacity,
+          //   transform: [{ scale: dragScale ?? 1 }],
+          // }}
         >
           {children}
         </Animated.View>
