@@ -1,11 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import {
   useFonts,
   NotoSansJP_100Thin,
-  NotoSansJP_300Light,
+  // NotoSansJP_300Light,
   NotoSansJP_400Regular,
-  NotoSansJP_500Medium,
+  // NotoSansJP_500Medium,
   NotoSansJP_700Bold,
   NotoSansJP_900Black,
 } from "@expo-google-fonts/noto-sans-jp";
@@ -14,25 +14,15 @@ import {
   KleeOne_600SemiBold,
 } from "@expo-google-fonts/klee-one";
 import * as SplashScreen from "expo-splash-screen";
-import Interactable from "./src/displays/Interactable";
-import Outline from "./src/displays/Outline";
 import { useCallback, useEffect, useState } from "react";
-import Draggable from "./src/components/Draggable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DragContextProvider from "./src/contexts/DragContextProvider";
-import DropLocation from "./src/components/DropLocation";
-import Alternative from "./src/components/Alternative.1";
-import KanjiComps from "./src/components/KanjiComps";
 import {
   glyphDictLoader as gd,
-  glyphDictLoader,
   GlyphDictType,
 } from "./src/data_loading/glyphDict";
-import { shuffle } from "./src/functions/shuffle";
 import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
-import TextBox from "./src/utils/TextBox";
-import HelpBox from "./src/components/HelpBox";
 import HealthContextProvider from "./src/contexts/HealthContextProvider";
 
 export default function App() {

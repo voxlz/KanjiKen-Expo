@@ -5,6 +5,7 @@ import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
 import { GlyphInfo } from "../contexts/ChallengeContextProvider";
+import GlyphHint from "./GlyphHint";
 
 type Props = {
   altInfo: GlyphInfo;
@@ -16,12 +17,13 @@ type Props = {
 /** Draggable on top of an outline */
 const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
   const glyph = altInfo.glyph;
-  const { measure, onLayout, ref } = useMeasure();
+  const { measure: anchor, onLayout, ref } = useMeasure();
   const {
     measure: text,
     onLayout: textOnLayout,
     ref: textContRef,
   } = useMeasure();
+
   const [show, setShow] = useState(false);
 
   const meaning = altInfo.meanings.primary;
@@ -45,7 +47,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       {/* ------------- Interactable - Middle layer --------------*/}
       <View className="absolute z-10">
         <Draggable
-          anchor={measure}
+          anchor={anchor}
           width={width}
           text={glyph}
           dragOpacity={dragOpacity}
@@ -56,40 +58,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       </View>
 
       {/* ------------ Help box - Top Layer -------------- */}
-      {measure && (
-        <View
-          style={{
-            opacity: show ? 1 : 0,
-            left: measure.left - ((text?.width ?? 0) - measure.width) / 2,
-            top: measure.top - (text?.height ?? 0) - 10,
-            width: show ? text?.width ?? 1000 : 0,
-            height: show ? text?.height : 0,
-          }}
-          className="absolute w-32 h-16 z-20"
-        >
-          <View
-            id="hint"
-            // style={{
-            //   width: show ? undefined : 0,
-            //   height: show ? undefined : 0,
-            // }}
-            ref={textContRef}
-            onLayout={() => {
-              if (show) textOnLayout();
-            }}
-            className="bg-ui-light  self-start rounded-lg"
-          >
-            <Text className="mx-4 my-3 text-xl capitalize">{meaning}</Text>
-          </View>
-          <View
-            style={{
-              left: (text?.width ?? 0) / 2 - 10,
-              top: 0,
-            }}
-            className="w-0 h-0 border-transparent border-t-[10px] border-b-0 border-x-[10px] border-t-ui-normal"
-          />
-        </View>
-      )}
+      {anchor && <GlyphHint anchor={anchor} hintText={meaning} show={show} />}
     </View>
   );
 };

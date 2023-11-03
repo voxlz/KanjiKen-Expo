@@ -10,6 +10,7 @@ import { DragContext } from "../contexts/DragContextProvider";
 import { MeasureType } from "./Alternative";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { ChallengeContext } from "../contexts/ChallengeContextProvider";
+import GlyphHint from "./GlyphHint";
 
 const { UIManager } = NativeModules;
 
@@ -50,7 +51,8 @@ const Draggable: FC<Props> = ({
     getDropInfo,
     hoverDropInfo: hoverDropPos,
   } = useContext(DragContext); // Access the drag logic
-  const { isGlyphNext, advanceOrder } = useContext(ChallengeContext);
+  const { isGlyphNext, advanceOrder, getGlyphInfo } =
+    useContext(ChallengeContext);
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
@@ -181,6 +183,18 @@ const Draggable: FC<Props> = ({
         >
           {children}
         </Animated.View>
+        <GlyphHint
+          anchor={{
+            height: currSize ? currSize.height : width,
+            width: currSize ? currSize.width : width,
+            left: 0,
+            top: 0,
+            x: 0,
+            y: 0,
+          }}
+          hintText={getGlyphInfo?.(glyph ?? "").meanings.primary ?? ""}
+          show={isBeingDragged}
+        />
       </Animated.View>
     </GestureDetector>
   );
