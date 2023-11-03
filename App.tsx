@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { Animated, View } from "react-native";
 import {
   useFonts,
   NotoSansJP_100Thin,
@@ -24,6 +24,9 @@ import {
 import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
 import HealthContextProvider from "./src/contexts/HealthContextProvider";
+import { Platform } from "react-native";
+
+// import "./src/input";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -54,24 +57,24 @@ export default function App() {
   }
 
   return (
-    <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
-      <GestureHandlerRootView className="w-full h-full">
+    <Animated.View className="flex-1 bg-white" onLayout={onLayoutRootView}>
+      <GestureHandlerRootView className="w-full h-full max-w-full max-h-full">
         <StatusBar style="auto" />
         <HealthContextProvider>
           <DragContextProvider>
             <ChallengeContextProvider>
               <CompKanjiChallenge />
-              {/* <View className="justify-center self-stretch items-center flex-grow  w-full">
-              <View className="h-20 w-20">
+              {/* <Animated.View className="justify-center self-stretch items-center flex-grow  w-full">
+              <Animated.View className="h-20 w-20">
                 <HelpBox meaning="hello">
                   <Outline text="a" />
                 </HelpBox>
-              </View>
-            </View> */}
+              </Animated.View>
+            </Animated.View> */}
             </ChallengeContextProvider>
           </DragContextProvider>
         </HealthContextProvider>
       </GestureHandlerRootView>
-    </View>
+    </Animated.View>
   );
 }
