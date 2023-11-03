@@ -45,7 +45,7 @@ const Draggable: FC<Props> = ({
 }) => {
   const { setLocation, updateDropRect, resetContainsDroppable, hoverDropPos } =
     useContext(DragContext); // Access the drag logic
-  const { checkAnswer } = useContext(ChallengeContext);
+  const { isGlyphNext, advanceOrder } = useContext(ChallengeContext);
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
@@ -56,13 +56,13 @@ const Draggable: FC<Props> = ({
     y: 0,
   });
 
-  const pan = Gesture.Pan();
+  const drag = Gesture.Pan();
 
-  pan.onBegin(() => {
+  drag.onBegin(() => {
     resetContainsDroppable?.(glyph ?? "");
   });
 
-  pan.onChange((drag) => {
+  drag.onChange((drag) => {
     setIsBeingDragged(true);
     const trans = {
       x: dragStart.x + drag.translationX,
@@ -73,19 +73,24 @@ const Draggable: FC<Props> = ({
     setLocation?.(loc);
   });
 
-  pan.onEnd(() => {
+  drag.onEnd(() => {
     LayoutAnimation.configureNext({
       duration: 300,
       update: { type: "spring", springDamping: 1 },
     }); // Animate next layout change
 
+    console.log("checkAnswer", isGlyphNext?.(glyph));
+
     // Drop successful
     if (
-      hoverDropPos &&
+      !!hoverDropPos &&
       anchor &&
-      !hoverDropPos.contains &&
-      checkAnswer?.(glyph)
+      !hoverDropPos.containsGlyph &&
+      isGlyphNext?.(glyph)
     ) {
+      console.log("DROP SUCCESSS");
+      advanceOrder?.();
+
       const newSize = {
         width: hoverDropPos.width,
         height: hoverDropPos.height,
@@ -96,7 +101,7 @@ const Draggable: FC<Props> = ({
       };
       setCurrentSize(newSize);
       moveTo(newTrans);
-      hoverDropPos.contains = glyph;
+      hoverDropPos.containsGlyph = glyph;
       updateDropRect?.(hoverDropPos);
 
       console.log("newSize", newSize);
@@ -122,7 +127,7 @@ const Draggable: FC<Props> = ({
   };
 
   return (
-    <GestureDetector gesture={pan}>
+    <GestureDetector gesture={drag}>
       <Animated.View
         id="animate_position"
         className="absolute"

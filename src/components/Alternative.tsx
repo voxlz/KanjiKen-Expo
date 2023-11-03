@@ -23,6 +23,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
     ref: textContRef,
   } = useMeasure();
   const [show, setShow] = useState(false);
+
   const meaning = altInfo.meanings.primary;
 
   return (

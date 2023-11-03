@@ -10,7 +10,8 @@ export type GlyphInfo = GlyphDictType[0];
 type ChallengeContextType = {
   setGlyph?: (glyph?: string) => void;
   getNextAnswer?: () => string | undefined;
-  checkAnswer?: (input?: string) => boolean;
+  isGlyphNext?: (input?: string) => boolean;
+  advanceOrder?: () => void;
   isFinished: boolean;
   glyphInfo?: GlyphDictType[0];
   challengeId: number;
@@ -92,9 +93,10 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
 
   const getNextAnswer = () => correctOrder?.[orderIdx];
 
-  const checkAnswer = (input?: string) => {
+  const isGlyphNext = (input?: string) => {
+    if (!input) return false;
+
     if (input === getNextAnswer()) {
-      next();
       return true;
     } else {
       return false;
@@ -110,7 +112,8 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
   const context = {
     setGlyph,
     getNextAnswer,
-    checkAnswer,
+    advanceOrder: next,
+    isGlyphNext,
     isFinished,
     glyphInfo,
     challengeId,
