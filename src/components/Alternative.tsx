@@ -26,7 +26,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
 
   const [show, setShow] = useState(false);
 
-  const meaning = altInfo.meanings.primary;
+  const meaning = altInfo.meanings.primary ?? "";
 
   return (
     <View

@@ -89,7 +89,7 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
     setChallengeId((id) => id + 1);
   };
 
-  const getNextAnswer = () => correctOrder?.[orderIdx];
+  const getNextAnswer = () => correctOrder?.[orderIdx] ?? "-1";
 
   const isGlyphNext = (input?: string) => {
     if (!input) return false;

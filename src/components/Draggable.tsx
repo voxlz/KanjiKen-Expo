@@ -97,12 +97,12 @@ const Draggable: FC<Props> = ({
   });
 
   drag.onBegin(() => {
+    setIsBeingDragged(true);
     resetContainsDroppable?.(glyph ?? "");
     // console.log("start drag");
   });
 
   drag.onChange((drag) => {
-    setIsBeingDragged(true);
     setDragLoc?.({ x: drag.absoluteX, y: drag.absoluteY });
     translation.setValue({
       x: dragStart.x + drag.translationX,
@@ -114,14 +114,14 @@ const Draggable: FC<Props> = ({
     LayoutAnimation.configureNext({
       duration: 300,
       update: { type: "spring", springDamping: 1 },
-    }); // Animate next layout change
+    });
 
     // Drop successful
     if (
-      !!hoverDropInfo &&
+      hoverDropInfo?.glyph === glyph && // currently hovering over droplocation with the right glyph
       anchor &&
-      !hoverDropInfo.containsGlyph &&
-      isGlyphNext?.(glyph)
+      !hoverDropInfo?.containsGlyph &&
+      isGlyphNext?.(glyph) // Is this glyph the right input
     ) {
       advanceOrder?.();
 
