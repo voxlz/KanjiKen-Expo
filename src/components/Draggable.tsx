@@ -59,7 +59,8 @@ const Draggable: FC<Props> = ({
   const drag = Gesture.Pan();
 
   drag.onBegin(() => {
-    resetContainsDroppable?.(glyph ?? "");
+    // resetContainsDroppable?.(glyph ?? "");
+    console.log("start drag");
   });
 
   drag.onChange((drag) => {
@@ -79,8 +80,6 @@ const Draggable: FC<Props> = ({
       update: { type: "spring", springDamping: 1 },
     }); // Animate next layout change
 
-    console.log("checkAnswer", isGlyphNext?.(glyph));
-
     // Drop successful
     if (
       !!hoverDropPos &&
@@ -88,7 +87,6 @@ const Draggable: FC<Props> = ({
       !hoverDropPos.containsGlyph &&
       isGlyphNext?.(glyph)
     ) {
-      console.log("DROP SUCCESSS");
       advanceOrder?.();
 
       const newSize = {
@@ -103,8 +101,6 @@ const Draggable: FC<Props> = ({
       moveTo(newTrans);
       hoverDropPos.containsGlyph = glyph;
       updateDropRect?.(hoverDropPos);
-
-      console.log("newSize", newSize);
     }
     // Drop failed.
     else {

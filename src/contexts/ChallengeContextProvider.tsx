@@ -78,9 +78,7 @@ const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
       altInfos = altInfos.concat(getRandomGlyphInfo(dict));
       findRandom -= 1;
     } while (findRandom > 0);
-    console.log(altInfos.length, "should be 8");
     setAlts(shuffle(altInfos));
-    console.log(glyph);
 
     // Update state
     setGlyphInfo(info);

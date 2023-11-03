@@ -52,12 +52,10 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
     setHoverDropPos(undefined);
   };
 
+  /** Set the current dragLocation, which will update dropPos */
   const setLocation = (loc?: XY) => {
     const dropPos = loc ? isDroppable(loc) : undefined;
-    console.log("setLocation", dropPos);
-
-    // setDragLocation(loc);
-    setHoverDropPos(dropPos);
+    if (dropPos !== hoverDropPos) setHoverDropPos(dropPos);
   };
 
   // Reset 'containsDroppable' field for dropPos with matching glyph.

@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from "react";
+import React, { FC, useContext, useEffect, useMemo } from "react";
 import { View, ViewProps } from "react-native";
 import { DragContext } from "../contexts/DragContextProvider";
 import { useMeasure } from "../functions/useMeasure";
@@ -14,7 +14,6 @@ type Props = {
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
   const { updateDropRect, hoverDropPos } = useContext(DragContext);
   const { getNextAnswer, getGlyphInfo } = useContext(ChallengeContext);
-
   const { ref, onLayout, measure } = useMeasure();
 
   useEffect(() => {
@@ -23,16 +22,18 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
 
   const meaning = getGlyphInfo?.(text).meanings.primary ?? "ERROR";
 
+  const isHovered =
+    hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y;
+  const isNext = getNextAnswer?.() === text;
+
+  console.log("DROPLOCATION UPDATE");
+
   return (
     <HelpBox meaning={meaning}>
       <View
         className={
           "flex-grow flex-shrink rounded-xl " +
-          (hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y
-            ? "bg-highlight-blue"
-            : getNextAnswer?.() === text
-            ? "bg-gray-100"
-            : "")
+          (isHovered ? "bg-highlight-blue" : isNext ? "bg-gray-100" : "")
         }
         {...props}
         style={[props.style]}

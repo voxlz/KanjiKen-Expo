@@ -21,7 +21,7 @@ import Draggable from "./src/components/Draggable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DragContextProvider from "./src/contexts/DragContextProvider";
 import DropLocation from "./src/components/DropLocation";
-import Alternative from "./src/components/Alternative";
+import Alternative from "./src/components/Alternative.1";
 import KanjiComps from "./src/components/KanjiComps";
 import {
   glyphDictLoader as gd,

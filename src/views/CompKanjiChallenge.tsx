@@ -1,19 +1,28 @@
 import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { View, Text, Animated } from "react-native";
-import Alternative from "../components/Alternative";
 import KanjiComps from "../components/KanjiComps";
-import { ChallengeContext } from "../contexts/ChallengeContextProvider";
+import {
+  ChallengeContext,
+  GlyphInfo,
+} from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
 import Button from "../components/Button";
 import { useWindowDimensions } from "react-native";
 import HealthBar from "../components/HealthBar";
 import StatusBar from "../components/StatusBar";
+import Alternative from "../components/Alternative";
+import { useChallengeAnims } from "../animations/challengeAnims";
+import BottomBar from "../components/BottomBar";
 
 type Props = {};
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<Props> = ({}) => {
+  console.log("CHALLENGE UPDATE");
+
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const { animation, builderScale, continueTranslateY, kanjiScale, opacity } =
+    useChallengeAnims();
   const { setGlyph, isFinished, glyphInfo, challengeId, alts } =
     useContext(ChallengeContext);
 
@@ -22,71 +31,22 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   }, []);
 
   useEffect(() => {
-    if (isFinished) success.start();
+    if (isFinished) animation.start();
     else {
       builderScale.setValue(1);
       kanjiScale.setValue(0.5);
       opacity.setValue(1);
       continueTranslateY.setValue(200);
-      success.reset();
+      animation.reset();
     }
   }, [isFinished]);
 
   const position = glyphInfo?.comps.position;
 
-  const builderScale = useRef(new Animated.Value(1)).current;
-  const kanjiScale = useRef(new Animated.Value(0.5)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-  const continueTranslateY = useRef(new Animated.Value(200)).current;
-  // const borderWidth = useRef(new Animated.Value(0)).current;
-
-  const success = Animated.sequence([
-    // Lift (scale up) linear 150ms
-    Animated.timing(builderScale, {
-      toValue: 1.2,
-      duration: 150,
-      useNativeDriver: true,
-    }),
-    // Scale down builder, scale up kanji, spring, 700ms
-    Animated.parallel([
-      Animated.spring(opacity, {
-        toValue: 0,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(builderScale, {
-        toValue: 0.5,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(kanjiScale, {
-        toValue: 1,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(continueTranslateY, {
-        toValue: 0,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-    ]),
-  ]); // start the sequence group
-
-  console.log("alts", alts?.length);
-
   const margin = 36 * 2;
   const gap = 3 * 12;
   const altWidth = (windowWidth - margin - gap) / 4;
 
-  // px-9
   return (
     <Animated.View
       // style={{ borderWidth: isFinished ? 8 : 0 }}
@@ -124,51 +84,29 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         </Animated.View>
       </View>
       <KanjiMeaning text={glyphInfo?.meanings.primary ?? ""} />
-      <View className="flex-grow" />
-      <View className="flex-grow" />
+      <View style={{ flexGrow: 2 }} />
       <View
         style={{ gap: 12 }}
         className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9"
       >
-        {alts?.map((alt, i) => (
-          <Alternative
-            key={i + alt.glyph! + challengeId}
-            altInfo={alt}
-            dragOpacity={
-              glyphInfo?.comps.order.includes(alt.glyph!) ? opacity : undefined
-            }
-            dragScale={
-              glyphInfo?.comps.order.includes(alt.glyph!)
-                ? builderScale
-                : undefined
-            }
-            width={altWidth}
-          />
-        ))}
+        {alts?.map((alt, i) => {
+          const isCorrectAnswer = glyphInfo?.comps.order.includes(alt.glyph!);
+          return (
+            <Alternative
+              key={i + alt.glyph! + challengeId}
+              altInfo={alt}
+              dragOpacity={isCorrectAnswer ? opacity : undefined}
+              dragScale={isCorrectAnswer ? builderScale : undefined}
+              width={altWidth}
+            />
+          );
+        })}
       </View>
-      <Animated.View
-        style={{
-          aspectRatio: "20 / 7",
-          transform: [{ translateY: continueTranslateY }],
-        }}
-        className="  w-full h-auto py-6  mt-4"
-      >
-        <View style={{ height: 0.85714285714 * altWidth }} className="px-8 ">
-          <Button
-            text="Continue"
-            onPress={() => {
-              setGlyph?.();
-            }}
-          />
-        </View>
-        <View
-          className="absolute h-40  w-full bottom-0 -z-10"
-          style={{
-            transform: [{ translateY: 150 }],
-          }}
-        />
-        {/* ^ Hacky bottom bar that extends the bg below the screen. Does not take up any space. To ensure the spring animation does not show white at the bottom. */}
-      </Animated.View>
+      <BottomBar
+        onContinue={() => setGlyph?.()}
+        yOffset={continueTranslateY}
+        altWidth={altWidth}
+      />
     </Animated.View>
   );
 };

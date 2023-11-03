@@ -11,8 +11,7 @@ type Props = {
 /** Places the dropLocations in accordance with position object.
  */
 const KanjiComps: FC<Props> = ({ pos }) => {
-  console.log("pos", pos);
-
+  console.log("KANJI COMPS UPDATE");
   return (
     <View className="flex-grow flex-shrink">
       {Object.entries(pos ?? {}).map(([key, value], i) => (
