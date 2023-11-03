@@ -49,12 +49,14 @@ const Draggable: FC<Props> = ({
     updateDropInfo: updateDropRect,
     resetContainsDroppable,
     getDropInfo,
-    hoverDropInfo: hoverDropPos,
+    hoverDropInfo,
   } = useContext(DragContext); // Access the drag logic
   const { isGlyphNext, advanceOrder, getGlyphInfo } =
     useContext(ChallengeContext);
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
+
+  console.log("rerender dragable");
 
   // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
   const [currSize, setCurrentSize] = useState<Size>(); // Set current size of the draggable
@@ -75,7 +77,7 @@ const Draggable: FC<Props> = ({
 
     // Drop successful
     const dropInfo = getDropInfo?.(glyph ?? "");
-    console.log("tap", dropInfo);
+    // console.log("tap", dropInfo);
 
     if (anchor && isGlyphNext?.(glyph) && dropInfo) {
       advanceOrder?.();
@@ -96,18 +98,16 @@ const Draggable: FC<Props> = ({
 
   drag.onBegin(() => {
     resetContainsDroppable?.(glyph ?? "");
-    console.log("start drag");
+    // console.log("start drag");
   });
 
   drag.onChange((drag) => {
     setIsBeingDragged(true);
-    const trans = {
+    setDragLoc?.({ x: drag.absoluteX, y: drag.absoluteY });
+    translation.setValue({
       x: dragStart.x + drag.translationX,
       y: dragStart.y + drag.translationY,
-    };
-    const loc = { x: drag.absoluteX, y: drag.absoluteY };
-    translation.setValue(trans);
-    setDragLoc?.(loc);
+    });
   });
 
   drag.onEnd(() => {
@@ -118,25 +118,25 @@ const Draggable: FC<Props> = ({
 
     // Drop successful
     if (
-      !!hoverDropPos &&
+      !!hoverDropInfo &&
       anchor &&
-      !hoverDropPos.containsGlyph &&
+      !hoverDropInfo.containsGlyph &&
       isGlyphNext?.(glyph)
     ) {
       advanceOrder?.();
 
       const newSize = {
-        width: hoverDropPos.width,
-        height: hoverDropPos.height,
+        width: hoverDropInfo.width,
+        height: hoverDropInfo.height,
       };
       const newTrans = {
-        x: hoverDropPos.x - anchor.x,
-        y: hoverDropPos.y - anchor.y,
+        x: hoverDropInfo.x - anchor.x,
+        y: hoverDropInfo.y - anchor.y,
       };
       setCurrentSize(newSize);
       moveTo(newTrans);
-      hoverDropPos.containsGlyph = glyph;
-      updateDropRect?.(hoverDropPos);
+      hoverDropInfo.containsGlyph = glyph;
+      updateDropRect?.(hoverDropInfo);
     }
     // Drop failed.
     else {

@@ -18,7 +18,7 @@ type Props = {};
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<Props> = ({}) => {
-  console.log("CHALLENGE UPDATE");
+  // console.log("CHALLENGE UPDATE");
 
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const { animation, builderScale, continueTranslateY, kanjiScale, opacity } =
