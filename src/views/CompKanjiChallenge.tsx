@@ -42,18 +42,12 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   }, [isFinished]);
 
   const position = glyphInfo?.comps.position;
-
   const margin = 36 * 2;
   const gap = 3 * 12;
   const altWidth = (windowWidth - margin - gap) / 4;
 
   return (
-    <Animated.View
-      // style={{ borderWidth: isFinished ? 8 : 0 }}
-      className={
-        "flex-col items-center pt-20   w-full h-full flex-grow  border-forest-500 rounded-[44px] "
-      }
-    >
+    <Animated.View className="flex-col items-center pt-20   w-full h-full flex-grow  border-forest-500 rounded-[44px] ">
       <HealthBar altWidth={altWidth} />
       <StatusBar />
       <View className="w-2/4  h-auto aspect-square  flex-shrink flex-grow">

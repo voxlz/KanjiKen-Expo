@@ -6,28 +6,54 @@ export type XY = {
   y: number;
 };
 
-export type DropPos = {
+export type DropInfo = {
   glyph: string;
   containsGlyph?: string; // Is something already dropped here or not
 } & MeasureType;
 
-export const DragContext = React.createContext<{
-  setLocation?: (loc?: XY) => void;
-  updateDropRect?: (rect: DropPos) => void;
-  resetContainsDroppable?: (glyph: string) => void; // Reset contains glyph tracking for a given glyph
-  hoverDropPos?: DropPos; // What dropPos are we hovering?
-  clearDropContext?: () => void; // Clear drop rects, usually between exercises
-}>({});
+type DragContextType = {
+  setDragLoc: (loc?: XY) => void;
+  updateDropInfo: (info: DropInfo) => void;
+  hoverDropInfo: DropInfo | undefined; // What dropPos are we hovering?
+  getDropInfo: (glyph: string) => DropInfo | undefined;
+  resetContainsDroppable: (glyph: string) => void; // Reset contains glyph tracking for a given glyph
+  clearDropContext: () => void; // Clear drop rects, usually between exercises
+};
+
+export const DragContext = React.createContext<DragContextType>({
+  setDragLoc(loc) {
+    console.log("not implemented");
+  },
+  updateDropInfo(info) {
+    console.log("not implemented");
+  },
+  clearDropContext() {
+    console.log("not implemented");
+  },
+  getDropInfo(glyph) {
+    console.log("not implemented");
+    return undefined;
+  },
+  resetContainsDroppable(glyph) {
+    console.log("not implemented");
+  },
+  hoverDropInfo: undefined,
+});
 
 /** Provides the drag context to elements that need it */
 const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
-  const [dropPositions, setDropPositions] = useState<DropPos[]>([]);
-  const [hoverDropPos, setHoverDropPos] = useState<DropPos>();
+  const [dropInfoArr, setDropPositions] = useState<DropInfo[]>([]);
+  const [hoverDropInfo, setHoverDropPos] = useState<DropInfo>();
+
+  // Get specific drop info.
+  const getDropInfo = (glyph: string) => {
+    return dropInfoArr.find((info) => info.glyph === glyph);
+  };
 
   // Update droppable regions
-  const updateDropRect = (dropPos: DropPos) => {
+  const updateDropInfo = (dropPos: DropInfo) => {
     setDropPositions((dp) => {
       if (dp) {
         const index = dp?.findIndex(
@@ -47,15 +73,15 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
 
   const clearDropContext = () => {
     setDropPositions([]);
-    setLocation();
+    setDragLoc();
     resetContainsDroppable();
     setHoverDropPos(undefined);
   };
 
   /** Set the current dragLocation, which will update dropPos */
-  const setLocation = (loc?: XY) => {
+  const setDragLoc = (loc?: XY) => {
     const dropPos = loc ? isDroppable(loc) : undefined;
-    if (dropPos !== hoverDropPos) setHoverDropPos(dropPos);
+    if (dropPos !== hoverDropInfo) setHoverDropPos(dropPos);
   };
 
   // Reset 'containsDroppable' field for dropPos with matching glyph.
@@ -76,7 +102,7 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
 
   /** Is the currently dragged object droppable on a certain rect? Return if so. */
   const isDroppable = (loc: XY) =>
-    dropPositions.find(
+    dropInfoArr.find(
       (rect) =>
         loc.x >= rect.x &&
         loc.x <= rect.x + rect.width &&
@@ -85,12 +111,14 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
     );
 
   const context = {
-    setLocation,
-    updateDropRect,
+    setDragLoc,
+    updateDropInfo,
     resetContainsDroppable,
-    hoverDropPos,
+    hoverDropInfo,
     clearDropContext,
-  };
+    getDropInfo,
+  } as DragContextType;
+
   return <DragContext.Provider value={context} children={children} />;
 };
 

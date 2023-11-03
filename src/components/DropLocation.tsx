@@ -12,21 +12,18 @@ type Props = {
 
 /** Make this component a possible drop location */
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
-  const { updateDropRect, hoverDropPos } = useContext(DragContext);
+  const { updateDropInfo, hoverDropInfo } = useContext(DragContext);
   const { getNextAnswer, getGlyphInfo } = useContext(ChallengeContext);
   const { ref, onLayout, measure } = useMeasure();
 
   useEffect(() => {
-    if (measure) updateDropRect?.({ glyph: text, ...measure });
+    if (measure && updateDropInfo) updateDropInfo({ glyph: text, ...measure });
   }, [measure]);
 
   const meaning = getGlyphInfo?.(text).meanings.primary ?? "ERROR";
-
   const isHovered =
-    hoverDropPos?.x === measure?.x && hoverDropPos?.y === measure?.y;
+    hoverDropInfo?.x === measure?.x && hoverDropInfo?.y === measure?.y;
   const isNext = getNextAnswer?.() === text;
-
-  console.log("DROPLOCATION UPDATE");
 
   return (
     <HelpBox meaning={meaning}>

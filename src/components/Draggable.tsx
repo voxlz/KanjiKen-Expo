@@ -43,8 +43,13 @@ const Draggable: FC<Props> = ({
   dragScale,
   ...props
 }) => {
-  const { setLocation, updateDropRect, resetContainsDroppable, hoverDropPos } =
-    useContext(DragContext); // Access the drag logic
+  const {
+    setDragLoc,
+    updateDropInfo: updateDropRect,
+    resetContainsDroppable,
+    getDropInfo,
+    hoverDropInfo: hoverDropPos,
+  } = useContext(DragContext); // Access the drag logic
   const { isGlyphNext, advanceOrder } = useContext(ChallengeContext);
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
@@ -56,10 +61,39 @@ const Draggable: FC<Props> = ({
     y: 0,
   });
 
+  const tap = Gesture.Tap();
   const drag = Gesture.Pan();
+  const composed = Gesture.Simultaneous(tap, drag);
+
+  tap.onEnd(() => {
+    LayoutAnimation.configureNext({
+      duration: 300,
+      update: { type: "spring", springDamping: 1 },
+    }); // Animate next layout change
+
+    // Drop successful
+    const dropInfo = getDropInfo?.(glyph ?? "");
+    console.log("tap", dropInfo);
+
+    if (anchor && isGlyphNext?.(glyph) && dropInfo) {
+      advanceOrder?.();
+      const newSize = {
+        width: dropInfo.width,
+        height: dropInfo.height,
+      };
+      const newTrans = {
+        x: dropInfo.x - anchor.x,
+        y: dropInfo.y - anchor.y,
+      };
+      setCurrentSize(newSize);
+      moveTo(newTrans);
+      dropInfo.containsGlyph = glyph;
+      updateDropRect?.(dropInfo);
+    }
+  });
 
   drag.onBegin(() => {
-    // resetContainsDroppable?.(glyph ?? "");
+    resetContainsDroppable?.(glyph ?? "");
     console.log("start drag");
   });
 
@@ -71,7 +105,7 @@ const Draggable: FC<Props> = ({
     };
     const loc = { x: drag.absoluteX, y: drag.absoluteY };
     translation.setValue(trans);
-    setLocation?.(loc);
+    setDragLoc?.(loc);
   });
 
   drag.onEnd(() => {
@@ -109,7 +143,7 @@ const Draggable: FC<Props> = ({
         setCurrentSize({ width: anchor.width, height: anchor.height });
       }
     }
-    setLocation?.();
+    setDragLoc?.();
     setIsBeingDragged(false);
   });
 
@@ -123,7 +157,7 @@ const Draggable: FC<Props> = ({
   };
 
   return (
-    <GestureDetector gesture={drag}>
+    <GestureDetector gesture={composed}>
       <Animated.View
         id="animate_position"
         className="absolute"
