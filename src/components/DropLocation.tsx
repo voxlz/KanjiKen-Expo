@@ -1,9 +1,14 @@
-import React, { FC, useContext, useEffect, useMemo, useRef } from "react";
-import { Animated, View, ViewProps } from "react-native";
-import { DragContext } from "../contexts/DragContextProvider";
+import React, { FC, useContext, useEffect, useRef } from "react";
+import { Animated, ViewProps } from "react-native";
 import { useMeasure } from "../functions/useMeasure";
-import { ChallengeContext } from "../contexts/ChallengeContextProvider";
-import HelpBox from "./HelpBox";
+import {
+  GetGlyphContext,
+  ExpectedChoiceContext,
+} from "../contexts/ChallengeContextProvider";
+import {
+  DropsDispatchContext,
+  HoverContext,
+} from "../contexts/DragContextProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -12,15 +17,15 @@ type Props = {
 
 /** Make this component a possible drop location */
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
-  const { updateDropInfo, hoverDropInfo } = useContext(DragContext);
-  const { getGlyphInfo, getNextAnswer } = useContext(ChallengeContext);
+  const dropsDispatch = useContext(DropsDispatchContext);
+  const hover = useContext(HoverContext);
+  const expectedChoice = useContext(ExpectedChoiceContext);
+
   const { ref, onLayout, measure } = useMeasure();
-  const meaning = useMemo(
-    () => getGlyphInfo?.(text).meanings.primary ?? "ERROR",
-    []
-  );
+
   useEffect(() => {
-    if (measure && updateDropInfo) updateDropInfo({ glyph: text, ...measure });
+    if (measure && dropsDispatch)
+      dropsDispatch({ type: "changed", dropInfo: { glyph: text, ...measure } });
   }, [measure]);
 
   // BACKGROUND COLOR - Laggs wihtout as well
@@ -34,25 +39,22 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
     ],
   });
   const isHovered =
-    hoverDropInfo &&
-    measure &&
-    hoverDropInfo?.x === measure?.x &&
-    hoverDropInfo?.y === measure?.y;
-  const isNext = getNextAnswer?.() === text;
+    hover && measure && hover?.x === measure?.x && hover?.y === measure?.y;
+  const isNext = expectedChoice === text;
   colorIndex.setValue(isHovered ? 1 : isNext ? 2 : 0);
 
   return (
-    <HelpBox meaning={meaning}>
-      <Animated.View
-        className="flex-grow flex-shrink rounded-xl"
-        {...props}
-        style={[props.style, { backgroundColor: bgColor }]}
-        ref={ref}
-        onLayout={onLayout}
-      >
-        {children}
-      </Animated.View>
-    </HelpBox>
+    // <HelpBox meaning={meaning}>
+    <Animated.View
+      className="flex-grow flex-shrink rounded-xl"
+      {...props}
+      style={[props.style, { backgroundColor: bgColor }]}
+      ref={ref}
+      onLayout={onLayout}
+    >
+      {children}
+    </Animated.View>
+    // </HelpBox>
   );
 };
 

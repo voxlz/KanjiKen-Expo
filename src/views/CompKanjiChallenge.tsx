@@ -1,18 +1,22 @@
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { View, Text, Animated } from "react-native";
 import KanjiComps from "../components/KanjiComps";
 import {
-  ChallengeContext,
-  GlyphInfo,
+  GetGlyphContext,
 } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
-import Button from "../components/Button";
 import { useWindowDimensions } from "react-native";
 import HealthBar from "../components/HealthBar";
 import StatusBar from "../components/StatusBar";
 import Alternative from "../components/Alternative";
 import { useChallengeAnims } from "../animations/challengeAnims";
 import BottomBar from "../components/BottomBar";
+import {
+  SetChallengeContext,
+  ExpectedChoiceContext,
+  SeenCountContext,
+  ChoicesContext,
+} from "../contexts/ChallengeContextProvider";
 
 type Props = {};
 
@@ -23,15 +27,19 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const { animation, builderScale, continueTranslateY, kanjiScale, opacity } =
     useChallengeAnims();
-  const { setGlyph, isFinished, glyphInfo, challengeId, alts } =
-    useContext(ChallengeContext);
+
+  const setChallenge = useContext(SetChallengeContext);
+  const expectedChoice = useContext(ExpectedChoiceContext);
+  const getGlyph = useContext(GetGlyphContext);
+  const seenCount = useContext(SeenCountContext);
+  const choices = useContext(ChoicesContext);
 
   useEffect(() => {
-    setGlyph?.();
+    setChallenge?.();
   }, []);
 
   useEffect(() => {
-    if (isFinished) animation.start();
+    if (expectedChoice === "FINISH") animation.start();
     else {
       builderScale.setValue(1);
       kanjiScale.setValue(0.5);
@@ -39,8 +47,9 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
       continueTranslateY.setValue(200);
       animation.reset();
     }
-  }, [isFinished]);
+  }, [expectedChoice]);
 
+  const glyphInfo = getGlyph?.();
   const position = glyphInfo?.comps.position;
   const margin = 36 * 2;
   const gap = 3 * 12;
@@ -59,7 +68,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
           }}
           className="flex-grow"
         >
-          <KanjiComps pos={position} key={challengeId} />
+          <KanjiComps pos={position} key={seenCount} />
         </Animated.View>
         <Animated.View
           style={{
@@ -73,7 +82,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
             className="text-8xl p-2 -mb-6"
             adjustsFontSizeToFit
           >
-            {glyphInfo?.glyph}
+            {getGlyph?.()?.glyph}
           </Text>
         </Animated.View>
       </View>
@@ -83,11 +92,11 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         style={{ gap: 12 }}
         className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9"
       >
-        {alts?.map((alt, i) => {
+        {choices?.map((alt, i) => {
           const isCorrectAnswer = glyphInfo?.comps.order.includes(alt.glyph!);
           return (
             <Alternative
-              key={i + alt.glyph! + challengeId}
+              key={i + alt.glyph! + seenCount}
               altInfo={alt}
               dragOpacity={isCorrectAnswer ? opacity : undefined}
               dragScale={isCorrectAnswer ? builderScale : undefined}
@@ -97,7 +106,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
         })}
       </View>
       <BottomBar
-        onContinue={() => setGlyph?.()}
+        onContinue={() => setChallenge?.()}
         yOffset={continueTranslateY}
         altWidth={altWidth}
       />

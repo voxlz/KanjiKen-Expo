@@ -6,11 +6,20 @@ import {
   Platform,
   ViewProps,
 } from "react-native";
-import { DragContext } from "../contexts/DragContextProvider";
-import { MeasureType } from "./Alternative";
+import {
+  HoverUpdateContext,
+  DropsContext,
+} from "../contexts/DragContextProvider";
+import {} from "./Alternative";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import { ChallengeContext } from "../contexts/ChallengeContextProvider";
+import {
+  ExpectedChoiceContext,
+  OnCorrectChoiceContext,
+  GetGlyphContext,
+} from "../contexts/ChallengeContextProvider";
 import GlyphHint from "./GlyphHint";
+import { DropInfo, MeasureType } from "../types/dropInfo";
+import { HoverContext } from "../contexts/DragContextProvider";
 
 const { UIManager } = NativeModules;
 
@@ -42,21 +51,23 @@ const Draggable: FC<Props> = ({
   text: glyph,
   dragOpacity,
   dragScale,
-  ...props
+  // ...props
 }) => {
-  const {
-    setDragLoc,
-    updateDropInfo: updateDropRect,
-    resetContainsDroppable,
-    getDropInfo,
-    hoverDropInfo,
-  } = useContext(DragContext); // Access the drag logic
-  const { isGlyphNext, advanceOrder, getGlyphInfo } =
-    useContext(ChallengeContext);
+  const hover = useContext(HoverContext);
+  const hoverUpdate = useContext(HoverUpdateContext);
+  const drops = useContext(DropsContext);
+  const expectedChoice = useContext(ExpectedChoiceContext);
+  const onCorrectChoice = useContext(OnCorrectChoiceContext);
+  const getGlyph = useContext(GetGlyphContext);
+
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
-  console.log("rerender dragable");
+  console.log(
+    "rerender dragable",
+    glyph,
+    drops.map((drop) => drop.glyph)
+  );
 
   // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
   const [currSize, setCurrentSize] = useState<Size>(); // Set current size of the draggable
@@ -67,76 +78,79 @@ const Draggable: FC<Props> = ({
 
   const tap = Gesture.Tap();
   const drag = Gesture.Pan();
-  const composed = Gesture.Simultaneous(tap, drag);
+  const composed = Gesture.Simultaneous(drag);
 
-  tap.onEnd(() => {
-    LayoutAnimation.configureNext({
-      duration: 300,
-      update: { type: "spring", springDamping: 1 },
-    }); // Animate next layout change
+  // tap.onEnd(() => {
+  //   LayoutAnimation.configureNext({
+  //     duration: 300,
+  //     update: { type: "spring", springDamping: 1 },
+  //   }); // Animate next layout change
 
-    // Drop successful
-    const dropInfo = getDropInfo?.(glyph ?? "");
-    // console.log("tap", dropInfo);
+  //   // Drop successful
+  //   const dropInfo = drops.find((info) => info.glyph === glyph);
+  //   // console.log("tap", dropInfo);
 
-    if (anchor && isGlyphNext?.(glyph) && dropInfo) {
-      advanceOrder?.();
-      const newSize = {
-        width: dropInfo.width,
-        height: dropInfo.height,
-      };
-      const newTrans = {
-        x: dropInfo.x - anchor.x,
-        y: dropInfo.y - anchor.y,
-      };
-      setCurrentSize(newSize);
-      moveTo(newTrans);
-      dropInfo.containsGlyph = glyph;
-      updateDropRect?.(dropInfo);
-    }
-  });
+  //   if (anchor && expectedChoice === glyph && dropInfo) {
+  //     onCorrectChoice?.();
+  //     const newSize = {
+  //       width: dropInfo.width,
+  //       height: dropInfo.height,
+  //     };
+  //     const newTrans = {
+  //       x: dropInfo.x - anchor.x,
+  //       y: dropInfo.y - anchor.y,
+  //     };
+  //     setCurrentSize(newSize);
+  //     moveTo(newTrans);
+  //   }
+  // });
 
   drag.onBegin(() => {
     setIsBeingDragged(true);
-    resetContainsDroppable?.(glyph ?? "");
-    // console.log("start drag");
   });
 
   drag.onChange((drag) => {
-    setDragLoc?.({ x: drag.absoluteX, y: drag.absoluteY });
+    hoverUpdate?.({ x: drag.absoluteX, y: drag.absoluteY });
     translation.setValue({
       x: dragStart.x + drag.translationX,
       y: dragStart.y + drag.translationY,
     });
   });
-
-  drag.onEnd(() => {
+  drag.onFinalize(() => {
+    setIsBeingDragged(false);
     LayoutAnimation.configureNext({
       duration: 300,
       update: { type: "spring", springDamping: 1 },
     });
 
     // Drop successful
+    console.log("Drop", hover);
+
     if (
-      hoverDropInfo?.glyph === glyph && // currently hovering over droplocation with the right glyph
+      hover &&
+      hover.glyph === glyph && // currently hovering over droplocation with the right glyph
       anchor &&
-      !hoverDropInfo?.containsGlyph &&
-      isGlyphNext?.(glyph) // Is this glyph the right input
+      !hover.containsGlyph &&
+      expectedChoice === glyph // Is this glyph the right input
     ) {
-      advanceOrder?.();
+      console.log("success");
+
+      onCorrectChoice?.();
 
       const newSize = {
-        width: hoverDropInfo.width,
-        height: hoverDropInfo.height,
+        width: hover.width,
+        height: hover.height,
       };
       const newTrans = {
-        x: hoverDropInfo.x - anchor.x,
-        y: hoverDropInfo.y - anchor.y,
+        x: hover.x - anchor.x,
+        y: hover.y - anchor.y,
       };
-      setCurrentSize(newSize);
+      if (
+        currSize?.height !== newSize.height &&
+        currSize?.width !== newSize.width
+      )
+        setCurrentSize(newSize);
       moveTo(newTrans);
-      hoverDropInfo.containsGlyph = glyph;
-      updateDropRect?.(hoverDropInfo);
     }
     // Drop failed.
     else {
@@ -145,8 +159,7 @@ const Draggable: FC<Props> = ({
         setCurrentSize({ width: anchor.width, height: anchor.height });
       }
     }
-    setDragLoc?.();
-    setIsBeingDragged(false);
+    hoverUpdate?.();
   });
 
   // Move to new default position
@@ -155,7 +168,8 @@ const Draggable: FC<Props> = ({
       toValue: newpan,
       useNativeDriver: true,
     }).start();
-    setBeforeDragTransform(newpan);
+    if (dragStart.x !== newpan.x && dragStart.y !== newpan.y)
+      setBeforeDragTransform(newpan);
   };
 
   return (
@@ -192,7 +206,7 @@ const Draggable: FC<Props> = ({
             x: 0,
             y: 0,
           }}
-          hintText={getGlyphInfo?.(glyph ?? "").meanings.primary ?? ""}
+          hintText={getGlyph?.(glyph)?.meanings.primary ?? ""}
           show={isBeingDragged}
         />
       </Animated.View>

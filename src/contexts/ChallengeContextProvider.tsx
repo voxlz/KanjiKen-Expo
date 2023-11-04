@@ -1,124 +1,112 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, createContext as cc, useContext, useState } from "react";
 import {
   glyphDictLoader,
   GlyphDictType as GlyphDictType,
 } from "../data_loading/glyphDict";
-import { DragContext } from "./DragContextProvider";
+import { DropsDispatchContext } from "./DragContextProvider";
 import { shuffle } from "../functions/shuffle";
+
+// Types
 export type GlyphInfo = GlyphDictType[0];
+type GetGlyphType = ((glyph?: string) => GlyphInfo | undefined) | undefined;
+type SetChallengeType = ((glyph?: string) => void) | undefined;
 
-type ChallengeContextType = {
-  setGlyph?: (glyph?: string) => void;
-  getNextAnswer?: () => string | undefined;
-  isGlyphNext?: (input?: string) => boolean;
-  advanceOrder?: () => void;
-  isFinished: boolean;
-  glyphInfo?: GlyphDictType[0];
-  challengeId: number;
-  alts?: GlyphInfo[];
-  getGlyphInfo?: (glyph: string, dict?: GlyphDictType) => GlyphInfo;
-};
+// Contexts
+export const SetChallengeContext = cc<SetChallengeType>(undefined); // Provide info about any glyph. Defaults to current challenge glyph
+export const GetGlyphContext = cc<GetGlyphType>(undefined); // Provide info about any glyph. Defaults to current challenge glyph
+export const SeenCountContext = cc<number>(0); // Keep track of challenges seen
+export const ChoicesContext = cc<GlyphInfo[]>([]); // Keep track of question choice alternatives
+export const OnCorrectChoiceContext = cc<(() => void) | undefined>(undefined); // Keep track of question choice alternatives
+export const ExpectedChoiceContext = cc<string>("FINISH"); // Keep track of next correct choice, and if we are finished.
 
-export const ChallengeContext = React.createContext<ChallengeContextType>({
-  isFinished: false,
-  challengeId: 0,
-});
-
-/** Keeps track of challenge specific stats, like what is the correct answer and is challenge compleated. */
 const ChallengeContextProvider: FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
-  const { clearDropContext: clearDropRects } = useContext(DragContext);
-  const [glyphDict, setGlyphDict] = useState<GlyphDictType>();
+  // Context state
+  const dropsDispatch = useContext(DropsDispatchContext);
+
+  // Local state
+  const [dict] = useState(glyphDictLoader());
   const [correctOrder, setCorrectOrder] = useState<string[]>();
   const [orderIdx, setOrderIdx] = useState(0);
 
-  const [glyphInfo, setGlyphInfo] = useState<GlyphInfo>();
-  const [isFinished, setIsFinished] = useState(false);
-  const [challengeId, setChallengeId] = useState(0); // Used to keep apart different challanges. Used in key's for example.
-  const [alts, setAlts] = useState<GlyphInfo[]>([]);
+  // Exposed state
+  const [ChallengeInfo, setGlyphInfo] = useState<GlyphInfo>();
+  const [seenCount, setSeenCount] = useState(0); // Used to keep apart different challanges. Used in key's for example.
+  const [choices, setChoices] = useState<GlyphInfo[]>([]);
 
-  const getGlyphInfo = (glyph: string, dict?: GlyphDictType) => {
-    const d = dict ? dict : glyphDict!;
-    const info = d[glyph];
+  /** Provide an API to get glyphInfo */
+  const getGlyphInfo = (glyph?: string) => {
+    if (!glyph) return ChallengeInfo;
+
+    // Return info
+    const info = dict[glyph];
     info.glyph = glyph;
     return info;
   };
 
-  const getRandomGlyphInfo = (dict: GlyphDictType) => {
+  const getRandomGlyphInfo = () => {
     const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length);
     const possibleGlyphs = Object.keys(dict);
     const glyph = possibleGlyphs.at(randIdx())!;
-    return getGlyphInfo(glyph, dict);
+    return getGlyphInfo(glyph);
   };
 
-  const setGlyph = (glyph?: string) => {
-    let dict = glyphDict;
-
-    // Load glyphDict if not already loaded
-    if (!dict) {
-      dict = glyphDictLoader();
-      setGlyphDict(dict);
-    }
-
-    // Load glyphInfo
-    let info: GlyphInfo;
+  const setChallenge = (glyph?: string) => {
+    let info: GlyphInfo | undefined;
     if (!glyph) {
       do {
-        info = getRandomGlyphInfo(dict);
+        info = getRandomGlyphInfo();
       } while (!info?.comps.position);
     } else {
-      info = getGlyphInfo(glyph, dict);
+      info = getGlyphInfo(glyph);
+    }
+
+    if (!info) {
+      console.warn("No glyph set. Probably glyph was set to something wierd.");
+      return;
     }
 
     // Set alts
-    let altInfos = info.comps.order.map((alt) => getGlyphInfo(alt, dict!));
+    let altInfos = info.comps.order.map((alt) => getGlyphInfo(alt));
     let findRandom = 8 - altInfos.length;
     do {
-      altInfos = altInfos.concat(getRandomGlyphInfo(dict));
+      altInfos = altInfos.concat(getRandomGlyphInfo());
       findRandom -= 1;
     } while (findRandom > 0);
-    setAlts(shuffle(altInfos));
+    setChoices(shuffle(altInfos));
 
     // Update state
     setGlyphInfo(info);
     setCorrectOrder(info?.comps.order);
     setOrderIdx(0);
-    setIsFinished(false);
-    clearDropRects?.();
-    setChallengeId((id) => id + 1);
+    dropsDispatch?.({ type: "clear" });
+    setSeenCount((id) => id + 1);
   };
 
-  const getNextAnswer = () => correctOrder?.[orderIdx] ?? "-1";
+  /** Get the next correct choice. Returns "FINISH" if finished */
+  const getExpectedChoice = correctOrder?.[orderIdx] ?? "FINISH";
 
-  const isGlyphNext = (input?: string) => {
-    if (!input) return false;
-
-    if (input === getNextAnswer()) {
-      return true;
-    } else {
-      return false;
-    }
+  /** What happens when user answers correctly */
+  const onCorrectChoice = () => {
+    setOrderIdx(orderIdx + 1);
   };
 
-  const next = () => {
-    const newOrderIdx = orderIdx + 1;
-    setOrderIdx(newOrderIdx);
-    if (newOrderIdx === correctOrder?.length) setIsFinished(true);
-  };
-
-  const context = {
-    setGlyph,
-    getNextAnswer,
-    advanceOrder: next,
-    isGlyphNext,
-    isFinished,
-    glyphInfo,
-    challengeId,
-    alts,
-    getGlyphInfo,
-  };
-  return <ChallengeContext.Provider value={context} children={children} />;
+  return (
+    <SetChallengeContext.Provider value={setChallenge}>
+      <GetGlyphContext.Provider value={getGlyphInfo}>
+        <OnCorrectChoiceContext.Provider value={onCorrectChoice}>
+          <ExpectedChoiceContext.Provider value={getExpectedChoice}>
+            <SeenCountContext.Provider value={seenCount}>
+              <ChoicesContext.Provider value={choices}>
+                {children}
+              </ChoicesContext.Provider>
+            </SeenCountContext.Provider>
+          </ExpectedChoiceContext.Provider>
+        </OnCorrectChoiceContext.Provider>
+      </GetGlyphContext.Provider>
+    </SetChallengeContext.Provider>
+  );
 };
 
 export default ChallengeContextProvider;

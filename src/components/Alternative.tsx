@@ -1,11 +1,11 @@
-import React, { FC, useState } from "react";
-import { Animated, View, Text, Pressable } from "react-native";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import { Animated, View, Pressable } from "react-native";
 import Draggable from "./Draggable";
 import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
 import { GlyphInfo } from "../contexts/ChallengeContextProvider";
-import GlyphHint from "./GlyphHint";
+import { HoverContext } from "../contexts/DragContextProvider";
 
 type Props = {
   altInfo: GlyphInfo;
@@ -18,15 +18,7 @@ type Props = {
 const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
   const glyph = altInfo.glyph;
   const { measure: anchor, onLayout, ref } = useMeasure();
-  const {
-    measure: text,
-    onLayout: textOnLayout,
-    ref: textContRef,
-  } = useMeasure();
-
-  const [show, setShow] = useState(false);
-
-  const meaning = altInfo.meanings.primary ?? "";
+  const [, setShow] = useState(false);
 
   return (
     <View
@@ -58,21 +50,9 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       </View>
 
       {/* ------------ Help box - Top Layer -------------- */}
-      {anchor && <GlyphHint anchor={anchor} hintText={meaning} show={show} />}
+      {/* {anchor && <GlyphHint anchor={anchor} hintText={meaning} show={show} />} */}
     </View>
   );
 };
 
 export default Alternative;
-
-export type LayoutType = {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-};
-
-export type MeasureType = LayoutType & {
-  top: number;
-  left: number;
-};
