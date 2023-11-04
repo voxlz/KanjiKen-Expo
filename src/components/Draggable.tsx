@@ -31,7 +31,7 @@ if (Platform.OS === "android") {
 type Props = {
   anchor?: MeasureType; // Default position / size
   children?: React.ReactNode;
-  text?: string;
+  glyph?: string;
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
   width: number;
@@ -49,7 +49,7 @@ const Draggable: FC<Props> = ({
   children,
   anchor,
   width,
-  text: glyph,
+  glyph,
   dragOpacity,
   dragScale,
   setIsBeingDragged,
@@ -62,6 +62,8 @@ const Draggable: FC<Props> = ({
   const expectedChoice = useContext(ExpectedChoiceContext);
   const onCorrectChoice = useContext(OnCorrectChoiceContext);
   const getGlyph = useContext(GetGlyphContext);
+
+  let [droppedBefore, setDroppedBefore] = useState(false);
 
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
 
@@ -94,6 +96,7 @@ const Draggable: FC<Props> = ({
     )
       setCurrentSize(newSize);
     moveTo(newTrans);
+    setDroppedBefore(true);
   };
 
   const prepForLayout = () =>
@@ -120,6 +123,7 @@ const Draggable: FC<Props> = ({
   const drag = React.useMemo(
     () =>
       Gesture.Pan()
+        .enabled(!droppedBefore)
         .onBegin(() => {
           setIsBeingDragged(true);
         })
@@ -170,6 +174,7 @@ const Draggable: FC<Props> = ({
       prepForLayout,
       setCurrentSize,
       setIsBeingDragged,
+      droppedBefore,
     ]
   );
 
@@ -186,7 +191,7 @@ const Draggable: FC<Props> = ({
   };
 
   return (
-    <GestureDetector gesture={composed}>
+    <GestureDetector gesture={drag}>
       <Animated.View
         id="animate_position"
         className="absolute"

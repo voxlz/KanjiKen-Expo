@@ -42,7 +42,7 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
         <Draggable
           anchor={anchor}
           width={width}
-          text={glyph}
+          glyph={glyph}
           dragOpacity={dragOpacity}
           dragScale={dragScale}
           isBeingDragged={isBeingDragged}
