@@ -5,7 +5,6 @@ import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
 import { GlyphInfo } from "../contexts/ChallengeContextProvider";
-import { HoverContext } from "../contexts/DragContextProvider";
 
 type Props = {
   altInfo: GlyphInfo;
