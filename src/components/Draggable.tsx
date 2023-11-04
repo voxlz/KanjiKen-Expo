@@ -1,4 +1,4 @@
-import React, { FC, useContext, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import {
   Animated,
   LayoutAnimation,
@@ -9,6 +9,7 @@ import {
 import {
   HoverUpdateContext,
   DropsContext,
+  hoverRef,
 } from "../contexts/DragContextProvider";
 import {} from "./Alternative";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
@@ -19,7 +20,10 @@ import {
 } from "../contexts/ChallengeContextProvider";
 import GlyphHint from "./GlyphHint";
 import { DropInfo, MeasureType } from "../types/dropInfo";
-import { HoverContext } from "../contexts/DragContextProvider";
+import {
+  HoverContext,
+  WasSuccessfulDropContext,
+} from "../contexts/DragContextProvider";
 
 const { UIManager } = NativeModules;
 
@@ -53,7 +57,7 @@ const Draggable: FC<Props> = ({
   dragScale,
   // ...props
 }) => {
-  const hover = useContext(HoverContext);
+  // const hover = useContext(HoverContext);
   const hoverUpdate = useContext(HoverUpdateContext);
   const drops = useContext(DropsContext);
   const expectedChoice = useContext(ExpectedChoiceContext);
@@ -124,8 +128,7 @@ const Draggable: FC<Props> = ({
     });
 
     // Drop successful
-    console.log("Drop", hover);
-
+    const hover = hoverRef;
     if (
       hover &&
       hover.glyph === glyph && // currently hovering over droplocation with the right glyph
@@ -156,7 +159,11 @@ const Draggable: FC<Props> = ({
     else {
       moveTo({ x: 0, y: 0 });
       if (anchor) {
-        setCurrentSize({ width: anchor.width, height: anchor.height });
+        if (
+          currSize?.height !== anchor.height &&
+          currSize?.width !== anchor.width
+        )
+          setCurrentSize({ width: anchor.width, height: anchor.height });
       }
     }
     hoverUpdate?.();

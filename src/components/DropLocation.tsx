@@ -1,13 +1,10 @@
 import React, { FC, useContext, useEffect, useRef } from "react";
 import { Animated, ViewProps } from "react-native";
 import { useMeasure } from "../functions/useMeasure";
-import {
-  GetGlyphContext,
-  ExpectedChoiceContext,
-} from "../contexts/ChallengeContextProvider";
+import { ExpectedChoiceContext } from "../contexts/ChallengeContextProvider";
 import {
   DropsDispatchContext,
-  HoverContext,
+  hoverRef,
 } from "../contexts/DragContextProvider";
 
 type Props = {
@@ -18,7 +15,6 @@ type Props = {
 /** Make this component a possible drop location */
 const DropLocation: FC<Props> = ({ children, text, ...props }) => {
   const dropsDispatch = useContext(DropsDispatchContext);
-  const hover = useContext(HoverContext);
   const expectedChoice = useContext(ExpectedChoiceContext);
 
   const { ref, onLayout, measure } = useMeasure();
@@ -28,7 +24,7 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
       dropsDispatch({ type: "changed", dropInfo: { glyph: text, ...measure } });
   }, [measure]);
 
-  // BACKGROUND COLOR - Laggs wihtout as well
+  // BACKGROUND COLOR - Does not currently work
   const colorIndex = useRef(new Animated.Value(0)).current;
   const bgColor = colorIndex.interpolate({
     inputRange: [0, 1, 2],
@@ -39,7 +35,10 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
     ],
   });
   const isHovered =
-    hover && measure && hover?.x === measure?.x && hover?.y === measure?.y;
+    hoverRef &&
+    measure &&
+    hoverRef?.x === measure?.x &&
+    hoverRef?.y === measure?.y;
   const isNext = expectedChoice === text;
   colorIndex.setValue(isHovered ? 1 : isNext ? 2 : 0);
 
