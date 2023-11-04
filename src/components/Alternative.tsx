@@ -18,11 +18,12 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
   const glyph = altInfo.glyph;
   const { measure: anchor, onLayout, ref } = useMeasure();
   const [, setShow] = useState(false);
+  const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
   return (
     <View
-      className="aspect-square flex-grow flex-shrink"
-      style={{ width: width }}
+      className="aspect-square flex-grow flex-shrink z-0"
+      style={{ width: width, zIndex: isBeingDragged ? 30 : 10 }}
     >
       {/* ----------- Outline - Bottom layer-------------- */}
       <Pressable
@@ -36,13 +37,16 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
       </Pressable>
 
       {/* ------------- Interactable - Middle layer --------------*/}
-      <View className="absolute z-10">
+
+      <View className="absolute z-20">
         <Draggable
           anchor={anchor}
           width={width}
           text={glyph}
           dragOpacity={dragOpacity}
           dragScale={dragScale}
+          isBeingDragged={isBeingDragged}
+          setIsBeingDragged={setIsBeingDragged}
         >
           <Interactable text={glyph} />
         </Draggable>

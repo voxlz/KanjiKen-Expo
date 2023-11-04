@@ -35,6 +35,8 @@ type Props = {
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
   width: number;
+  setIsBeingDragged: (bool: boolean) => void;
+  isBeingDragged: boolean;
 } & ViewProps;
 
 type Size = {
@@ -50,6 +52,8 @@ const Draggable: FC<Props> = ({
   text: glyph,
   dragOpacity,
   dragScale,
+  setIsBeingDragged,
+  isBeingDragged,
   // ...props
 }) => {
   // const hover = useContext(HoverContext);
@@ -60,7 +64,6 @@ const Draggable: FC<Props> = ({
   const getGlyph = useContext(GetGlyphContext);
 
   const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
-  const [isBeingDragged, setIsBeingDragged] = useState(false); // is draggable being dragging?
 
   console.log(
     "rerender dragable",
@@ -117,8 +120,6 @@ const Draggable: FC<Props> = ({
   const drag = React.useMemo(
     () =>
       Gesture.Pan()
-        .activeOffsetX(4)
-        .activeOffsetY(4)
         .onBegin(() => {
           setIsBeingDragged(true);
         })
