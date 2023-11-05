@@ -11,10 +11,17 @@ type Props = {
   dragOpacity?: Animated.Value;
   dragScale?: Animated.Value;
   width: number;
+  expectedChoice: string;
 };
 
 /** Draggable on top of an outline */
-const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
+const Alternative: FC<Props> = ({
+  altInfo,
+  dragOpacity,
+  dragScale,
+  width,
+  expectedChoice,
+}) => {
   const glyph = altInfo.glyph;
   const { measure: anchor, onLayout, ref } = useMeasure();
   const [, setShow] = useState(false);
@@ -38,7 +45,13 @@ const Alternative: FC<Props> = ({ altInfo, dragOpacity, dragScale, width }) => {
 
       {/* ------------- Interactable - Middle layer --------------*/}
 
-      <View className="absolute z-20">
+      <View
+        style={{
+          pointerEvents:
+            !!dragOpacity && expectedChoice === "FINISH" ? "none" : "auto",
+        }}
+        className="absolute z-20"
+      >
         <Draggable
           anchor={anchor}
           width={width}

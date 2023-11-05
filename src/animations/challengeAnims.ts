@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Animated } from "react-native";
 
 export const useChallengeAnims = () => {

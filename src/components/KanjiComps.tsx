@@ -25,8 +25,8 @@ const KanjiComps: FC<Props> = ({ pos }) => {
           {value.map((strOrPos, j) => {
             if (typeof strOrPos === "string") {
               return (
-                <DropLocation text={strOrPos as string} key={j}>
-                  <Outline text={strOrPos as string} />
+                <DropLocation text={strOrPos.substring(0, 1) as string} key={j}>
+                  <Outline text={strOrPos.substring(0, 1) as string} />
                 </DropLocation>
               );
             } else {

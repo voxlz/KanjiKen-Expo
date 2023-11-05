@@ -1,9 +1,7 @@
 import React, { FC, useContext, useEffect } from "react";
 import { View, Text, Animated } from "react-native";
 import KanjiComps from "../components/KanjiComps";
-import {
-  GetGlyphContext,
-} from "../contexts/ChallengeContextProvider";
+import { GetGlyphContext } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
 import { useWindowDimensions } from "react-native";
 import HealthBar from "../components/HealthBar";
@@ -18,10 +16,8 @@ import {
   ChoicesContext,
 } from "../contexts/ChallengeContextProvider";
 
-type Props = {};
-
 /** The general challenge view for building a kanji through components */
-const CompKanjiChallenge: FC<Props> = ({}) => {
+const CompKanjiChallenge: FC<{}> = ({}) => {
   // console.log("CHALLENGE UPDATE");
 
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
@@ -101,6 +97,7 @@ const CompKanjiChallenge: FC<Props> = ({}) => {
               dragOpacity={isCorrectAnswer ? opacity : undefined}
               dragScale={isCorrectAnswer ? builderScale : undefined}
               width={altWidth}
+              expectedChoice={expectedChoice}
             />
           );
         })}

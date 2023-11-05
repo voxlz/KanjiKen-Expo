@@ -137,6 +137,7 @@ const Draggable: FC<Props> = ({
           hoverUpdate?.({ x: drag.absoluteX, y: drag.absoluteY });
           let tx = drag.translationX;
           let ty = drag.translationY;
+          
           // Respond to drag, but "don't let them move it"
           if (droppedBefore) {
             tx =
@@ -148,7 +149,6 @@ const Draggable: FC<Props> = ({
                 ? -Math.log2(Math.abs(ty / 20 - 1)) * 5 - 1
                 : Math.log2(Math.abs(ty / 20 + 1)) * 5 + 1;
           }
-
           translation.setValue({
             x: dragStartTran.x + tx,
             y: dragStartTran.y + ty,
@@ -157,8 +157,6 @@ const Draggable: FC<Props> = ({
         .onEnd(() => {
           setIsBeingDragged(false);
           prepForLayout();
-
-          console.log("DROPED", droppedBefore);
 
           // Drop successful
           const hover = hoverRef;
