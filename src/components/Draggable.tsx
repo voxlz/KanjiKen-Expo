@@ -75,10 +75,11 @@ const Draggable: FC<Props> = ({
 
   // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
   const [currSize, setCurrentSize] = useState<Size>(); // Set current size of the draggable
-  const [dragStart, setBeforeDragTransform] = useState({
-    x: 0,
-    y: 0,
-  });
+  const [dragStartTran, setDragStartTran] = useState({ x: 0, y: 0 }); // What translation did it had at drag start.
+  const [dragStartSize, setDragStartSize] = useState({
+    height: width,
+    width: width,
+  }); // What size did it had at drag start.
 
   const dropSuccessful = (hover: DropInfo, anchor: MeasureType) => {
     onCorrectChoice?.();
@@ -93,8 +94,10 @@ const Draggable: FC<Props> = ({
     if (
       currSize?.height !== newSize.height &&
       currSize?.width !== newSize.width
-    )
+    ) {
       setCurrentSize(newSize);
+      setDragStartSize(newSize);
+    }
     moveTo(newTrans);
     setDroppedBefore(true);
   };
@@ -108,14 +111,16 @@ const Draggable: FC<Props> = ({
   /** TAP - Memod as requested in documentation*/
   const tap = React.useMemo(
     () =>
-      Gesture.Tap().onEnd(() => {
-        prepForLayout();
-        const dropInfo = drops.find((info) => info.glyph === glyph);
-        if (anchor && expectedChoice === glyph && dropInfo) {
-          dropSuccessful(dropInfo, anchor);
-        }
-        setIsBeingDragged(false);
-      }),
+      Gesture.Tap()
+        .runOnJS(true)
+        .onEnd(() => {
+          prepForLayout();
+          const dropInfo = drops.find((info) => info.glyph === glyph);
+          if (anchor && expectedChoice === glyph && dropInfo) {
+            dropSuccessful(dropInfo, anchor);
+          }
+          setIsBeingDragged(false);
+        }),
     [anchor, drops, expectedChoice, glyph, prepForLayout]
   );
 
@@ -123,24 +128,42 @@ const Draggable: FC<Props> = ({
   const drag = React.useMemo(
     () =>
       Gesture.Pan()
-        .enabled(!droppedBefore)
+        .runOnJS(true)
         .onBegin(() => {
           setIsBeingDragged(true);
+          currSize && setDragStartSize(currSize);
         })
         .onChange((drag) => {
           hoverUpdate?.({ x: drag.absoluteX, y: drag.absoluteY });
+          let tx = drag.translationX;
+          let ty = drag.translationY;
+          // Respond to drag, but "don't let them move it"
+          if (droppedBefore) {
+            tx =
+              tx < 0
+                ? -Math.log2(Math.abs(tx / 20 - 1)) * 5 - 1
+                : Math.log2(Math.abs(tx / 20 + 1)) * 5 + 1;
+            ty =
+              ty < 0
+                ? -Math.log2(Math.abs(ty / 20 - 1)) * 5 - 1
+                : Math.log2(Math.abs(ty / 20 + 1)) * 5 + 1;
+          }
+
           translation.setValue({
-            x: dragStart.x + drag.translationX,
-            y: dragStart.y + drag.translationY,
+            x: dragStartTran.x + tx,
+            y: dragStartTran.y + ty,
           });
         })
         .onEnd(() => {
           setIsBeingDragged(false);
           prepForLayout();
 
+          console.log("DROPED", droppedBefore);
+
           // Drop successful
           const hover = hoverRef;
           if (
+            !droppedBefore &&
             hover &&
             hover.glyph === glyph && // currently hovering over droplocation with the right glyph
             anchor &&
@@ -151,13 +174,18 @@ const Draggable: FC<Props> = ({
           }
           // Drop failed.
           else {
-            moveTo({ x: 0, y: 0 });
+            console.log("failed", droppedBefore);
+            moveTo(dragStartTran);
             if (
               anchor &&
-              currSize?.height !== anchor.height &&
-              currSize?.width !== anchor.width
-            )
-              setCurrentSize({ width: anchor.width, height: anchor.height });
+              currSize?.height !== dragStartSize.height &&
+              currSize?.width !== dragStartSize.width
+            ) {
+              setCurrentSize({
+                width: dragStartSize.width,
+                height: dragStartSize.height,
+              });
+            }
           }
           hoverUpdate?.();
         })
@@ -167,7 +195,7 @@ const Draggable: FC<Props> = ({
     [
       hoverUpdate,
       translation,
-      dragStart,
+      dragStartTran,
       currSize,
       anchor,
       expectedChoice,
@@ -186,8 +214,8 @@ const Draggable: FC<Props> = ({
       toValue: newpan,
       useNativeDriver: true,
     }).start();
-    if (dragStart.x !== newpan.x && dragStart.y !== newpan.y)
-      setBeforeDragTransform(newpan);
+    if (dragStartTran.x !== newpan.x && dragStartTran.y !== newpan.y)
+      setDragStartTran(newpan);
   };
 
   return (
