@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import { Animated, View } from "react-native";
+import { View } from "react-native";
 import Button from "./Button";
+import Animated, { SharedValue } from "react-native-reanimated";
 
 type Props = {
   onContinue: () => void;
-  yOffset: Animated.Value;
+  yOffset: SharedValue<number>;
   altWidth: number;
 };
 

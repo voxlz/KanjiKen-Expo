@@ -1,51 +1,58 @@
-import { useRef, useState } from "react";
-import { Animated } from "react-native";
+import {
+  useSharedValue,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 export const useChallengeAnims = () => {
-  const builderScale = useRef(new Animated.Value(1)).current;
-  const kanjiScale = useRef(new Animated.Value(0.5)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-  const continueTranslateY = useRef(new Animated.Value(200)).current;
-  // const borderWidth = useRef(new Animated.Value(0)).current;
+  const builderScale = useSharedValue(1);
+  const kanjiScale = useSharedValue(0.5);
+  const opacity = useSharedValue(1);
+  const continueTranslateY = useSharedValue(200);
+  // const borderWidth = useSharedValue(0);
 
-  const animation = Animated.sequence([
-    // Lift (scale up) linear 150ms
-    Animated.timing(builderScale, {
-      toValue: 1.2,
-      duration: 150,
-      useNativeDriver: true,
-    }),
-    // Scale down builder, scale up kanji, spring, 700ms
-    Animated.parallel([
-      Animated.spring(opacity, {
-        toValue: 0,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(builderScale, {
-        toValue: 0.5,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(kanjiScale, {
-        toValue: 1,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(continueTranslateY, {
-        toValue: 0,
-        stiffness: 236.9,
-        damping: 17.14,
-        mass: 1,
-        useNativeDriver: true,
-      }),
-    ]),
-  ]); // start the sequence group
-  return { animation, builderScale, kanjiScale, opacity, continueTranslateY };
+  const springDefault = {
+    stiffness: 236.9,
+    damping: 20,
+    mass: 1,
+    restSpeedThreshold: 0.1,
+  };
+  const duration = 200;
+  const anim = (value: number) =>
+    withDelay(duration, withSpring(value, springDefault));
+
+  const stopAnimation = () => {
+    builderScale.value = 1;
+    kanjiScale.value = 0.5;
+    opacity.value = 1;
+    continueTranslateY.value = 200;
+  };
+
+  const animation = () => {
+    console.log("Started animation");
+    stopAnimation();
+
+    builderScale.value = withTiming(1.2, { duration: duration });
+    opacity.value = anim(0);
+    builderScale.value = anim(0.5);
+    kanjiScale.value = anim(1);
+    continueTranslateY.value = anim(0);
+  };
+
+  const reset = () => {
+    builderScale.value = 1; // Needs to be fast since we measure size here.
+    kanjiScale.value = withSpring(0.5, springDefault);
+    opacity.value = withSpring(1, springDefault);
+    continueTranslateY.value = withSpring(200, springDefault);
+  };
+
+  return {
+    animation,
+    reset,
+    builderScale,
+    kanjiScale,
+    opacity,
+    continueTranslateY,
+  };
 };

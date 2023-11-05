@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Animated, View } from "react-native";
+import { View } from "react-native";
 import {
   useFonts,
   NotoSansJP_100Thin,
@@ -25,6 +25,7 @@ import ChallengeContextProvider from "./src/contexts/ChallengeContextProvider";
 import CompKanjiChallenge from "./src/views/CompKanjiChallenge";
 import HealthContextProvider from "./src/contexts/HealthContextProvider";
 import { Platform } from "react-native";
+import Animated from "react-native-reanimated";
 
 // import "./src/input";
 

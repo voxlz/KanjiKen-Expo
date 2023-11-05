@@ -1,15 +1,16 @@
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
-import { Animated, View, Pressable } from "react-native";
+import React, { FC, useState } from "react";
+import { View, Pressable } from "react-native";
 import Draggable from "./Draggable";
 import Interactable from "../displays/Interactable";
 import Outline from "../displays/Outline";
 import { useMeasure } from "../functions/useMeasure";
 import { GlyphInfo } from "../contexts/ChallengeContextProvider";
+import Animated, { SharedValue } from "react-native-reanimated";
 
 type Props = {
   altInfo: GlyphInfo;
-  dragOpacity?: Animated.Value;
-  dragScale?: Animated.Value;
+  dragOpacity?: SharedValue<number>;
+  dragScale?: SharedValue<number>;
   width: number;
   expectedChoice: string;
 };

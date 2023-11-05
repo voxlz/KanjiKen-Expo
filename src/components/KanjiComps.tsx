@@ -8,8 +8,9 @@ type Props = {
   pos: Position | undefined;
 };
 
-/** Places the dropLocations in accordance with position object.
- */
+/**
+ * Places the dropLocations in accordance with position object.
+ * */
 const KanjiComps: FC<Props> = ({ pos }) => {
   // console.log("KANJI COMPS UPDATE");
   return (

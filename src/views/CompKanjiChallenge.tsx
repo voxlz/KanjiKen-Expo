@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect } from "react";
-import { View, Text, Animated } from "react-native";
+import { View, Text } from "react-native";
 import KanjiComps from "../components/KanjiComps";
 import { GetGlyphContext } from "../contexts/ChallengeContextProvider";
 import KanjiMeaning from "../displays/KanjiMeaning";
@@ -15,14 +15,21 @@ import {
   SeenCountContext,
   ChoicesContext,
 } from "../contexts/ChallengeContextProvider";
+import Animated, { useDerivedValue } from "react-native-reanimated";
 
 /** The general challenge view for building a kanji through components */
 const CompKanjiChallenge: FC<{}> = ({}) => {
   // console.log("CHALLENGE UPDATE");
 
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
-  const { animation, builderScale, continueTranslateY, kanjiScale, opacity } =
-    useChallengeAnims();
+  const {
+    animation,
+    reset,
+    builderScale,
+    continueTranslateY,
+    kanjiScale,
+    opacity,
+  } = useChallengeAnims();
 
   const setChallenge = useContext(SetChallengeContext);
   const expectedChoice = useContext(ExpectedChoiceContext);
@@ -35,14 +42,8 @@ const CompKanjiChallenge: FC<{}> = ({}) => {
   }, []);
 
   useEffect(() => {
-    if (expectedChoice === "FINISH") animation.start();
-    else {
-      builderScale.setValue(1);
-      kanjiScale.setValue(0.5);
-      opacity.setValue(1);
-      continueTranslateY.setValue(200);
-      animation.reset();
-    }
+    if (expectedChoice === "FINISH") animation();
+    else reset();
   }, [expectedChoice]);
 
   const glyphInfo = getGlyph?.();
@@ -51,6 +52,7 @@ const CompKanjiChallenge: FC<{}> = ({}) => {
   const gap = 3 * 12;
   const altWidth = (windowWidth - margin - gap) / 4;
 
+  const invertedOpacity = useDerivedValue(() => 1 - opacity.value);
   return (
     <Animated.View className="flex-col items-center pt-20   w-full h-full flex-grow  border-forest-500 rounded-[44px] ">
       <HealthBar altWidth={altWidth} />
@@ -68,7 +70,7 @@ const CompKanjiChallenge: FC<{}> = ({}) => {
         </Animated.View>
         <Animated.View
           style={{
-            opacity: Animated.subtract(1, opacity),
+            opacity: invertedOpacity,
             transform: [{ scale: kanjiScale }],
           }}
           className=" bg-forest-200 border-forest-900 border-4 absolute w-full h-full flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"

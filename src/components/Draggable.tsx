@@ -1,6 +1,5 @@
 import React, { FC, useContext, useRef, useState } from "react";
 import {
-  Animated,
   LayoutAnimation,
   NativeModules,
   Platform,
@@ -19,6 +18,12 @@ import {
 } from "../contexts/ChallengeContextProvider";
 import GlyphHint from "./GlyphHint";
 import { DropInfo, MeasureType } from "../types/dropInfo";
+import Animated, {
+  SharedValue,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 const { UIManager } = NativeModules;
 
@@ -32,8 +37,8 @@ type Props = {
   anchor?: MeasureType; // Default position / size
   children?: React.ReactNode;
   glyph?: string;
-  dragOpacity?: Animated.Value;
-  dragScale?: Animated.Value;
+  dragOpacity?: SharedValue<number>;
+  dragScale?: SharedValue<number>;
   width: number;
   setIsBeingDragged: (bool: boolean) => void;
   isBeingDragged: boolean;
@@ -63,9 +68,11 @@ const Draggable: FC<Props> = ({
   const onCorrectChoice = useContext(OnCorrectChoiceContext);
   const getGlyph = useContext(GetGlyphContext);
 
-  let [droppedBefore, setDroppedBefore] = useState(false);
+  const [droppedBefore, setDroppedBefore] = useState(false);
 
-  const translation = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  let transX = useSharedValue(0);
+  let transY = useSharedValue(0);
+  let scale = useSharedValue(1);
 
   console.log(
     "rerender dragable",
@@ -137,7 +144,7 @@ const Draggable: FC<Props> = ({
           hoverUpdate?.({ x: drag.absoluteX, y: drag.absoluteY });
           let tx = drag.translationX;
           let ty = drag.translationY;
-          
+
           // Respond to drag, but "don't let them move it"
           if (droppedBefore) {
             tx =
@@ -149,10 +156,8 @@ const Draggable: FC<Props> = ({
                 ? -Math.log2(Math.abs(ty / 20 - 1)) * 5 - 1
                 : Math.log2(Math.abs(ty / 20 + 1)) * 5 + 1;
           }
-          translation.setValue({
-            x: dragStartTran.x + tx,
-            y: dragStartTran.y + ty,
-          });
+          transX.value = dragStartTran.x + tx;
+          transY.value = dragStartTran.y + ty;
         })
         .onEnd(() => {
           setIsBeingDragged(false);
@@ -192,7 +197,8 @@ const Draggable: FC<Props> = ({
         }),
     [
       hoverUpdate,
-      translation,
+      transX,
+      transY,
       dragStartTran,
       currSize,
       anchor,
@@ -208,13 +214,14 @@ const Draggable: FC<Props> = ({
 
   // Move to new default position
   const moveTo = (newpan: { x: number; y: number }) => {
-    Animated.spring(translation, {
-      toValue: newpan,
-      useNativeDriver: true,
-    }).start();
+    const springConf = { mass: 1, damping: 23, stiffness: 253 };
+    transX.value = withSpring(newpan.x, springConf);
+    transY.value = withSpring(newpan.y, springConf);
     if (dragStartTran.x !== newpan.x && dragStartTran.y !== newpan.y)
       setDragStartTran(newpan);
   };
+
+  scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 });
 
   return (
     <GestureDetector gesture={drag}>
@@ -223,9 +230,9 @@ const Draggable: FC<Props> = ({
         className="absolute"
         style={{
           transform: [
-            { translateX: translation.x },
-            { translateY: translation.y },
-            { scale: isBeingDragged ? 1.1 : 1 },
+            { translateX: transX },
+            { translateY: transY },
+            { scale: scale },
           ],
           zIndex: isBeingDragged ? 10 : 1,
           elevation: isBeingDragged ? 10 : 1,
