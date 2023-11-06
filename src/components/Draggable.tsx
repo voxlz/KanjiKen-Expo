@@ -18,6 +18,7 @@ import {
 } from "../contexts/ChallengeContextProvider";
 import GlyphHint from "./GlyphHint";
 import { DropInfo, MeasureType } from "../types/dropInfo";
+import { AddHealthContext } from "../contexts/HealthContextProvider";
 import Animated, {
   SharedValue,
   useSharedValue,
@@ -67,6 +68,7 @@ const Draggable: FC<Props> = ({
   const expectedChoice = useContext(ExpectedChoiceContext);
   const onCorrectChoice = useContext(OnCorrectChoiceContext);
   const getGlyph = useContext(GetGlyphContext);
+  const addHealth = useContext(AddHealthContext);
 
   const [droppedBefore, setDroppedBefore] = useState(false);
 
@@ -107,6 +109,20 @@ const Draggable: FC<Props> = ({
     }
     moveTo(newTrans);
     setDroppedBefore(true);
+  };
+
+  const dropCancelled = () => {
+    moveTo(dragStartTran);
+    if (
+      anchor &&
+      currSize?.height !== dragStartSize.height &&
+      currSize?.width !== dragStartSize.width
+    ) {
+      setCurrentSize({
+        width: dragStartSize.width,
+        height: dragStartSize.height,
+      });
+    }
   };
 
   const prepForLayout = () =>
@@ -166,29 +182,23 @@ const Draggable: FC<Props> = ({
           // Drop successful
           const hover = hoverRef;
           if (
-            !droppedBefore &&
+            !droppedBefore && // Not dropped already
             hover &&
             hover.glyph === glyph && // currently hovering over droplocation with the right glyph
             anchor &&
-            !hover.containsGlyph &&
             expectedChoice === glyph // Is this glyph the right input
           ) {
             dropSuccessful(hover, anchor);
           }
-          // Drop failed.
-          else {
+          // Drop user error
+          else if (!droppedBefore && hover) {
             console.log("failed", droppedBefore);
-            moveTo(dragStartTran);
-            if (
-              anchor &&
-              currSize?.height !== dragStartSize.height &&
-              currSize?.width !== dragStartSize.width
-            ) {
-              setCurrentSize({
-                width: dragStartSize.width,
-                height: dragStartSize.height,
-              });
-            }
+            addHealth(-10);
+            dropCancelled();
+          }
+          // Drop cancelled.
+          else {
+            dropCancelled();
           }
           hoverUpdate?.();
         })
