@@ -1,10 +1,12 @@
 import React, { FC } from "react";
 import { View, Text } from "react-native";
 
-type Props = {};
+type Props = {
+  seenCount: number;
+};
 
 /** Display challenge title and challenge number */
-const StatusBar: FC<Props> = ({}) => (
+const StatusBar: FC<Props> = ({ seenCount }) => (
   <View className="flex-row justify-between self-stretch px-9 mt-2 h-auto flex-shrink items-start mb-8">
     <Text
       style={{ fontFamily: "NotoSansJP_700Bold" }}
@@ -16,7 +18,7 @@ const StatusBar: FC<Props> = ({}) => (
       style={{ fontFamily: "NotoSansJP_400Regular" }}
       className="text-xl capitalize "
     >
-      13/20
+      {seenCount}/20
     </Text>
   </View>
 );

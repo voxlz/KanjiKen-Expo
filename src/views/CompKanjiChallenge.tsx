@@ -56,7 +56,7 @@ const CompKanjiChallenge: FC<{}> = ({}) => {
   return (
     <Animated.View className="flex-col items-center pt-20   w-full h-full flex-grow  border-forest-500 rounded-[44px] ">
       <HealthBar altWidth={altWidth} />
-      <StatusBar />
+      <StatusBar seenCount={seenCount} />
       <View className="w-2/4  h-auto aspect-square  flex-shrink flex-grow">
         <Animated.View
           style={{
