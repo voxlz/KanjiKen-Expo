@@ -1,8 +1,16 @@
 import React, { FC } from 'react'
 import { View } from 'react-native'
 import Button from './Button'
-import Animated, { SharedValue } from 'react-native-reanimated'
-import { useChallengeAnims } from '../animations/challengeAnims'
+import Animated, {
+    Extrapolation,
+    SharedValue,
+    interpolate,
+    useAnimatedStyle,
+    useDerivedValue,
+    useInterpolateConfig,
+} from 'react-native-reanimated'
+import { useContext } from '../utils/react'
+import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
 
 type Props = {
     onContinue: () => void
@@ -11,14 +19,25 @@ type Props = {
 
 /** The 'continue to next challenge' bar. */
 const BottomBar: FC<Props> = ({ onContinue, glyphWidth: altWidth }) => {
-    const { continueTranslateY } = useChallengeAnims()
+    const progress = useContext(ContinueAnimContext)
+
+    // Animation
+    const animatedStyles = useAnimatedStyle(() => ({
+        transform: [
+            {
+                translateY: interpolate(
+                    progress.value,
+                    [-1, 0, 1],
+                    [200, 200, 0],
+                    Extrapolation.EXTEND
+                ),
+            },
+        ],
+    }))
 
     return (
         <Animated.View
-            style={{
-                aspectRatio: '20 / 7',
-                transform: [{ translateY: continueTranslateY }],
-            }}
+            style={[{ aspectRatio: '20 / 7' }, animatedStyles]}
             className="  w-full h-auto py-6  mt-4"
         >
             <View

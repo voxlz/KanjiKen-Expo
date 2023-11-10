@@ -1,8 +1,7 @@
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { View, useWindowDimensions } from 'react-native'
 import HealthBar from '../components/HealthBar'
 import StatusBar from '../components/StatusBar'
-import { useChallengeAnims } from '../animations/challengeAnims'
 import BottomBar from '../components/BottomBar'
 import {
     SetChallengeContext,
@@ -14,27 +13,22 @@ import Compose from './Compose'
 import { learnOrder } from '../data/learnOrder'
 import { GetGlyphContext } from '../contexts/ChallengeContextProvider'
 import NewGlyph from './NewGlyph'
+import { useContext } from '../utils/react'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
     const { width: windowWidth } = useWindowDimensions()
-    const { animation, reset } = useChallengeAnims()
+
+    // Context
     const setChallenge = useContext(SetChallengeContext)
-    const expectedChoice = useContext(ExpectedChoiceContext)
     const seenCount = useContext(SeenCountContext)
     const getGlyph = useContext(GetGlyphContext)
+
     const [progressIdx, setProgressIdx] = useState(0)
 
     useEffect(() => {
         setChallenge?.()
     }, [])
-
-    useEffect(() => {
-        if (expectedChoice === 'FINISH') {
-            animation()
-            console.log('aa')
-        } else reset()
-    }, [expectedChoice])
 
     const margin = 36 * 2
     const gap = 3 * 12

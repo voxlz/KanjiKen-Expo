@@ -23,6 +23,7 @@ import Session from './src/views/Session'
 import HealthContextProvider from './src/contexts/HealthContextProvider'
 import { Platform } from 'react-native'
 import Animated from 'react-native-reanimated'
+import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
 
 // import "./src/input";
 
@@ -60,16 +61,18 @@ export default function App() {
                 <StatusBar style="auto" />
                 <HealthContextProvider>
                     <DragContextProvider>
-                        <ChallengeContextProvider>
-                            <Session />
-                            {/* <Animated.View className="justify-center self-stretch items-center flex-grow  w-full">
+                        <TaskAnimContextProvider>
+                            <ChallengeContextProvider>
+                                <Session />
+                                {/* <Animated.View className="justify-center self-stretch items-center flex-grow  w-full">
               <Animated.View className="h-20 w-20">
-                <HelpBox meaning="hello">
-                  <Outline text="a" />
-                </HelpBox>
+              <HelpBox meaning="hello">
+              <Outline text="a" />
+              </HelpBox>
               </Animated.View>
             </Animated.View> */}
-                        </ChallengeContextProvider>
+                            </ChallengeContextProvider>
+                        </TaskAnimContextProvider>
                     </DragContextProvider>
                 </HealthContextProvider>
             </GestureHandlerRootView>

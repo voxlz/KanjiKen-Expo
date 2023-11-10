@@ -1,6 +1,10 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import { View, Text } from 'react-native'
-import Animated from 'react-native-reanimated'
+import Animated, {
+    Extrapolation,
+    interpolate,
+    useAnimatedStyle,
+} from 'react-native-reanimated'
 import Alternative from '../components/Alternative'
 import KanjiComps from '../components/KanjiComps'
 import KanjiMeaning from '../displays/KanjiMeaning'
@@ -12,7 +16,9 @@ import {
     GetGlyphContext,
     SeenCountContext,
 } from '../contexts/ChallengeContextProvider'
-import { useChallengeAnims } from '../animations/challengeAnims'
+// import { useChallengeAnims } from '../animations/challengeAnims'
+import { useContext } from '../utils/react'
+import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
 
 type Props = { glyphWidth: number }
 
@@ -22,9 +28,49 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
     const seenCount = useContext(SeenCountContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const choices = useContext(ChoicesContext)
+    const animation = useContext(ContinueAnimContext)
 
-    const { builderScale, kanjiScale, opacity, invertedOpacity } =
-        useChallengeAnims()
+    // Animation
+    const builderStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            animation.value,
+            [-1, 0, 1],
+            [1, 1, 0],
+            Extrapolation.EXTEND
+        ),
+        // transform: [
+        //     {
+        //         scale: interpolate(
+        //             animation.value,
+        //             [0.5, 0, 1],
+        //             [1, 1.2, 0.5],
+        //             Extrapolation.EXTEND
+        //         ),
+        //     },
+        // ],
+    }))
+
+    const kanjiStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            animation.value,
+            [-1, 0, 1],
+            [0, 0, 1],
+            Extrapolation.EXTEND
+        ),
+        transform: [
+            {
+                scale: interpolate(
+                    animation.value,
+                    [-1, 0, 1],
+                    [0.5, 0.5, 1],
+                    Extrapolation.EXTEND
+                ),
+            },
+        ],
+    }))
+
+    const opacity = 1
+    const builderScale = 1
 
     const glyphInfo = getGlyph?.()
 
@@ -32,11 +78,7 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
         <>
             <View className="w-2/4  h-auto aspect-square  flex-shrink flex-grow">
                 <Animated.View
-                    style={{
-                        gap: 12,
-                        opacity: opacity,
-                        transform: [{ scale: builderScale }],
-                    }}
+                    style={[{ gap: 12 }, builderStyle]}
                     className="flex-grow"
                 >
                     <KanjiComps
@@ -45,10 +87,7 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
                     />
                 </Animated.View>
                 <Animated.View
-                    style={{
-                        opacity: invertedOpacity,
-                        transform: [{ scale: kanjiScale }],
-                    }}
+                    style={kanjiStyle}
                     className=" bg-forest-200 border-forest-900 border-4 absolute w-full h-full flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                 >
                     <Text
@@ -74,11 +113,8 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
                         <Alternative
                             key={i + alt.glyph! + seenCount}
                             altInfo={alt}
-                            dragOpacity={isCorrectAnswer ? opacity : undefined}
-                            dragScale={
-                                isCorrectAnswer ? builderScale : undefined
-                            }
                             width={glyphWidth}
+                            isCorrectAnswer={isCorrectAnswer ?? false}
                             expectedChoice={expectedChoice}
                         />
                     )

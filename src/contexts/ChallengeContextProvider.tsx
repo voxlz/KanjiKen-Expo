@@ -1,9 +1,12 @@
-import React, { FC, useContext, useState, ReactNode } from 'react'
+import React, { FC, useState, ReactNode } from 'react'
 import { glyphDictLoader, GlyphDictType } from '../data/glyphDict'
 import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
-import { SharedValue, useSharedValue } from 'react-native-reanimated'
-import { createContext as CC } from '../utils/react'
+import { createContext as CC, useContext } from '../utils/react'
+import {
+    StartFinishAnimationContext,
+    ResetFinishAnimationContext,
+} from './TaskAnimContextProvider'
 
 // Types
 export type GlyphInfo = GlyphDictType[0]
@@ -21,11 +24,10 @@ export const ExpectedChoiceContext = CC<string>() // Keep track of next correct 
 const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     children,
 }) => {
-    // Animation state
-    const challangeComplete = useSharedValue(-1) // -1 -> 0 is wind-up, 0 -> 1 is the transition animation.
-
     // Context state
     const dropsDispatch = useContext(DropsDispatchContext)
+    const startAnimation = useContext(StartFinishAnimationContext)
+    const resetAnimation = useContext(ResetFinishAnimationContext)
 
     // Local state
     const [dict] = useState(glyphDictLoader())
@@ -33,13 +35,13 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const [orderIdx, setOrderIdx] = useState(0)
 
     // Exposed state
-    const [ChallengeInfo, setGlyphInfo] = useState<GlyphInfo>()
+    const [challengeInfo, setGlyphInfo] = useState<GlyphInfo>()
     const [seenCount, setSeenCount] = useState(0) // Used to keep apart different challanges. Used in key's for example.
     const [choices, setChoices] = useState<GlyphInfo[]>([])
 
     /** Provide an API to get glyphInfo */
     const getGlyphInfo = (glyph?: string) => {
-        if (!glyph) return ChallengeInfo
+        if (!glyph) return challengeInfo
 
         // Return info
         const info = dict[glyph]
@@ -80,6 +82,9 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         } while (findRandom > 0)
         setChoices(shuffle(altInfos))
 
+        // reset animation
+        if (challengeInfo) resetAnimation()
+
         // Update state
         setGlyphInfo(info)
         setCorrectOrder(info?.comps.order)
@@ -89,15 +94,19 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     }
 
     /** Get the next correct choice. Returns "FINISH" if finished */
-    const getExpectedChoice = correctOrder?.[orderIdx] ?? 'FINISH'
+    const getExpectedChoice = correctOrder
+        ? correctOrder[orderIdx] ?? 'FINISH'
+        : ''
 
+    if (getExpectedChoice === 'FINISH') {
+        startAnimation()
+    }
     /** What happens when user answers correctly */
     const onCorrectChoice = () => {
         setOrderIdx(orderIdx + 1)
     }
 
     /** Start animation */
-
 
     return (
         <SetChallengeContext.Provider value={setChallenge}>
