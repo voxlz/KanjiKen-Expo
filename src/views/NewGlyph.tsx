@@ -42,7 +42,7 @@ const NewGlyph: FC<Props> = ({ glyphWidth, onContinue }) => {
                     <Button
                         text="I already know this"
                         onPress={onContinue}
-                        style="secondary"
+                        styleName="secondary"
                     />
                 </View>
             </View>

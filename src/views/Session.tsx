@@ -13,6 +13,7 @@ import { learnOrder } from '../data/learnOrder'
 import { GetGlyphContext } from '../contexts/ChallengeContextProvider'
 import NewGlyph from './NewGlyph'
 import { useContext } from '../utils/react'
+import Recognize from './Recognize'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
@@ -26,7 +27,7 @@ const Session: FC<{}> = ({}) => {
     const [progressIdx, setProgressIdx] = useState(0)
 
     useEffect(() => {
-        setChallenge?.()
+        setChallenge?.(learnOrder[progressIdx])
     }, [])
 
     const margin = 36 * 2
@@ -46,14 +47,15 @@ const Session: FC<{}> = ({}) => {
                 {getGlyph?.()?.comps.position ? (
                     <Compose glyphWidth={glyphWidth} />
                 ) : (
-                    <NewGlyph
-                        glyphWidth={glyphWidth}
-                        onContinue={() => {
-                            const newIdx = progressIdx + 1
-                            setChallenge?.(learnOrder[newIdx])
-                            setProgressIdx(newIdx)
-                        }}
-                    />
+                    <Recognize glyphWidth={glyphWidth} />
+                    // <NewGlyph
+                    //     glyphWidth={glyphWidth}
+                    //     onContinue={() => {
+                    //         const newIdx = progressIdx + 1
+                    //         setChallenge?.(learnOrder[newIdx])
+                    //         setProgressIdx(newIdx)
+                    //     }}
+                    // />
                 )}
             </View>
             <BottomBar

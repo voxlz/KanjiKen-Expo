@@ -7,6 +7,7 @@ import {
     StartFinishAnimationContext,
     ResetFinishAnimationContext,
 } from './TaskAnimContextProvider'
+import { Skills } from '../types/progress'
 
 // Types
 export type GlyphInfo = GlyphDictType[0]
@@ -31,7 +32,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
     // Local state
     const [dict] = useState(glyphDictLoader())
-    const [correctOrder, setCorrectOrder] = useState<string[]>()
+    const [correctOrder, setAnswerOrder] = useState<string[]>()
     const [orderIdx, setOrderIdx] = useState(0)
 
     // Exposed state
@@ -76,8 +77,16 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             return
         }
 
+        // Figure out the skill
+        const skill: Skills = info.comps.position ? 'compose' : 'recognize'
+        const answers: string[] =
+            skill === 'compose' ? info.comps.order : [info.glyph ?? 'errrr']
+        
         // Set alts
-        let altInfos = info.comps.order.map((alt) => getGlyphInfo(alt))
+        let altInfos =
+            skill === 'compose'
+                ? info.comps.order.map((alt) => getGlyphInfo(alt))
+                : [info]
         let findRandom = 8 - altInfos.length
         do {
             altInfos = altInfos.concat(getRandomGlyphInfo())
@@ -90,8 +99,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
         // Update state
         setGlyphInfo(info)
-        setCorrectOrder(info.comps.order)
-        setOrderIdx(info.comps.position ? 0 : -1)
+        setAnswerOrder(answers)
+        setOrderIdx(0)
         dropsDispatch?.({ type: 'clear' })
         setSeenCount((id) => id + 1)
     }

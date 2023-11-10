@@ -13,7 +13,8 @@ export interface Progress {
 
 export interface GlyphProgress extends Progress {
     skills: {
-        compose: Skill<Level.LVL1 | Level.MAX>
+        compose?: Skill<Level.LVL1 | Level.MAX>
+        recognize?: Skill
         draw: Skill
     }
 }

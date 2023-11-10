@@ -5,8 +5,6 @@ import Animated, {
     interpolate,
     useAnimatedStyle,
 } from 'react-native-reanimated'
-import Alternative from '../components/Alternative'
-import KanjiComps from '../components/KanjiComps'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import {
     ChoicesContext,
@@ -22,15 +20,22 @@ import {
     ContinueAnimContext,
     ContinueAnimInstantResetContext,
 } from '../contexts/TaskAnimContextProvider'
+import Button from '../components/Button'
+import { OnCorrectChoiceContext } from '../contexts/ChallengeContextProvider'
+import { AddHealthContext } from '../contexts/HealthContextProvider'
 
 type Props = { glyphWidth: number }
 
 /** Drag components to build a glyph */
-const Compose: FC<Props> = ({ glyphWidth }) => {
+const Recognize: FC<Props> = ({ glyphWidth }) => {
     const getGlyph = useContext(GetGlyphContext)
     const seenCount = useContext(SeenCountContext)
-    const expectedChoice = useContext(ExpectedChoiceContext)
     const choices = useContext(ChoicesContext)
+    const onCorrectChoice = useContext(OnCorrectChoiceContext)
+    const addHealth = useContext(AddHealthContext)
+    const expectedChoice = useContext(ExpectedChoiceContext)
+
+    // Animation values
     const animation = useContext(ContinueAnimContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
@@ -79,13 +84,16 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
         <>
             <View className="w-2/4  h-auto aspect-square  flex-shrink flex-grow">
                 <Animated.View
-                    style={[{ gap: 12 }, builderStyle]}
-                    className="flex-grow"
+                    style={builderStyle}
+                    className=" bg-ui-very_light border-ui-disabled border-4 absolute w-full h-full flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                 >
-                    <KanjiComps
-                        pos={glyphInfo?.comps.position}
-                        key={seenCount}
-                    />
+                    <Text
+                        style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                        className="text-8xl p-2 -mb-6"
+                        adjustsFontSizeToFit
+                    >
+                        {'?'}
+                    </Text>
                 </Animated.View>
                 <Animated.View
                     style={kanjiStyle}
@@ -107,17 +115,26 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
                 className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9"
             >
                 {choices?.map((alt, i) => {
-                    const isCorrectAnswer = glyphInfo?.comps.order.includes(
-                        alt.glyph!
-                    )
+                    const isCorrectAnswer = glyphInfo?.glyph === alt.glyph
                     return (
-                        <Alternative
+                        <View
+                            style={{ width: glyphWidth, height: glyphWidth }}
                             key={i + alt.glyph! + seenCount}
-                            altInfo={alt}
-                            width={glyphWidth}
-                            isCorrectAnswer={isCorrectAnswer ?? false}
-                            expectedChoice={expectedChoice}
-                        />
+                        >
+                            <Button
+                                text={alt.glyph}
+                                lang="jap"
+                                styleName="normal"
+                                onPress={() => {
+                                    if (expectedChoice !== 'FINISH') {
+                                        isCorrectAnswer
+                                            ? onCorrectChoice?.()
+                                            : addHealth(-10)
+                                        return isCorrectAnswer
+                                    }
+                                }}
+                            />
+                        </View>
                     )
                 })}
             </View>
@@ -125,4 +142,4 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
     )
 }
 
-export default Compose
+export default Recognize
