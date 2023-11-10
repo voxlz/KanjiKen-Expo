@@ -168,7 +168,7 @@ const Draggable: FC<Props> = ({
                     let ty = drag.translationY
 
                     // Respond to drag, but "don't let them move it"
-                    if (droppedBefore) {
+                    if (droppedBefore || expectedChoice === 'FINISH') {
                         tx =
                             tx < 0
                                 ? -Math.log2(Math.abs(tx / 20 - 1)) * 5 - 1
@@ -189,6 +189,7 @@ const Draggable: FC<Props> = ({
                     const hover = hoverRef
                     if (
                         !droppedBefore && // Not dropped already
+                        expectedChoice !== 'FINISH' && // not already finished
                         hover &&
                         hover.glyph === glyph && // currently hovering over droplocation with the right glyph
                         anchor &&
@@ -197,7 +198,11 @@ const Draggable: FC<Props> = ({
                         dropSuccessful(hover, anchor)
                     }
                     // Drop user error
-                    else if (!droppedBefore && hover) {
+                    else if (
+                        !droppedBefore &&
+                        hover &&
+                        expectedChoice !== 'FINISH' // not already finished
+                    ) {
                         console.log('failed', droppedBefore)
                         addHealth(-10)
                         dropCancelled()
