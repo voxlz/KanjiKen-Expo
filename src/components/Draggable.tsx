@@ -1,4 +1,4 @@
-import React, { FC, useContext, useRef, useState } from "react";
+import React, { FC,  useState } from "react";
 import {
   LayoutAnimation,
   NativeModules,
@@ -25,6 +25,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useContext } from "../utils/react";
 
 const { UIManager } = NativeModules;
 
@@ -62,8 +63,7 @@ const Draggable: FC<Props> = ({
   isBeingDragged,
   // ...props
 }) => {
-  // const hover = useContext(HoverContext);
-  const hoverUpdate = useContext(HoverUpdateContext);
+  const hoverUpdate = useContext(HoverUpdateContext)
   const drops = useContext(DropsContext);
   const expectedChoice = useContext(ExpectedChoiceContext);
   const onCorrectChoice = useContext(OnCorrectChoiceContext);
