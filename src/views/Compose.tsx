@@ -18,7 +18,10 @@ import {
 } from '../contexts/ChallengeContextProvider'
 // import { useChallengeAnims } from '../animations/challengeAnims'
 import { useContext } from '../utils/react'
-import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
+import {
+    ContinueAnimContext,
+    ContinueAnimInstantResetContext,
+} from '../contexts/TaskAnimContextProvider'
 
 type Props = { glyphWidth: number }
 
@@ -29,6 +32,7 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
     const expectedChoice = useContext(ExpectedChoiceContext)
     const choices = useContext(ChoicesContext)
     const animation = useContext(ContinueAnimContext)
+    const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
     // Animation
     const builderStyle = useAnimatedStyle(() => ({
@@ -38,16 +42,16 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
             [1, 1, 0],
             Extrapolation.EXTEND
         ),
-        // transform: [
-        //     {
-        //         scale: interpolate(
-        //             animation.value,
-        //             [0.5, 0, 1],
-        //             [1, 1.2, 0.5],
-        //             Extrapolation.EXTEND
-        //         ),
-        //     },
-        // ],
+        transform: [
+            {
+                scale: interpolate(
+                    animationInstantReset.value,
+                    [-1, 0, 1],
+                    [1, 1.2, 0.5],
+                    Extrapolation.EXTEND
+                ),
+            },
+        ],
     }))
 
     const kanjiStyle = useAnimatedStyle(() => ({

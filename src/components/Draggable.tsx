@@ -28,7 +28,10 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated'
 import { useContext } from '../utils/react'
-import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
+import {
+    ContinueAnimContext,
+    ContinueAnimInstantResetContext,
+} from '../contexts/TaskAnimContextProvider'
 
 const { UIManager } = NativeModules
 
@@ -70,7 +73,8 @@ const Draggable: FC<Props> = ({
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const getGlyph = useContext(GetGlyphContext)
     const addHealth = useContext(AddHealthContext)
-    const animation = useContext(ContinueAnimInstantResetContext)
+    const animation = useContext(ContinueAnimContext)
+    const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
     const [droppedBefore, setDroppedBefore] = useState(false)
 
@@ -263,16 +267,16 @@ const Draggable: FC<Props> = ({
                                       [1, 1, 0],
                                       Extrapolation.EXTEND
                                   ),
-                                  //   transform: [
-                                  //       {
-                                  //           scale: interpolate(
-                                  //               animation.value,
-                                  //               [-1, 0, 1],
-                                  //               [1, 1.2, 0.5],
-                                  //               Extrapolation.EXTEND
-                                  //           ),
-                                  //       },
-                                  //   ],
+                                  transform: [
+                                      {
+                                          scale: interpolate(
+                                              animationInstantReset.value,
+                                              [-1, 0, 1],
+                                              [1, 1.2, 0.5],
+                                              Extrapolation.EXTEND
+                                          ),
+                                      },
+                                  ],
                               }))
                             : {}
                     }
