@@ -5,7 +5,6 @@ import StatusBar from '../components/StatusBar'
 import BottomBar from '../components/BottomBar'
 import {
     SetChallengeContext,
-    ExpectedChoiceContext,
     SeenCountContext,
 } from '../contexts/ChallengeContextProvider'
 import Animated from 'react-native-reanimated'
@@ -37,7 +36,12 @@ const Session: FC<{}> = ({}) => {
     return (
         <Animated.View className="items-center pt-20 w-full h-full flex-grow ">
             <HealthBar glyphWidth={glyphWidth} />
-            <StatusBar seenCount={seenCount} />
+            <StatusBar
+                seenCount={seenCount}
+                text={
+                    getGlyph?.()?.comps.position ? 'Build Kanji' : 'New Kanji'
+                }
+            />
             <View className="flex-grow flex-shrink items-center">
                 {getGlyph?.()?.comps.position ? (
                     <Compose glyphWidth={glyphWidth} />

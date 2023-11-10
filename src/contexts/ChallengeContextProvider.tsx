@@ -58,6 +58,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
     const setChallenge = (glyph?: string) => {
         let info: GlyphInfo | undefined
+
+        // If undefined, select random
         if (!glyph) {
             do {
                 info = getRandomGlyphInfo()
@@ -66,6 +68,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             info = getGlyphInfo(glyph)
         }
 
+        // Something strange happened
         if (!info) {
             console.warn(
                 'No glyph set. Probably glyph was set to something wierd.'
@@ -87,8 +90,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
         // Update state
         setGlyphInfo(info)
-        setCorrectOrder(info?.comps.order)
-        setOrderIdx(0)
+        setCorrectOrder(info.comps.order)
+        setOrderIdx(info.comps.position ? 0 : -1)
         dropsDispatch?.({ type: 'clear' })
         setSeenCount((id) => id + 1)
     }
@@ -105,8 +108,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const onCorrectChoice = () => {
         setOrderIdx(orderIdx + 1)
     }
-
-    /** Start animation */
 
     return (
         <SetChallengeContext.Provider value={setChallenge}>

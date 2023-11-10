@@ -39,7 +39,11 @@ const NewGlyph: FC<Props> = ({ glyphWidth, onContinue }) => {
                 className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0"
             >
                 <View className="w-full ">
-                    <Button text="Reveal Meaning" onPress={onContinue} />
+                    <Button
+                        text="I already know this"
+                        onPress={onContinue}
+                        style="secondary"
+                    />
                 </View>
             </View>
         </View>

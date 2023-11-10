@@ -200,8 +200,8 @@ const Draggable: FC<Props> = ({
                     // Drop user error
                     else if (
                         !droppedBefore &&
-                        hover &&
-                        expectedChoice !== 'FINISH' // not already finished
+                        expectedChoice !== 'FINISH' && // not already finished
+                        hover
                     ) {
                         console.log('failed', droppedBefore)
                         addHealth(-10)
@@ -267,7 +267,7 @@ const Draggable: FC<Props> = ({
                         isCorrectAnswer
                             ? useAnimatedStyle(() => ({
                                   opacity: interpolate(
-                                      animation.value,
+                                      animationInstantReset.value,
                                       [-1, 0, 1],
                                       [1, 1, 0],
                                       Extrapolation.EXTEND

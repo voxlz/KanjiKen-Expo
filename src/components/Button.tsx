@@ -7,6 +7,14 @@ const themeOptions = {
         press: 'bg-forest-300',
         border: 'border-forest-700',
         text: 'text-ui-text',
+        font: 'NotoSansJP_400Regular',
+    },
+    secondary: {
+        bg: 'bg-transparent',
+        press: 'bg-transparent',
+        border: 'border-transparent',
+        text: 'text-forest-900',
+        font: 'NotoSansJP_900Black',
     },
 } as const
 
@@ -36,8 +44,8 @@ const Button: FC<Props> = ({ text, style = 'forest', onPress }) => {
             } ${theme.border}`}
         >
             <Text
-                style={{ fontFamily: 'NotoSansJP_400Regular' }}
-                className={`text-center text-xl -mt-1 text-${theme.text}`}
+                style={{ fontFamily: theme.font }}
+                className={`text-center text-xl -mt-1 ${theme.text}`}
             >
                 {text}
             </Text>
