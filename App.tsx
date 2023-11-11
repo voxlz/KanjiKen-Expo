@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar'
-import { View } from 'react-native'
 import {
     useFonts,
     NotoSansJP_100Thin,
@@ -17,13 +16,14 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useState } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import DragContextProvider from './src/contexts/DragContextProvider'
-import { glyphDictLoader as gd, GlyphDictType } from './src/data/glyphDict'
+import { glyphDictLoader as gd } from './src/data/glyphDict'
 import ChallengeContextProvider from './src/contexts/ChallengeContextProvider'
 import Session from './src/views/Session'
 import HealthContextProvider from './src/contexts/HealthContextProvider'
-import { Platform } from 'react-native'
 import Animated from 'react-native-reanimated'
 import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
+import ProgressContextProvider from './src/contexts/ProgressContextProvider'
+import { GlyphDictType } from './src/types/glyphDict'
 
 // import "./src/input";
 
@@ -63,7 +63,9 @@ export default function App() {
                     <DragContextProvider>
                         <TaskAnimContextProvider>
                             <ChallengeContextProvider>
-                                <Session />
+                                <ProgressContextProvider>
+                                    <Session />
+                                </ProgressContextProvider>
                                 {/* <Animated.View className="justify-center self-stretch items-center flex-grow  w-full">
               <Animated.View className="h-20 w-20">
               <HelpBox meaning="hello">

@@ -1,5 +1,5 @@
-import React, { FC, useState, ReactNode } from 'react'
-import { glyphDictLoader, GlyphDictType } from '../data/glyphDict'
+import React, { FC, useState, ReactNode, useMemo } from 'react'
+import { glyphDictLoader } from '../data/glyphDict'
 import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
@@ -8,10 +8,11 @@ import {
     ResetFinishAnimationContext,
 } from './TaskAnimContextProvider'
 import { Skills } from '../types/progress'
+import { GlyphDictType } from '../types/glyphDict'
 
 // Types
 export type GlyphInfo = GlyphDictType[0]
-type GetGlyphType = ((glyph?: string) => GlyphInfo | undefined) | undefined
+type GetGlyphType = ((glyph?: string) => GlyphInfo) | undefined
 type SetChallengeType = ((glyph?: string) => void) | undefined
 
 // Contexts
@@ -30,13 +31,15 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const startAnimation = useContext(StartFinishAnimationContext)
     const resetAnimation = useContext(ResetFinishAnimationContext)
 
+    const glyphDict = useMemo(() => glyphDictLoader(), [])
+
     // Local state
-    const [dict] = useState(glyphDictLoader())
+    const [dict] = useState(glyphDict)
     const [correctOrder, setAnswerOrder] = useState<string[]>()
     const [orderIdx, setOrderIdx] = useState(0)
 
     // Exposed state
-    const [challengeInfo, setGlyphInfo] = useState<GlyphInfo>()
+    const [challengeInfo, setGlyphInfo] = useState<GlyphInfo>(glyphDict['食'])
     const [seenCount, setSeenCount] = useState(0) // Used to keep apart different challanges. Used in key's for example.
     const [choices, setChoices] = useState<GlyphInfo[]>([])
 
@@ -81,7 +84,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         const skill: Skills = info.comps.position ? 'compose' : 'recognize'
         const answers: string[] =
             skill === 'compose' ? info.comps.order : [info.glyph ?? 'errrr']
-        
+
         // Set alts
         let altInfos =
             skill === 'compose'

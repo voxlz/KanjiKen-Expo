@@ -42,10 +42,12 @@ const themePress = {
     },
 } as const
 
+export type ButtonStyles = keyof typeof themeOptions
+
 type Props = {
-    onPress?: () => boolean | undefined
+    onPress?: () => boolean | undefined | void
     text?: string
-    styleName?: keyof typeof themeOptions
+    styleName?: ButtonStyles
     lang?: 'eng' | 'jap'
 }
 

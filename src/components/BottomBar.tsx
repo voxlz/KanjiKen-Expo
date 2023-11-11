@@ -1,24 +1,28 @@
 import React, { FC } from 'react'
 import { View } from 'react-native'
-import Button from './Button'
+import Button, { ButtonStyles } from './Button'
 import Animated, {
     Extrapolation,
-    SharedValue,
     interpolate,
     useAnimatedStyle,
-    useDerivedValue,
-    useInterpolateConfig,
 } from 'react-native-reanimated'
 import { useContext } from '../utils/react'
 import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
 
 type Props = {
-    onContinue: () => void
+    onContinue: () => boolean | undefined
     glyphWidth: number
+    continueBtnText: string
+    continueBtnStyle: ButtonStyles
 }
 
 /** The 'continue to next challenge' bar. */
-const BottomBar: FC<Props> = ({ onContinue, glyphWidth: altWidth }) => {
+const BottomBar: FC<Props> = ({
+    onContinue,
+    glyphWidth: altWidth,
+    continueBtnText,
+    continueBtnStyle,
+}) => {
     const progress = useContext(ContinueAnimContext)
 
     // Animation
@@ -44,7 +48,11 @@ const BottomBar: FC<Props> = ({ onContinue, glyphWidth: altWidth }) => {
                 style={{ height: 0.85714285714 * altWidth }}
                 className="px-8 "
             >
-                <Button text="Continue" onPress={onContinue} />
+                <Button
+                    text={continueBtnText}
+                    onPress={onContinue}
+                    styleName={continueBtnStyle}
+                />
             </View>
             <View
                 className="absolute h-40  w-full bottom-0 -z-10"

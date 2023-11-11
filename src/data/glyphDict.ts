@@ -8,5 +8,3 @@ export const glyphDictLoader = (): GlyphDictType => {
     console.log(`Call to JSON.parse took ${endTime - startTime} milliseconds.`)
     return json
 }
-export { GlyphDictType }
-

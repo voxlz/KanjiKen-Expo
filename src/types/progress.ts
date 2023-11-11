@@ -8,21 +8,22 @@ export type ProgressDict = {
 export interface Progress {
     // Track what characters you have confused with this one
     skills: Partial<{ [name in Skills]: Skill }>
+    created_at: Date
     confusables?: {}
 }
 
 export interface GlyphProgress extends Progress {
     skills: {
-        compose?: Skill<Level.LVL1 | Level.MAX>
-        recognize?: Skill
-        draw: Skill
+        compose?: Skill<Level.UNSEEN | Level.LVL1 | Level.MAX>
+        recognize?: Skill<Level.UNSEEN | Level.LVL1 | Level.MAX>
+        // draw?: Skill
     }
 }
 
 export interface VocabProgress extends Progress {
     skills: {
-        spell: Skill
-        pronounce: Skill
+        // spell: Skill
+        // pronounce: Skill
     }
 }
 
@@ -45,6 +46,6 @@ export enum Level {
  * Each skill can be leveled up and should be tested individually.
  */
 export type Skill<Level = {}> = {
-    level: Level.UNSEEN | Level // Determines how much help you will get during the exercise. 0 means you have not yet seen it before
-    seen_at: Date[] // Ancient -> Recent
+    level: Level // Determines how much help you will get during the exercise. 0 means you have not yet seen it before
+    reviewed_at: { date: Date; tries: number; confused_with: string[] }[] // Ancient -> Recent
 }

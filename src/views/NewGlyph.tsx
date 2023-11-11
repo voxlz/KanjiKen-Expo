@@ -1,22 +1,40 @@
-import React, { FC, useContext } from 'react'
-import Animated from 'react-native-reanimated'
-import { GetGlyphContext } from '../contexts/ChallengeContextProvider'
+import React, { FC, useContext, useEffect } from 'react'
+import Animated, {
+    useAnimatedStyle,
+    useDerivedValue,
+    useSharedValue,
+    withTiming,
+} from 'react-native-reanimated'
+import {
+    GetGlyphContext,
+    OnCorrectChoiceContext,
+} from '../contexts/ChallengeContextProvider'
 import { Text, View } from 'react-native'
 import Button from '../components/Button'
 import KanjiMeaning from '../displays/KanjiMeaning'
 
 type Props = {
     glyphWidth: number
-    onContinue: () => void
+    onContinue: () => boolean | undefined
 }
 
 /**
  * The screen introducing a new glyph too the user.
  * Let's user instantly challenge themselves.
  */
-const NewGlyph: FC<Props> = ({ glyphWidth, onContinue }) => {
+const NewGlyph: FC<Props> = ({ glyphWidth }) => {
     const getGlyph = useContext(GetGlyphContext)
+    const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const glyphInfo = getGlyph?.()
+
+    const fadeAnim = useSharedValue(0)
+    const textStyle = useAnimatedStyle(() => ({
+        opacity: fadeAnim.value,
+    }))
+
+    useEffect(() => {
+        fadeAnim.value = 0
+    }, [glyphInfo])
 
     return (
         <View className="w-full h-full items-center justify-between">
@@ -32,20 +50,57 @@ const NewGlyph: FC<Props> = ({ glyphWidth, onContinue }) => {
                         </Text>
                     </Animated.View>
                 </View>
-                <KanjiMeaning text={glyphInfo?.meanings.primary ?? ''} />
-            </View>
-            <View
-                style={{ height: 0.85714285714 * glyphWidth }}
-                className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0"
-            >
-                <View className="w-full ">
-                    <Button
-                        text="I already know this"
-                        onPress={onContinue}
-                        styleName="secondary"
-                    />
+                <View>
+                    <Animated.View style={textStyle}>
+                        <KanjiMeaning
+                            text={glyphInfo?.meanings.primary ?? ''}
+                        />
+                    </Animated.View>
+                    <Animated.View
+                        style={{
+                            opacity: useDerivedValue(() => 1 - fadeAnim.value),
+                            position: 'absolute',
+                        }}
+                    >
+                        <KanjiMeaning text={'New character!'} />
+                    </Animated.View>
                 </View>
             </View>
+            <Animated.View
+                className="-mb-14"
+                style={{
+                    opacity: useDerivedValue(() => 1 - fadeAnim.value),
+                }}
+            >
+                <View
+                    style={{ height: 0.85714285714 * glyphWidth }}
+                    className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0 mb-4"
+                >
+                    <View className="w-full ">
+                        <Button
+                            text="I might know this..."
+                            styleName="secondary"
+                        />
+                    </View>
+                </View>
+                <View
+                    style={{ height: 0.85714285714 * glyphWidth }}
+                    className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0"
+                >
+                    <View className="w-full ">
+                        <Button
+                            text="Reveal Meaning"
+                            onPress={() => {
+                                fadeAnim.value = withTiming(1, {
+                                    duration: 300,
+                                })
+                                setTimeout(() => onCorrectChoice?.(), 1500)
+                            }}
+                            styleName="normal"
+                        />
+                    </View>
+                </View>
+            </Animated.View>
         </View>
     )
 }

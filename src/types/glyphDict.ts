@@ -22,7 +22,7 @@ export type Word = {
 
 export type GlyphDictType = {
     [char: string]: {
-        glyph?: string
+        glyph: string
         code: string
         comps: {
             order: string[]
