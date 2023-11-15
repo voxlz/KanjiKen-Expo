@@ -16,6 +16,10 @@ import Button from '../components/Button'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import { ContinueAnimInstantResetContext as SkillAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'
+import {
+    ExpectedChoiceContext,
+    SeenCountContext,
+} from '../contexts/ChallengeContextProvider'
 
 type Props = {
     glyphWidth: number
@@ -30,6 +34,7 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
     const getGlyph = useContext(GetGlyphContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const skillAnim = useContext(SkillAnimInstantResetContext)
+    const seenCount = useContext(SeenCountContext)
     const glyphInfo = getGlyph?.()
 
     const fadeAnim = useSharedValue(0)
@@ -40,9 +45,11 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
         ],
     }))
 
+    console.log(fadeAnim.value)
+
     useEffect(() => {
         fadeAnim.value = 0
-    }, [glyphInfo])
+    }, [seenCount])
 
     const builderStyle = useAnimatedStyle(() => ({
         opacity: interpolate(
@@ -124,7 +131,9 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                                 fadeAnim.value = withTiming(1, {
                                     duration: 300,
                                 })
-                                setTimeout(() => onCorrectChoice?.(), 1000)
+                                setTimeout(() => {
+                                    onCorrectChoice?.()
+                                }, 1000)
                             }}
                             styleName="normal"
                         />

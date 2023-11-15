@@ -1,8 +1,10 @@
+import { Learnable } from './progress'
+
 export type Position = {
-    col?: (string | Position)[]
-    'col?'?: (string | Position)[]
-    row?: (string | Position)[]
-    'row?'?: (string | Position)[]
+    col?: (Learnable | Position)[]
+    'col?'?: (Learnable | Position)[]
+    row?: (Learnable | Position)[]
+    'row?'?: (Learnable | Position)[]
 }
 
 export type Word = {
@@ -21,11 +23,11 @@ export type Word = {
 }
 
 export type GlyphDictType = {
-    [char: string]: {
-        glyph: string
+    [char in Learnable]: {
+        glyph: Learnable
         code: string
         comps: {
-            order: string[]
+            order: Learnable[]
             position?: Position
             warnings: string[]
             occur: number

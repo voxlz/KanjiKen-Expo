@@ -7,14 +7,14 @@ export type ProgressDict = {
 
 export interface Progress {
     // Track what characters you have confused with this one
-    skills: Partial<{ [name in Skills]: Skill }>
+    skills: Partial<{ [name in Skills]: Excercise }>
     created_at: Date
     confusables?: {}
 }
 
 export interface GlyphProgress extends Progress {
     skills: {
-        [skill in Skills]?: Skill
+        [skill in Skills]?: Excercise
     }
 }
 
@@ -29,31 +29,41 @@ export type Skills = 'intro' | 'compose' | 'recognize'
 export type Learnable = (typeof learnOrder)[number]
 
 // Possible levels values for all skills
-export enum Lvl {
+export enum LvL {
     'UNSEEN', // Not seen before
     'LVL1',
     'LVL2',
     'LVL3',
+    'LVL4',
+    'LVL5',
+    'LVL6',
+    'LVL7',
+    'LVL8',
+    'LVL9',
     'MAX', // Highest level for this skill
 }
 
-export const LevelsPerSkill: { [skill in Skills]: Lvl[] } = {
-    intro: [Lvl.UNSEEN, Lvl.MAX],
-    compose: [Lvl.UNSEEN, Lvl.LVL1, Lvl.MAX],
-    recognize: [Lvl.UNSEEN, Lvl.LVL1, Lvl.MAX],
+export const lvlsPerSkill: { [skill in Skills]: number } = {
+    intro: 1,
+    compose: 10,
+    recognize: 10,
 }
 
-export const RequirePerSkill: { [skill in Skills]: Skills[] } = {
+export const requirePerSkill: {
+    [skill in Skills]: { skill: Skills; lvl: number }[]
+} = {
     intro: [],
-    compose: ['intro'],
-    recognize: ['intro'],
+    compose: [{ skill: 'intro', lvl: 1 }],
+    recognize: [{ skill: 'intro', lvl: 1 }],
 }
 
 /**
  * Each skill is connected to a specific exercise.
  * Each skill can be leveled up and should be tested individually.
  */
-export type Skill = {
-    level: Lvl
+export type Excercise = {
+    glyph: Learnable
+    level: LvL
+    skill: Skills
     reviewed_at: { date: Date; tries: number; confused_with: string[] }[] // Ancient -> Recent
 }

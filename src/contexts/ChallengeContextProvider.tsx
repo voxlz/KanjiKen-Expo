@@ -3,17 +3,14 @@ import { glyphDictLoader } from '../data/glyphDict'
 import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
-import {
-    StartFinishAnimationContext,
-    ResetFinishAnimationContext,
-} from './TaskAnimContextProvider'
-import { Skills } from '../types/progress'
+import { StartFinishAnimationContext } from './TaskAnimContextProvider'
+import { Learnable, Skills } from '../types/progress'
 import { GlyphDictType } from '../types/glyphDict'
 
 // Types
-export type GlyphInfo = GlyphDictType[0]
-type GetGlyphType = ((glyph?: string) => GlyphInfo) | undefined
-type SetChallengeType = ((glyph?: string) => void) | undefined
+export type GlyphInfo = GlyphDictType[Learnable]
+type GetGlyphType = ((glyph?: Learnable) => GlyphInfo) | undefined
+type SetChallengeType = ((glyph?: Learnable) => void) | undefined
 
 // Contexts
 export const SetChallengeContext = CC<SetChallengeType>() // Provide info about any glyph. Defaults to current challenge glyph
@@ -29,7 +26,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     // Context state
     const dropsDispatch = useContext(DropsDispatchContext)
     const startAnimation = useContext(StartFinishAnimationContext)
-    const resetAnimation = useContext(ResetFinishAnimationContext)
 
     const glyphDict = useMemo(() => glyphDictLoader(), [])
 
@@ -44,7 +40,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const [choices, setChoices] = useState<GlyphInfo[]>([])
 
     /** Provide an API to get glyphInfo */
-    const getGlyphInfo = (glyph?: string) => {
+    const getGlyphInfo = (glyph?: Learnable) => {
         if (!glyph) return challengeInfo
 
         // Return info
@@ -55,12 +51,12 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
     const getRandomGlyphInfo = () => {
         const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
-        const possibleGlyphs = Object.keys(dict)
+        const possibleGlyphs = Object.keys(dict) as Learnable[]
         const glyph = possibleGlyphs.at(randIdx())!
         return getGlyphInfo(glyph)
     }
 
-    const setChallenge = (glyph?: string) => {
+    const setChallenge = (glyph?: Learnable) => {
         let info: GlyphInfo | undefined
 
         // If undefined, select random

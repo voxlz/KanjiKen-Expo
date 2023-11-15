@@ -22,7 +22,7 @@ import Session from './src/views/Session'
 import HealthContextProvider from './src/contexts/HealthContextProvider'
 import Animated from 'react-native-reanimated'
 import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
-import ProgressContextProvider from './src/contexts/ProgressContextProvider'
+// import ProgressContextProvider from './src/contexts/ProgressContextProvider'
 import { GlyphDictType } from './src/types/glyphDict'
 
 // import "./src/input";
@@ -39,11 +39,11 @@ export default function App() {
         KleeOne_600SemiBold,
     })
 
-    const [glyphDict, setGlyphDict] = useState<GlyphDictType>({})
+    // const [glyphDict, setGlyphDict] = useState<GlyphDictType>({})
 
-    useEffect(() => {
-        setGlyphDict(gd())
-    }, [])
+    // useEffect(() => {
+    //     setGlyphDict(gd())
+    // }, [])
 
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
@@ -63,16 +63,9 @@ export default function App() {
                     <DragContextProvider>
                         <TaskAnimContextProvider>
                             <ChallengeContextProvider>
-                                <ProgressContextProvider>
-                                    <Session />
-                                </ProgressContextProvider>
-                                {/* <Animated.View className="justify-center self-stretch items-center flex-grow  w-full">
-              <Animated.View className="h-20 w-20">
-              <HelpBox meaning="hello">
-              <Outline text="a" />
-              </HelpBox>
-              </Animated.View>
-            </Animated.View> */}
+                                {/* <ProgressContextProvider> */}
+                                <Session />
+                                {/* </ProgressContextProvider> */}
                             </ChallengeContextProvider>
                         </TaskAnimContextProvider>
                     </DragContextProvider>
