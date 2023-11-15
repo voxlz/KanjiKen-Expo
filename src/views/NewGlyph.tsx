@@ -1,5 +1,7 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import Animated, {
+    Extrapolation,
+    interpolate,
     useAnimatedStyle,
     useDerivedValue,
     useSharedValue,
@@ -12,6 +14,8 @@ import {
 import { Text, View } from 'react-native'
 import Button from '../components/Button'
 import KanjiMeaning from '../displays/KanjiMeaning'
+import { ContinueAnimInstantResetContext as SkillAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
+import { useContext } from '../utils/react'
 
 type Props = {
     glyphWidth: number
@@ -25,22 +29,48 @@ type Props = {
 const NewGlyph: FC<Props> = ({ glyphWidth }) => {
     const getGlyph = useContext(GetGlyphContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
+    const skillAnim = useContext(SkillAnimInstantResetContext)
     const glyphInfo = getGlyph?.()
 
     const fadeAnim = useSharedValue(0)
     const textStyle = useAnimatedStyle(() => ({
         opacity: fadeAnim.value,
+        transform: [
+            { translateY: interpolate(fadeAnim.value, [0, 1], [50, 0]) },
+        ],
     }))
 
     useEffect(() => {
         fadeAnim.value = 0
     }, [glyphInfo])
 
+    const builderStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            skillAnim.value,
+            [-1, 0, 1],
+            [1, 1, 1],
+            Extrapolation.EXTEND
+        ),
+        transform: [
+            {
+                scale: interpolate(
+                    skillAnim.value,
+                    [-1, 0, 1],
+                    [1, 1.2, 1],
+                    Extrapolation.EXTEND
+                ),
+            },
+        ],
+    }))
+
     return (
         <View className="w-full h-full items-center justify-between">
             <View className="items-center">
                 <View className="w-2/4  h-auto aspect-square">
-                    <Animated.View className=" bg-forest-200 border-forest-900 border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	">
+                    <Animated.View
+                        style={builderStyle}
+                        className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
+                    >
                         <Text
                             style={{ fontFamily: 'KleeOne_600SemiBold' }}
                             className="text-8xl p-2 -mb-6"
@@ -50,7 +80,7 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                         </Text>
                     </Animated.View>
                 </View>
-                <View>
+                <View className="items-center">
                     <Animated.View style={textStyle}>
                         <KanjiMeaning
                             text={glyphInfo?.meanings.primary ?? ''}
@@ -59,15 +89,15 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                     <Animated.View
                         style={{
                             opacity: useDerivedValue(() => 1 - fadeAnim.value),
-                            position: 'absolute',
                         }}
+                        className={'-mt-14'}
                     >
                         <KanjiMeaning text={'New character!'} />
                     </Animated.View>
                 </View>
             </View>
             <Animated.View
-                className="-mb-14"
+                className="-mb-10"
                 style={{
                     opacity: useDerivedValue(() => 1 - fadeAnim.value),
                 }}
@@ -94,7 +124,7 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                                 fadeAnim.value = withTiming(1, {
                                     duration: 300,
                                 })
-                                setTimeout(() => onCorrectChoice?.(), 1500)
+                                setTimeout(() => onCorrectChoice?.(), 1000)
                             }}
                             styleName="normal"
                         />

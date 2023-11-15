@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, Text } from 'react-native'
 
 const themeOptions = {
     normal: {
@@ -14,14 +14,14 @@ const themeOptions = {
         press: 'bg-forest-300',
         border: 'border-forest-700',
         text: 'text-ui-text',
-        font: 'NotoSansJP_400Regular',
+        font: 'NotoSansJP_500Medium',
     },
     secondary: {
         bg: 'bg-transparent',
         press: 'bg-transparent',
         border: 'border-transparent',
         text: 'text-forest-900',
-        font: 'NotoSansJP_900Black',
+        font: 'NotoSansJP_700Bold',
     },
 } as const
 

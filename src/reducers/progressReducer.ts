@@ -1,9 +1,10 @@
 import { GlyphInfo } from '../contexts/ChallengeContextProvider'
+import { LevelsPerSkill as LvlsPerSkill } from '../types/progress'
 import {
     GlyphProgress,
-    Level,
+    Learnable,
+    Lvl,
     ProgressDict,
-    Skill,
     Skills,
 } from '../types/progress'
 
@@ -12,11 +13,14 @@ export const progressReducer = (
     action: {
         type: 'add' | 'review'
         glyphInfo: GlyphInfo
-        tries?: number
-        skill?: Skills
+
+        // Review
+        skill?: Skills // What skill was reviewed
+        tries?: number // How many misstakes did they do
+        confusables?: Learnable[] // What misstake did they do
     }
 ) => {
-    const { type, skill, tries, glyphInfo } = action
+    const { type, skill, tries, glyphInfo, confusables } = action
     switch (type) {
         case 'add': {
             if (progressDict[glyphInfo.glyph] === undefined && glyphInfo) {
@@ -26,16 +30,16 @@ export const progressReducer = (
                         ? 'recognize'
                         : 'compose'
 
+                const defaultSkill = {
+                    level: Lvl.UNSEEN,
+                    reviewed_at: [],
+                }
                 const glyphProgress: GlyphProgress = {
                     skills: {
-                        compose:
-                            skill === 'compose'
-                                ? { level: Level.UNSEEN, reviewed_at: [] }
-                                : undefined,
+                        intro: defaultSkill,
+                        compose: skill === 'compose' ? defaultSkill : undefined,
                         recognize:
-                            skill === 'recognize'
-                                ? { level: Level.UNSEEN, reviewed_at: [] }
-                                : undefined,
+                            skill === 'recognize' ? defaultSkill : undefined,
                     },
                     created_at: new Date(),
                 }
@@ -45,23 +49,34 @@ export const progressReducer = (
                     [glyphInfo.glyph]: glyphProgress,
                 }
             }
-
-            console.log(progressDict[glyphInfo.glyph], glyphInfo)
-
             console.warn(
-                `Add not possible, due to ${glyphInfo.glyph} already present.`
+                `Add not possible.
+                ${glyphInfo.glyph} already present.`
             )
             return progressDict
         }
         case 'review': {
-            if (skill && tries) {
+            const prevProg = progressDict[glyphInfo.glyph]
+
+            if (skill && tries && confusables && prevProg) {
                 const glyphSkill =
                     progressDict[glyphInfo.glyph]['skills'][skill]
+
                 if (glyphSkill) {
+                    // Calculate new level
+                    const lvls = LvlsPerSkill[skill]
+                    const currLvlIdx = lvls.findIndex(
+                        (lvl) => lvl === prevProg.skills[skill]?.level
+                    )
+                    const nextLvl =
+                        currLvlIdx >= lvls.length - 1
+                            ? Lvl.MAX
+                            : lvls[currLvlIdx + 1]
+
                     const updatedSkill = {
                         [skill]: {
-                            level: glyphSkill['level'],
-                        } as Skill,
+                            level: nextLvl,
+                        },
                     }
 
                     return {
@@ -76,7 +91,8 @@ export const progressReducer = (
                 }
             }
             console.warn(
-                `Could not update progress of ${glyphInfo.glyph}. No skill (${skill}) or tries (${tries}) defined.`
+                `Could not update progress of ${glyphInfo.glyph}. 
+                No skill (${skill}), tries (${tries}, or confusable (${confusables}) defined.`
             )
             return progressDict
         }

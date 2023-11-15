@@ -97,9 +97,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         } while (findRandom > 0)
         setChoices(shuffle(altInfos))
 
-        // reset animation
-        if (challengeInfo) resetAnimation()
-
         // Update state
         setGlyphInfo(info)
         setAnswerOrder(answers)

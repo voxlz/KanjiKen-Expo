@@ -18,8 +18,9 @@ import {
     ProgressContext,
     ProgressDispatchContext,
 } from '../contexts/ProgressContextProvider'
-import { Level, Skills } from '../types/progress'
+import { Lvl, Skills } from '../types/progress'
 import NewGlyph from './NewGlyph'
+import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
@@ -36,6 +37,7 @@ const Session: FC<{}> = ({}) => {
     const getGlyph = useContext(GetGlyphContext)
     const progress = useContext(ProgressContext)
     const progressDispatch = useContext(ProgressDispatchContext)
+    const resetSkillAnim = useContext(ResetSkillAnimContext)
 
     // State
     const [progressIdx, setProgressIdx] = useState(0)
@@ -58,7 +60,7 @@ const Session: FC<{}> = ({}) => {
         } else {
             let exercise: Skills | 'new'
             exercise = prog.skills.compose ? 'compose' : 'recognize'
-            if (prog.skills[exercise]!.level == Level.UNSEEN) exercise = 'new'
+            if (prog.skills[exercise]!.level == Lvl.UNSEEN) exercise = 'new'
 
             switch (exercise) {
                 case 'compose':
@@ -108,6 +110,7 @@ const Session: FC<{}> = ({}) => {
                     const newIdx = progressIdx + 1
                     setChallenge?.(learnOrder[newIdx])
                     setProgressIdx(newIdx)
+                    resetSkillAnim()
                     return undefined
                 }}
                 glyphWidth={glyphWidth}
