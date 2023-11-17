@@ -16,10 +16,7 @@ import Button from '../components/Button'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import { ContinueAnimInstantResetContext as SkillAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'
-import {
-    ExpectedChoiceContext,
-    SeenCountContext,
-} from '../contexts/ChallengeContextProvider'
+import { SeenCountContext } from '../contexts/ChallengeContextProvider'
 
 type Props = {
     glyphWidth: number
@@ -38,18 +35,13 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
     const glyphInfo = getGlyph?.()
 
     const fadeAnim = useSharedValue(0)
+
     const textStyle = useAnimatedStyle(() => ({
         opacity: fadeAnim.value,
         transform: [
             { translateY: interpolate(fadeAnim.value, [0, 1], [50, 0]) },
         ],
     }))
-
-    console.log(fadeAnim.value)
-
-    useEffect(() => {
-        fadeAnim.value = 0
-    }, [seenCount])
 
     const builderStyle = useAnimatedStyle(() => ({
         opacity: interpolate(
@@ -68,6 +60,12 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                 ),
             },
         ],
+    }))
+
+    const fadeAnimInv = useDerivedValue(() => 1 - fadeAnim.value, [fadeAnim])
+
+    const btnsStyle = useAnimatedStyle(() => ({
+        opacity: fadeAnimInv.value,
     }))
 
     return (
@@ -93,22 +91,12 @@ const NewGlyph: FC<Props> = ({ glyphWidth }) => {
                             text={glyphInfo?.meanings.primary ?? ''}
                         />
                     </Animated.View>
-                    <Animated.View
-                        style={{
-                            opacity: useDerivedValue(() => 1 - fadeAnim.value),
-                        }}
-                        className={'-mt-14'}
-                    >
+                    <Animated.View style={btnsStyle} className={'-mt-14'}>
                         <KanjiMeaning text={'New character!'} />
                     </Animated.View>
                 </View>
             </View>
-            <Animated.View
-                className="-mb-10"
-                style={{
-                    opacity: useDerivedValue(() => 1 - fadeAnim.value),
-                }}
-            >
+            <Animated.View className="-mb-10" style={btnsStyle}>
                 <View
                     style={{ height: 0.85714285714 * glyphWidth }}
                     className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0 mb-4"
