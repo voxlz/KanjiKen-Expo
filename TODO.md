@@ -3,8 +3,10 @@
 ## Known issues
 
 -   [x] #1 -Double pressing continue will advance 2 exercises.
--   [ ] #2 - Broken intro for composition kanji (2+ parts)
+-   [x] #2 - Broken intro for composition kanji (2+ parts)
 -   [ ] #3 - Space out intro and first exercise
+-   [x] #4 - Intro btns clickable when opacity 0.
+-   [] #5 - Possible to see next answer for a split second after continue.
 
 ## Features for next release
 

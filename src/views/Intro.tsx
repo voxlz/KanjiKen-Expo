@@ -1,10 +1,16 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Animated, {
+    BaseAnimationBuilder,
+    EntryAnimationsValues,
+    EntryExitAnimationFunction,
     Extrapolation,
+    ZoomIn,
+    ZoomOut,
     interpolate,
     useAnimatedStyle,
     useDerivedValue,
     useSharedValue,
+    withDelay,
     withTiming,
 } from 'react-native-reanimated'
 import {
@@ -31,11 +37,12 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
     const getGlyph = useContext(GetGlyphContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const skillAnim = useContext(SkillAnimInstantResetContext)
-    const seenCount = useContext(SeenCountContext)
     const glyphInfo = getGlyph?.()
 
+    const [showMeaning, setShowMeaning] = useState(false)
     const fadeAnim = useSharedValue(0)
 
+    // Styles for animation
     const textStyle = useAnimatedStyle(() => ({
         opacity: fadeAnim.value,
         transform: [
@@ -62,9 +69,9 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
         ],
     }))
 
+    // Btn fade out / Text fade in
     const fadeAnimInv = useDerivedValue(() => 1 - fadeAnim.value, [fadeAnim])
-
-    const btnsStyle = useAnimatedStyle(() => ({
+    const btnsAnimStyle = useAnimatedStyle(() => ({
         opacity: fadeAnimInv.value,
     }))
 
@@ -73,6 +80,12 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
             <View className="items-center">
                 <View className="w-2/4  h-auto aspect-square">
                     <Animated.View
+                        // entering={ZoomIn.springify()
+                        //     .stiffness(250)
+                        //     .damping(21)
+                        //     .restDisplacementThreshold(0.01)
+                        //     .restSpeedThreshold(2)}
+                        // exiting={ZoomOut}
                         style={builderStyle}
                         className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                     >
@@ -91,12 +104,29 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                             text={glyphInfo?.meanings.primary ?? ''}
                         />
                     </Animated.View>
-                    <Animated.View style={btnsStyle} className={'-mt-14'}>
+                    <Animated.View
+                        style={[
+                            btnsAnimStyle,
+                            {
+                                pointerEvents: showMeaning ? 'none' : 'auto',
+                            },
+                        ]}
+                        className={'-mt-14'}
+                    >
                         <KanjiMeaning text={'New character!'} />
                     </Animated.View>
                 </View>
             </View>
-            <Animated.View className="-mb-10" style={btnsStyle}>
+            <Animated.View
+                id="btns"
+                className="-mb-10"
+                style={[
+                    btnsAnimStyle,
+                    {
+                        pointerEvents: showMeaning ? 'none' : 'auto',
+                    },
+                ]}
+            >
                 <View
                     style={{ height: 0.85714285714 * glyphWidth }}
                     className="flex-row max-w-full flex-shrink flex-wrap h-auto px-9 flex-grow-0 mb-4"
@@ -116,12 +146,15 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                         <Button
                             text="Reveal Meaning"
                             onPress={() => {
-                                fadeAnim.value = withTiming(1, {
-                                    duration: 300,
-                                })
-                                setTimeout(() => {
-                                    onCorrectChoice?.()
-                                }, 1000)
+                                if (!showMeaning) {
+                                    setShowMeaning(true)
+                                    fadeAnim.value = withTiming(1, {
+                                        duration: 300,
+                                    })
+                                    setTimeout(() => {
+                                        onCorrectChoice?.()
+                                    }, 1000)
+                                }
                             }}
                             styleName="normal"
                         />
