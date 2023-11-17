@@ -1,5 +1,5 @@
 import {
-    Excercise,
+    Exercise,
     Learnable,
     LvL,
     lvlsPerSkill,
@@ -11,7 +11,7 @@ import { clamp } from './utils/js'
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
 export class ScheduleHandler {
-    schedule: Excercise[] = []
+    schedule: Exercise[] = []
     progress: Partial<{
         [glyph in Learnable]: { skills: Partial<{ [skill in Skills]: LvL }> }
     }> = {}
@@ -23,7 +23,7 @@ export class ScheduleHandler {
     // Factory for initializing
     constructor(glyphs: GlyphInfo[]) {
         glyphs
-            .sort((a, b) => a.order.book_rank - b.order.book_rank)
+            // .sort((a, b) => a.order.book_rank - b.order.book_rank)
             .forEach((glyph) => {
                 const isCompoundGlyph = !!glyph.comps.position
                 const generalInfo = {
@@ -86,8 +86,9 @@ export class ScheduleHandler {
         }
     }
 
+    /** Get the next valid exercise the user should see. */
     getNext() {
-        // Find next valid element
+        // Find next valid element (With timeout for crash safety)
         let i = 10000
         while (i > 0) {
             i -= 1

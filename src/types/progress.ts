@@ -7,14 +7,14 @@ export type ProgressDict = {
 
 export interface Progress {
     // Track what characters you have confused with this one
-    skills: Partial<{ [name in Skills]: Excercise }>
+    skills: Partial<{ [name in Skills]: Exercise }>
     created_at: Date
     confusables?: {}
 }
 
 export interface GlyphProgress extends Progress {
     skills: {
-        [skill in Skills]?: Excercise
+        [skill in Skills]?: Exercise
     }
 }
 
@@ -61,7 +61,7 @@ export const requirePerSkill: {
  * Each skill is connected to a specific exercise.
  * Each skill can be leveled up and should be tested individually.
  */
-export type Excercise = {
+export type Exercise = {
     glyph: Learnable
     level: LvL
     skill: Skills

@@ -10,7 +10,10 @@ import {
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import Compose from './Compose'
 import { learnOrder } from '../data/learnOrder'
-import { GetGlyphContext } from '../contexts/ChallengeContextProvider'
+import {
+    GetGlyphContext,
+    ExpectedChoiceContext,
+} from '../contexts/ChallengeContextProvider'
 import { useContext } from '../utils/react'
 import Recognize from './Recognize'
 import { ButtonStyles } from '../components/Button'
@@ -18,8 +21,8 @@ import { ButtonStyles } from '../components/Button'
 //     ProgressContext,
 //     ProgressDispatchContext,
 // } from '../contexts/ProgressContextProvider'
-import { Excercise, LvL, Skills } from '../types/progress'
-import NewGlyph from './NewGlyph'
+import { Exercise, LvL, Skills } from '../types/progress'
+import Intro from './Intro'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { ScheduleHandler } from '../ScheduleHandler'
 
@@ -36,6 +39,7 @@ const Session: FC<{}> = ({}) => {
     const setChallenge = useContext(SetChallengeContext)
     const seenCount = useContext(SeenCountContext)
     const getGlyph = useContext(GetGlyphContext)
+    const expectedChoice = useContext(ExpectedChoiceContext)
     // const progress = useContext(ProgressContext)
     // const progressDispatch = useContext(ProgressDispatchContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
@@ -48,24 +52,14 @@ const Session: FC<{}> = ({}) => {
     // State
     const [skillTitle, setSkillTitle] = useState('No title')
     const [continueBtnText, setContinueBtnText] = useState('Continue')
-    const [exercise, setExercise] = useState<Excercise>(scheduler.getNext())
+    const [exercise, setExercise] = useState<Exercise>(scheduler.getNext())
     const [continueBtnStyle, setContinueBtnStyle] =
         useState<ButtonStyles>('forest')
 
     // Set next challenge
     useEffect(() => {
         setExercise(exercise)
-        setChallenge?.(exercise.glyph)
-        // const prog = progress[nextGlyph]
-        // // Ensure there is a progress entry.
-        // if (prog === undefined) {
-        //     console.log(nextGlyph, prog, progress)
-
-        //     progressDispatch({ type: 'add', glyphInfo: getGlyph(nextGlyph) })
-        // } else {
-        //     let exercise: Skills | 'new'
-        //     exercise = prog.skills.compose ? 'compose' : 'recognize'
-        //     if (prog.skills[exercise]!.level == LvL.UNSEEN) exercise = 'new'
+        setChallenge?.(exercise)
 
         switch (exercise.skill) {
             case 'compose':
@@ -94,7 +88,7 @@ const Session: FC<{}> = ({}) => {
     const onNextExercise = () => {
         scheduler.onReview(1, exercise.level)
         setExercise(scheduler.getNext())
-        setChallenge?.(scheduler.getNext().glyph)
+        setChallenge?.(scheduler.getNext())
         resetSkillAnim()
 
         // setProgressIdx(newIdx)
@@ -111,7 +105,7 @@ const Session: FC<{}> = ({}) => {
                 ) : exercise?.skill === 'recognize' ? (
                     <Recognize key={seenCount} glyphWidth={glyphWidth} />
                 ) : (
-                    <NewGlyph
+                    <Intro
                         key={seenCount}
                         glyphWidth={glyphWidth}
                         onContinue={onNextExercise}
@@ -119,7 +113,9 @@ const Session: FC<{}> = ({}) => {
                 )}
             </View>
             <BottomBar
-                onContinue={onNextExercise}
+                onContinue={() => {
+                    if (expectedChoice === 'FINISH') return onNextExercise()
+                }}
                 glyphWidth={glyphWidth}
                 continueBtnText={continueBtnText}
                 continueBtnStyle={continueBtnStyle}

@@ -4,13 +4,13 @@ import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
 import { StartFinishAnimationContext } from './TaskAnimContextProvider'
-import { Learnable, Skills } from '../types/progress'
+import { Exercise, Learnable, Skills } from '../types/progress'
 import { GlyphDictType } from '../types/glyphDict'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
 type GetGlyphType = ((glyph?: Learnable) => GlyphInfo) | undefined
-type SetChallengeType = ((glyph?: Learnable) => void) | undefined
+type SetChallengeType = ((exercise: Exercise) => void) | undefined
 
 // Contexts
 export const SetChallengeContext = CC<SetChallengeType>() // Provide info about any glyph. Defaults to current challenge glyph
@@ -56,36 +56,60 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         return getGlyphInfo(glyph)
     }
 
-    const setChallenge = (glyph?: Learnable) => {
-        let info: GlyphInfo | undefined
+    const setChallenge = (excercise: Exercise) => {
+        let info = getGlyphInfo(excercise.glyph)
 
         // If undefined, select random
-        if (!glyph) {
-            do {
-                info = getRandomGlyphInfo()
-            } while (!info?.comps.position)
-        } else {
-            info = getGlyphInfo(glyph)
-        }
+        // if (!glyph) {
+        //     do {
+        //         info = getRandomGlyphInfo()
+        //     } while (!info?.comps.position)
+        // } else {
+        //     info = getGlyphInfo(glyph)
+        // }
 
         // Something strange happened
-        if (!info) {
-            console.warn(
-                'No glyph set. Probably glyph was set to something wierd.'
-            )
-            return
+        // if (!info) {
+        //     console.warn(
+        //         'No glyph set. Probably glyph was set to something wierd.'
+        //     )
+        //     return
+        // }
+
+        // Set the answers
+        let answers: string[]
+        switch (excercise.skill) {
+            case 'intro':
+                answers = ['just press the button']
+                break
+            case 'compose':
+                answers = info.comps.order
+                break
+            case 'recognize':
+                answers = [info.glyph]
+                break
+            default:
+                answers = []
+                break
         }
 
-        // Figure out the skill
-        const skill: Skills = info.comps.position ? 'compose' : 'recognize'
-        const answers: string[] =
-            skill === 'compose' ? info.comps.order : [info.glyph ?? 'errrr']
-
         // Set alts
-        let altInfos =
-            skill === 'compose'
-                ? info.comps.order.map((alt) => getGlyphInfo(alt))
-                : [info]
+        let altInfos: GlyphInfo[]
+        switch (excercise.skill) {
+            case 'intro':
+                altInfos = []
+                break
+            case 'compose':
+                altInfos = info.comps.order.map((alt) => getGlyphInfo(alt))
+                break
+            case 'recognize':
+                altInfos = [info]
+                break
+            default:
+                altInfos = []
+                break
+        }
+
         let findRandom = 8 - altInfos.length
         do {
             altInfos = altInfos.concat(getRandomGlyphInfo())
