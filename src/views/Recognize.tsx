@@ -59,6 +59,15 @@ const Recognize: FC<Props> = ({ glyphWidth }) => {
         ],
     }))
 
+    const textStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            animationInstantReset.value,
+            [-1, 0, 1],
+            [1, 1, 0],
+            Extrapolation.EXTEND
+        ),
+    }))
+
     const kanjiStyle = useAnimatedStyle(() => ({
         opacity: interpolate(
             animation.value,
@@ -87,13 +96,16 @@ const Recognize: FC<Props> = ({ glyphWidth }) => {
                     style={builderStyle}
                     className=" bg-ui-very_light border-ui-disabled border-4 absolute w-full h-full flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                 >
-                    <Text
-                        style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                    <Animated.Text
+                        style={[
+                            { fontFamily: 'KleeOne_600SemiBold' },
+                            textStyle,
+                        ]}
                         className="text-8xl p-2 -mb-6"
                         adjustsFontSizeToFit
                     >
                         {'?'}
-                    </Text>
+                    </Animated.Text>
                 </Animated.View>
                 <Animated.View
                     style={kanjiStyle}

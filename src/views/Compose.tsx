@@ -73,6 +73,15 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
         ],
     }))
 
+    const textStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            animationInstantReset.value,
+            [-1, 0, 1],
+            [0, 0, 1],
+            Extrapolation.EXTEND
+        ),
+    }))
+
     const glyphInfo = getGlyph?.()
 
     return (
@@ -91,13 +100,16 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
                     style={kanjiStyle}
                     className=" bg-forest-200 border-forest-900 border-4 absolute w-full h-full flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                 >
-                    <Text
-                        style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                    <Animated.Text
+                        style={[
+                            { fontFamily: 'KleeOne_600SemiBold' },
+                            textStyle,
+                        ]}
                         className="text-8xl p-2 -mb-6"
                         adjustsFontSizeToFit
                     >
                         {glyphInfo?.glyph}
-                    </Text>
+                    </Animated.Text>
                 </Animated.View>
             </View>
             <KanjiMeaning text={glyphInfo?.meanings.primary ?? ''} />

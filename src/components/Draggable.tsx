@@ -32,6 +32,7 @@ import {
     ContinueAnimContext,
     ContinueAnimInstantResetContext,
 } from '../contexts/TaskAnimContextProvider'
+import { Learnable } from '../types/progress'
 
 const { UIManager } = NativeModules
 
@@ -44,7 +45,7 @@ if (Platform.OS === 'android') {
 type Props = {
     anchor?: MeasureType // Default position / size
     children?: React.ReactNode
-    glyph?: string
+    glyph?: Learnable
     isCorrectAnswer?: boolean
     width: number
     setIsBeingDragged: (bool: boolean) => void
@@ -81,12 +82,6 @@ const Draggable: FC<Props> = ({
     let transX = useSharedValue(0)
     let transY = useSharedValue(0)
     let scale = useSharedValue(1)
-
-    // console.log(
-    //   "rerender dragable",
-    //   glyph,
-    //   drops.map((drop) => drop.glyph)
-    // );
 
     // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
     const [currSize, setCurrentSize] = useState<Size>() // Set current size of the draggable
