@@ -23,10 +23,10 @@ import {
     ContinueAnimInstantResetContext,
 } from '../contexts/TaskAnimContextProvider'
 
-type Props = { glyphWidth: number }
+type Props = { glyphWidth: number; showPositionHints: boolean }
 
 /** Drag components to build a glyph */
-const Compose: FC<Props> = ({ glyphWidth }) => {
+const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
     const getGlyph = useContext(GetGlyphContext)
     const seenCount = useContext(SeenCountContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
@@ -94,6 +94,7 @@ const Compose: FC<Props> = ({ glyphWidth }) => {
                     <KanjiComps
                         pos={glyphInfo?.comps.position}
                         key={seenCount}
+                        showPositionHints={showPositionHints}
                     />
                 </Animated.View>
                 <Animated.View

@@ -80,12 +80,12 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
             <View className="items-center">
                 <View className="w-2/4  h-auto aspect-square">
                     <Animated.View
-                        entering={ZoomIn.springify()
-                            .stiffness(250)
-                            .damping(21)
-                            .restDisplacementThreshold(0.01)
-                            .restSpeedThreshold(2)}
-                        exiting={ZoomOut}
+                        // entering={ZoomIn.springify()
+                        //     .stiffness(250)
+                        //     .damping(21)
+                        //     .restDisplacementThreshold(0.01)
+                        //     .restSpeedThreshold(2)}
+                        // exiting={ZoomOut}
                         style={builderStyle}
                         className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                     >

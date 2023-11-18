@@ -86,7 +86,7 @@ const Session: FC<{}> = ({}) => {
     }, [])
 
     const onNextExercise = () => {
-        scheduler.onReview(1, exercise.level)
+        scheduler.onReview(1, exercise.level, getGlyph(exercise.glyph))
         setExercise(scheduler.getNext())
         setChallenge?.(scheduler.getNext())
         resetSkillAnim()
@@ -101,7 +101,11 @@ const Session: FC<{}> = ({}) => {
             <StatusBar seenCount={seenCount} text={skillTitle} />
             <View className="flex-grow flex-shrink items-center">
                 {exercise?.skill === 'compose' ? (
-                    <Compose key={seenCount} glyphWidth={glyphWidth} />
+                    <Compose
+                        key={seenCount}
+                        glyphWidth={glyphWidth}
+                        showPositionHints={exercise.level === 0}
+                    />
                 ) : exercise?.skill === 'recognize' ? (
                     <Recognize key={seenCount} glyphWidth={glyphWidth} />
                 ) : (

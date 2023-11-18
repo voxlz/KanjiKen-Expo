@@ -16,37 +16,24 @@ export class ScheduleHandler {
         [glyph in Learnable]: { skills: Partial<{ [skill in Skills]: LvL }> }
     }> = {}
 
-    // load(schedule: Excercise[]) {
-    //     this.schedule = schedule
-    // }
+    generalInfo = (glyph: Learnable) => ({
+        glyph: glyph,
+        level: 0,
+        reviewed_at: [],
+    })
 
     // Factory for initializing
     constructor(glyphs: GlyphInfo[]) {
-        glyphs
-            // .sort((a, b) => a.order.book_rank - b.order.book_rank)
-            .forEach((glyph) => {
-                const isCompoundGlyph = !!glyph.comps.position
-                const generalInfo = {
-                    glyph: glyph.glyph,
-                    level: 0,
-                    reviewed_at: [],
-                }
-
-                this.schedule.push({
-                    ...generalInfo,
-                    skill: 'intro',
-                })
-                this.schedule.push({
-                    ...generalInfo,
-                    skill: isCompoundGlyph ? 'compose' : 'recognize',
-                })
+        glyphs.forEach((glyph) => {
+            this.schedule.push({
+                ...this.generalInfo(glyph.glyph),
+                skill: 'intro',
             })
-
-        return
+        })
     }
 
     // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
-    onReview(tries: number, currLvl: number) {
+    onReview(tries: number, currLvl: number, glyphInfo: GlyphInfo) {
         // Remove reviewed element
         const excercise = this.schedule.shift()
 
@@ -63,13 +50,8 @@ export class ScheduleHandler {
                 max: maxLvl,
             })
 
-            // * Update current exercise
+            // Update exercise
             excercise.level = newLevel
-            // skill.reviewed_at.unshift({
-            //     tries: 1,
-            //     confused_with: [], /
-            //     date: new Date(),
-            // }) // TODO
 
             // * Update progress
             if (!this.progress[excercise.glyph]) {
@@ -80,9 +62,19 @@ export class ScheduleHandler {
 
             // * Insert first element at index X, remove if max-level
             if (newLevel !== maxLvl) {
-                const newIndex = Math.pow(2, newLevel + 1)
+                const newIndex = Math.pow(2, newLevel + 1) - 1
                 this.schedule.splice(newIndex, 0, excercise)
+            } else if (excercise.skill === 'intro') {
+                const newIndex = 3
+                this.schedule.splice(newIndex, 0, {
+                    ...this.generalInfo(excercise.glyph),
+                    skill: glyphInfo.comps.position ? 'compose' : 'recognize',
+                })
             }
+
+            console.log('newLevel', newLevel)
+            console.log('updated progress', this.progress[excercise.glyph])
+            console.log('schedule', this.schedule.slice(0, 10))
         }
     }
 
