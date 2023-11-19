@@ -8,7 +8,7 @@ type Props = {
 
 /** Display challenge title and challenge number */
 const StatusBar: FC<Props> = ({ seenCount, text }) => (
-    <View className="flex-row justify-between self-stretch px-9 mt-2 flex-shrink flex-grow basis-10 items-start mb-8">
+    <View className="flex-row justify-between self-stretch px-9 mt-2 basis-10 items-start mb-8">
         <Text
             style={{ fontFamily: 'NotoSansJP_700Bold' }}
             className="text-xl capitalize  flex-shrink flex-grow  "

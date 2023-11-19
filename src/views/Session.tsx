@@ -31,7 +31,7 @@ const Session: FC<{}> = ({}) => {
     // How wide is a glyph part of a 1x4 row with margins and gap considered?
     // Calc the scale, use this to scale UI
     const { width: windowWidth } = useWindowDimensions()
-    const margin = 36 * 2
+    const margin = 32 * 2
     const gap = 3 * 12
     const glyphWidth = (windowWidth - margin - gap) / 4
     const [isLoading, setIsLoading] = useState(true)
@@ -115,7 +115,7 @@ const Session: FC<{}> = ({}) => {
         )
 
     return (
-        <Animated.View className="items-center pt-20 w-full h-full flex-grow ">
+        <Animated.View className="items-center pt-16  w-full h-full flex-grow ">
             <HealthBar glyphWidth={glyphWidth} />
             <StatusBar seenCount={seenCount} text={skillTitle} />
             <View className="flex-grow flex-shrink items-center">

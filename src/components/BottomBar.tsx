@@ -41,13 +41,10 @@ const BottomBar: FC<Props> = ({
 
     return (
         <Animated.View
-            style={[{ aspectRatio: '20 / 7' }, animatedStyles]}
-            className="  w-full h-auto py-6  mt-4"
+            style={[animatedStyles]}
+            className="w-full py-6  mb-4 justify-end"
         >
-            <View
-                style={{ height: 0.85714285714 * altWidth }}
-                className="px-8 "
-            >
+            <View style={{ height: 0.85 * altWidth }} className="px-8 ">
                 <Button
                     text={continueBtnText}
                     onPress={onContinue}

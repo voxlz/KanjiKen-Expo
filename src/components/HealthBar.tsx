@@ -59,7 +59,7 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
     })
 
     return (
-        <View style={{ gap: 12 }} className="flex-row px-9 ">
+        <View style={{ gap: 12 }} className="flex-row px-8 ">
             <SVGImg
                 width={height * 1.4}
                 height={height * 1.4}

@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Pressable, Text } from 'react-native'
+import { font } from '../utils/fonts'
 
 const themeOptions = {
     normal: {
@@ -7,14 +8,24 @@ const themeOptions = {
         press: ' bg-ui-light ',
         border: 'border-ui-disabled',
         text: 'text-ui-text',
+        font: 'NotoSansJP_700Bold',
+        textTransform: 'none',
+    },
+    choices: {
+        bg: ' bg-ui-very_light ',
+        press: ' bg-ui-light ',
+        border: 'border-ui-disabled',
+        text: 'text-ui-text',
         font: 'NotoSansJP_400Regular',
+        textTransform: 'none',
     },
     forest: {
         bg: 'bg-forest-200',
         press: 'bg-forest-300',
         border: 'border-forest-700',
-        text: 'text-ui-text',
-        font: 'NotoSansJP_500Medium',
+        text: 'text-forest-700',
+        font: 'NotoSansJP_900Black',
+        textTransform: 'uppercase',
     },
     secondary: {
         bg: 'bg-transparent',
@@ -22,6 +33,7 @@ const themeOptions = {
         border: 'border-transparent',
         text: 'text-forest-900',
         font: 'NotoSansJP_700Bold',
+        textTransform: 'none',
     },
 } as const
 
@@ -32,6 +44,7 @@ const themePress = {
         border: 'border-error-900',
         text: 'text-ui-text',
         font: 'NotoSansJP_400Regular',
+        textTransform: 'none',
     },
     correct: {
         bg: 'bg-forest-200',
@@ -39,6 +52,7 @@ const themePress = {
         border: 'border-forest-700',
         text: 'text-ui-text',
         font: 'NotoSansJP_400Regular',
+        textTransform: 'none',
     },
 } as const
 
@@ -90,10 +104,11 @@ const Button: FC<Props> = ({
         >
             <Text
                 style={{
-                    fontFamily: theme.font,
+                    fontFamily: font(text, theme.font),
+                    textTransform: 'theme.textTransform',
                 }}
-                className={`text-center ${
-                    lang === 'eng' ? 'text-xl ' : 'text-4xl -mb-2'
+                className={`text-center  ${
+                    lang === 'eng' ? 'text-lg text' : 'text-4xl -mb-2'
                 } -mt-1 ${theme.text} translate-x-1/2 `}
             >
                 {text}

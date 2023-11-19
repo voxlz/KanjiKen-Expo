@@ -35,6 +35,7 @@ export default function App() {
         NotoSansJP_900Black,
         KleeOne_400Regular,
         KleeOne_600SemiBold,
+        'KanjiKen-Regular': require('./assets/fonts/KanjiKen-Regular.ttf'),
     })
 
     // useEffect(() => {
