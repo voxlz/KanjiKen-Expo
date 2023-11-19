@@ -7,6 +7,7 @@
 -   [ ] #3 - Space out intro and first exercise
 -   [x] #4 - Intro btns clickable when opacity 0.
 -   [] #5 - Possible to see next answer for a split second after continue.
+-   [] #6 - Duplicate characters are both fade out in composition, even if only one was used.
 
 ## Features for next release
 

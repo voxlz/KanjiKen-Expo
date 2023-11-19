@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useRef } from 'react'
-import { View, useWindowDimensions } from 'react-native'
+import { View, useWindowDimensions, Text } from 'react-native'
 import HealthBar from '../components/HealthBar'
 import StatusBar from '../components/StatusBar'
 import BottomBar from '../components/BottomBar'
@@ -34,6 +34,7 @@ const Session: FC<{}> = ({}) => {
     const margin = 36 * 2
     const gap = 3 * 12
     const glyphWidth = (windowWidth - margin - gap) / 4
+    const [isLoading, setIsLoading] = useState(true)
 
     // Context
     const setChallenge = useContext(SetChallengeContext)
@@ -45,23 +46,41 @@ const Session: FC<{}> = ({}) => {
     const resetSkillAnim = useContext(ResetSkillAnimContext)
 
     // REF
-    const scheduler = useRef(
-        new ScheduleHandler(learnOrder.map((glyph) => getGlyph(glyph)))
-    ).current
+    const scheduler = useRef(new ScheduleHandler()).current
+
+    useEffect(() => {
+        scheduler.loadFromDisk
+            .then(() => {
+                console.log('load from disk successful')
+            })
+            .catch(() => {
+                const learnInfoArr = learnOrder.map((glyph) => getGlyph(glyph))
+                scheduler.init(learnInfoArr)
+            })
+            .finally(() => {
+                nextExercise()
+                setIsLoading(false)
+            })
+    }, [])
 
     // State
     const [skillTitle, setSkillTitle] = useState('No title')
     const [continueBtnText, setContinueBtnText] = useState('Continue')
-    const [exercise, setExercise] = useState<Exercise>(scheduler.getNext())
+    const [exercise, setExercise] = useState<Exercise>()
     const [continueBtnStyle, setContinueBtnStyle] =
         useState<ButtonStyles>('forest')
 
-    // Set next challenge
-    useEffect(() => {
-        setExercise(exercise)
-        setChallenge?.(exercise)
+    const nextExercise = () => {
+        // If we are currently on an exercise, mark as reviewd.
+        if (exercise) {
+            resetSkillAnim()
+            scheduler.onReview(1, exercise.level, getGlyph(exercise.glyph))
+        }
+        const next = scheduler.getNext()
+        setExercise(next)
+        setChallenge?.(scheduler.getNext())
 
-        switch (exercise.skill) {
+        switch (next.skill) {
             case 'compose':
                 setSkillTitle('Compose')
                 setContinueBtnText('Continue')
@@ -83,17 +102,17 @@ const Session: FC<{}> = ({}) => {
                 setContinueBtnStyle('forest')
                 break
         }
-    }, [])
-
-    const onNextExercise = () => {
-        scheduler.onReview(1, exercise.level, getGlyph(exercise.glyph))
-        setExercise(scheduler.getNext())
-        setChallenge?.(scheduler.getNext())
-        resetSkillAnim()
 
         // setProgressIdx(newIdx)
         return undefined
     }
+
+    if (isLoading || !exercise)
+        return (
+            <View className="flex-grow justify-center items-center">
+                <Text>Loading</Text>
+            </View>
+        )
 
     return (
         <Animated.View className="items-center pt-20 w-full h-full flex-grow ">
@@ -112,13 +131,13 @@ const Session: FC<{}> = ({}) => {
                     <Intro
                         key={seenCount}
                         glyphWidth={glyphWidth}
-                        onContinue={onNextExercise}
+                        onContinue={nextExercise}
                     />
                 )}
             </View>
             <BottomBar
                 onContinue={() => {
-                    if (expectedChoice === 'FINISH') return onNextExercise()
+                    if (expectedChoice === 'FINISH') return nextExercise()
                 }}
                 glyphWidth={glyphWidth}
                 continueBtnText={continueBtnText}

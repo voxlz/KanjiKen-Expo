@@ -8,6 +8,7 @@ import {
 } from './types/progress'
 import { GlyphInfo } from './contexts/ChallengeContextProvider'
 import { clamp } from './utils/js'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
 export class ScheduleHandler {
@@ -22,8 +23,36 @@ export class ScheduleHandler {
         reviewed_at: [],
     })
 
-    // Factory for initializing
-    constructor(glyphs: GlyphInfo[]) {
+    loadFromDisk = new Promise<boolean>((resolve, reject) => {
+        try {
+            AsyncStorage.getItem('schedule')
+                .then((schedule) => {
+                    if (schedule) this.schedule = JSON.parse(schedule)
+                    else reject()
+                    AsyncStorage.getItem('progress').then((progress) => {
+                        if (progress) this.progress = JSON.parse(progress)
+                        else reject()
+                    })
+                })
+                .then(() => resolve(true))
+                .catch(() => reject())
+        } catch (error) {
+            console.warn('Failed to load schedule from disk')
+            reject()
+        }
+    })
+
+    saveToDisk = () => {
+        try {
+            AsyncStorage.setItem('schedule', JSON.stringify(this.schedule))
+            AsyncStorage.setItem('progress', JSON.stringify(this.progress))
+        } catch (error) {
+            console.warn('Failed to save schedule to disk')
+        }
+    }
+
+    init(glyphs: GlyphInfo[]) {
+        // Load default learn order
         glyphs.forEach((glyph) => {
             this.schedule.push({
                 ...this.generalInfo(glyph.glyph),
@@ -75,6 +104,8 @@ export class ScheduleHandler {
             console.log('newLevel', newLevel)
             console.log('updated progress', this.progress[excercise.glyph])
             console.log('schedule', this.schedule.slice(0, 10))
+
+            this.saveToDisk()
         }
     }
 

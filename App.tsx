@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar'
 import {
     useFonts,
     NotoSansJP_100Thin,
-    // NotoSansJP_300Light,
+    NotoSansJP_300Light,
     NotoSansJP_400Regular,
     NotoSansJP_500Medium,
     NotoSansJP_700Bold,
@@ -13,24 +13,22 @@ import {
     KleeOne_600SemiBold,
 } from '@expo-google-fonts/klee-one'
 import * as SplashScreen from 'expo-splash-screen'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import DragContextProvider from './src/contexts/DragContextProvider'
-import { glyphDictLoader as gd } from './src/data/glyphDict'
 import ChallengeContextProvider from './src/contexts/ChallengeContextProvider'
 import Session from './src/views/Session'
 import HealthContextProvider from './src/contexts/HealthContextProvider'
 import Animated from 'react-native-reanimated'
 import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
-// import ProgressContextProvider from './src/contexts/ProgressContextProvider'
-import { GlyphDictType } from './src/types/glyphDict'
 
+// Used for web to render tailwind
 // import "./src/input";
 
 export default function App() {
     let [fontsLoaded] = useFonts({
         NotoSansJP_100Thin,
-        // NotoSansJP_300Light,
+        NotoSansJP_300Light,
         NotoSansJP_400Regular,
         NotoSansJP_500Medium,
         NotoSansJP_700Bold,
@@ -38,8 +36,6 @@ export default function App() {
         KleeOne_400Regular,
         KleeOne_600SemiBold,
     })
-
-    // const [glyphDict, setGlyphDict] = useState<GlyphDictType>({})
 
     // useEffect(() => {
     //     setGlyphDict(gd())
