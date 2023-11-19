@@ -7,7 +7,7 @@ import {
     SetChallengeContext,
     SeenCountContext,
 } from '../contexts/ChallengeContextProvider'
-import Animated, { useAnimatedStyle } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import Compose from './Compose'
 import { learnOrder } from '../data/learnOrder'
 import {
@@ -25,6 +25,7 @@ import { Exercise, LvL, Skills } from '../types/progress'
 import Intro from './Intro'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { ScheduleHandler } from '../ScheduleHandler'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
@@ -37,16 +38,12 @@ const Session: FC<{}> = ({}) => {
     const [isLoading, setIsLoading] = useState(true)
 
     // Context
+    const scheduler = useContext(SchedulerContext)
     const setChallenge = useContext(SetChallengeContext)
     const seenCount = useContext(SeenCountContext)
     const getGlyph = useContext(GetGlyphContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
-    // const progress = useContext(ProgressContext)
-    // const progressDispatch = useContext(ProgressDispatchContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
-
-    // REF
-    const scheduler = useRef(new ScheduleHandler()).current
 
     useEffect(() => {
         scheduler.loadFromDisk

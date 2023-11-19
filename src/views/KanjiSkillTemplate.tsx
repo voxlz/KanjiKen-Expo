@@ -5,9 +5,6 @@ import Animated, {
     interpolate,
     useAnimatedStyle,
 } from 'react-native-reanimated'
-import Alternative from '../components/Alternative'
-import KanjiComps from '../components/KanjiComps'
-import KanjiMeaning from '../displays/KanjiMeaning'
 import { useContext } from '../utils/react'
 import {
     ContinueAnimContext,
@@ -28,9 +25,7 @@ const KanjiSkillTemplate: FC<Props> = ({
     KanjiComp,
     KanjiSuccComp,
     TextComp,
-    TextSuccComp,
     ChoicesComp,
-    ChoicesSuccComp,
 }) => {
     const animation = useContext(ContinueAnimContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)

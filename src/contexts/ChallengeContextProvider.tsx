@@ -6,6 +6,7 @@ import { createContext as CC, useContext } from '../utils/react'
 import { StartFinishAnimationContext } from './TaskAnimContextProvider'
 import { Exercise, Learnable, Skills } from '../types/progress'
 import { GlyphDictType } from '../types/glyphDict'
+import { SchedulerContext } from './SchedulerContextProvider'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
@@ -26,6 +27,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     // Context state
     const dropsDispatch = useContext(DropsDispatchContext)
     const startAnimation = useContext(StartFinishAnimationContext)
+    const scheduler = useContext(SchedulerContext)
 
     const glyphDict = useMemo(() => glyphDictLoader(), [])
 
@@ -50,31 +52,23 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     }
 
     const getRandomGlyphInfo = () => {
-        const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
         const possibleGlyphs = Object.keys(dict) as Learnable[]
+        const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
+        const glyph = possibleGlyphs.at(randIdx())!
+        return getGlyphInfo(glyph)
+    }
+
+    const getRandomSeenGlyphInfo = () => {
+        const possibleGlyphs = Object.keys(
+            scheduler.getProgress()
+        ) as Learnable[]
+        const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
         const glyph = possibleGlyphs.at(randIdx())!
         return getGlyphInfo(glyph)
     }
 
     const setChallenge = (excercise: Exercise) => {
         let info = getGlyphInfo(excercise.glyph)
-
-        // If undefined, select random
-        // if (!glyph) {
-        //     do {
-        //         info = getRandomGlyphInfo()
-        //     } while (!info?.comps.position)
-        // } else {
-        //     info = getGlyphInfo(glyph)
-        // }
-
-        // Something strange happened
-        // if (!info) {
-        //     console.warn(
-        //         'No glyph set. Probably glyph was set to something wierd.'
-        //     )
-        //     return
-        // }
 
         // Set the answers
         let answers: string[]
@@ -94,28 +88,36 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         }
 
         // Set alts
-        let altInfos: GlyphInfo[]
+        let choices: GlyphInfo[]
         switch (excercise.skill) {
             case 'intro':
-                altInfos = []
+                choices = []
                 break
             case 'compose':
-                altInfos = info.comps.order.map((alt) => getGlyphInfo(alt))
+                choices = info.comps.order.map((alt) => getGlyphInfo(alt))
                 break
             case 'recognize':
-                altInfos = [info]
+                choices = [info]
                 break
             default:
-                altInfos = []
+                choices = []
                 break
         }
 
-        let findRandom = 8 - altInfos.length
+        let findRandom = 8 - choices.length
         do {
-            altInfos = altInfos.concat(getRandomGlyphInfo())
-            findRandom -= 1
+            const seenGlyph = getRandomSeenGlyphInfo()
+            if (
+                !choices.map((info) => info.glyph).includes(seenGlyph.glyph) ||
+                Object.keys(scheduler.getProgress()).length < findRandom
+            ) {
+                choices = choices.concat(seenGlyph)
+                findRandom -= 1
+            }
         } while (findRandom > 0)
-        setChoices(shuffle(altInfos))
+
+        console.log('CHOICES', choices)
+        setChoices(shuffle(choices))
 
         // Update state
         setGlyphInfo(info)

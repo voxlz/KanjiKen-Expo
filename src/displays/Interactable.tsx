@@ -1,8 +1,9 @@
 import { View, Text, StyleProp, ViewStyle } from 'react-native'
 import React from 'react'
+import { font } from '../utils/fonts'
 
 type Props = {
-    text?: String
+    text?: string
     style?: StyleProp<ViewStyle>
 }
 
@@ -18,7 +19,9 @@ const Interactable = ({ text, style }: Props) => {
                 <View className="flex-grow" />
                 <View>
                     <Text
-                        style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                        style={{
+                            fontFamily: font(text, 'KleeOne_600SemiBold'),
+                        }}
                         className=" text-ui-text text-4xl leading-none"
                     >
                         {text}

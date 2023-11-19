@@ -21,6 +21,7 @@ import Session from './src/views/Session'
 import HealthContextProvider from './src/contexts/HealthContextProvider'
 import Animated from 'react-native-reanimated'
 import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
+import SchedulerContextProvider from './src/contexts/SchedulerContextProvider'
 
 // Used for web to render tailwind
 // import "./src/input";
@@ -56,17 +57,19 @@ export default function App() {
         <Animated.View className="flex-1 bg-white" onLayout={onLayoutRootView}>
             <GestureHandlerRootView className="w-full h-full max-w-full max-h-full">
                 <StatusBar style="auto" />
-                <HealthContextProvider>
-                    <DragContextProvider>
-                        <TaskAnimContextProvider>
-                            <ChallengeContextProvider>
-                                {/* <ProgressContextProvider> */}
-                                <Session />
-                                {/* </ProgressContextProvider> */}
-                            </ChallengeContextProvider>
-                        </TaskAnimContextProvider>
-                    </DragContextProvider>
-                </HealthContextProvider>
+                <SchedulerContextProvider>
+                    <HealthContextProvider>
+                        <DragContextProvider>
+                            <TaskAnimContextProvider>
+                                <ChallengeContextProvider>
+                                    {/* <ProgressContextProvider> */}
+                                    <Session />
+                                    {/* </ProgressContextProvider> */}
+                                </ChallengeContextProvider>
+                            </TaskAnimContextProvider>
+                        </DragContextProvider>
+                    </HealthContextProvider>
+                </SchedulerContextProvider>
             </GestureHandlerRootView>
         </Animated.View>
     )

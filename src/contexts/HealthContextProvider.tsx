@@ -23,8 +23,8 @@ enum HealthColor {
 const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     children,
 }) => {
-    const [health, setHealth] = useState(100)
-    const [maxHealth] = useState(100)
+    const [health, setHealth] = useState(40)
+    const [maxHealth] = useState(40)
 
     const healthProcent = useSharedValue((health / maxHealth) * 100)
     const healthColor = useSharedValue(1)

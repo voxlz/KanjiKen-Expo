@@ -12,10 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
 export class ScheduleHandler {
-    schedule: Exercise[] = []
-    progress: Partial<{
+    #schedule: Exercise[] = []
+    #progress: Partial<{
         [glyph in Learnable]: { skills: Partial<{ [skill in Skills]: LvL }> }
     }> = {}
+    isLoaded = false
 
     generalInfo = (glyph: Learnable) => ({
         glyph: glyph,
@@ -27,13 +28,14 @@ export class ScheduleHandler {
         try {
             AsyncStorage.getItem('schedule')
                 .then((schedule) => {
-                    if (schedule) this.schedule = JSON.parse(schedule)
+                    if (schedule) this.#schedule = JSON.parse(schedule)
                     else reject()
                     AsyncStorage.getItem('progress').then((progress) => {
-                        if (progress) this.progress = JSON.parse(progress)
+                        if (progress) this.#progress = JSON.parse(progress)
                         else reject()
                     })
                 })
+                .then(() => (this.isLoaded = true))
                 .then(() => resolve(true))
                 .catch(() => reject())
         } catch (error) {
@@ -44,8 +46,8 @@ export class ScheduleHandler {
 
     saveToDisk = () => {
         try {
-            AsyncStorage.setItem('schedule', JSON.stringify(this.schedule))
-            AsyncStorage.setItem('progress', JSON.stringify(this.progress))
+            AsyncStorage.setItem('schedule', JSON.stringify(this.#schedule))
+            AsyncStorage.setItem('progress', JSON.stringify(this.#progress))
         } catch (error) {
             console.warn('Failed to save schedule to disk')
         }
@@ -54,17 +56,22 @@ export class ScheduleHandler {
     init(glyphs: GlyphInfo[]) {
         // Load default learn order
         glyphs.forEach((glyph) => {
-            this.schedule.push({
+            this.#schedule.push({
                 ...this.generalInfo(glyph.glyph),
                 skill: 'intro',
             })
         })
     }
 
+    /** Get a copy of the progress. Should not be edited. */
+    getProgress() {
+        return { ...this.#progress }
+    }
+
     // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
     onReview(tries: number, currLvl: number, glyphInfo: GlyphInfo) {
         // Remove reviewed element
-        const excercise = this.schedule.shift()
+        const excercise = this.#schedule.shift()
 
         if (excercise) {
             const maxLvl = lvlsPerSkill[excercise.skill]
@@ -83,27 +90,27 @@ export class ScheduleHandler {
             excercise.level = newLevel
 
             // * Update progress
-            if (!this.progress[excercise.glyph]) {
-                this.progress[excercise.glyph] = { skills: {} }
+            if (!this.#progress[excercise.glyph]) {
+                this.#progress[excercise.glyph] = { skills: {} }
             }
-            this.progress[excercise.glyph]!['skills'][excercise.skill] =
+            this.#progress[excercise.glyph]!['skills'][excercise.skill] =
                 newLevel
 
             // * Insert first element at index X, remove if max-level
             if (newLevel !== maxLvl) {
                 const newIndex = Math.pow(2, newLevel + 1) - 1
-                this.schedule.splice(newIndex, 0, excercise)
+                this.#schedule.splice(newIndex, 0, excercise)
             } else if (excercise.skill === 'intro') {
                 const newIndex = 3
-                this.schedule.splice(newIndex, 0, {
+                this.#schedule.splice(newIndex, 0, {
                     ...this.generalInfo(excercise.glyph),
                     skill: glyphInfo.comps.position ? 'compose' : 'recognize',
                 })
             }
 
             console.log('newLevel', newLevel)
-            console.log('updated progress', this.progress[excercise.glyph])
-            console.log('schedule', this.schedule.slice(0, 10))
+            console.log('updated progress', this.#progress[excercise.glyph])
+            console.log('schedule', this.#schedule.slice(0, 10))
 
             this.saveToDisk()
         }
@@ -117,23 +124,23 @@ export class ScheduleHandler {
             i -= 1
 
             // Ensure skill requirements are met
-            const next = this.schedule[0]
+            const next = this.#schedule[0]
             const reqs = requirePerSkill[next.skill]
 
             const missingReq = reqs.find(
                 (req) =>
                     req.lvl >
-                    (this.progress[next.glyph]?.['skills'][req.skill] ?? 0)
+                    (this.#progress[next.glyph]?.['skills'][req.skill] ?? 0)
             )
 
             if (missingReq) {
-                const nextPossibleUnlockIdx = this.schedule.findIndex(
+                const nextPossibleUnlockIdx = this.#schedule.findIndex(
                     (exe) =>
                         exe.glyph === next.glyph && exe.skill === next.skill
                 )
-                const doesNotFullfillReqs = this.schedule.shift()
+                const doesNotFullfillReqs = this.#schedule.shift()
                 if (doesNotFullfillReqs)
-                    this.schedule.splice(
+                    this.#schedule.splice(
                         nextPossibleUnlockIdx,
                         0,
                         doesNotFullfillReqs
@@ -143,6 +150,6 @@ export class ScheduleHandler {
             }
         }
 
-        return this.schedule[0]
+        return this.#schedule[0]
     }
 }
