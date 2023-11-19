@@ -105,7 +105,7 @@ const Button: FC<Props> = ({
             <Text
                 style={{
                     fontFamily: font(text, theme.font),
-                    textTransform: 'theme.textTransform',
+                    textTransform: theme.textTransform,
                 }}
                 className={`text-center  ${
                     lang === 'eng' ? 'text-lg text' : 'text-4xl -mb-2'
