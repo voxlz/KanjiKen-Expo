@@ -27,20 +27,11 @@ const KanjiComps: FC<Props> = ({ pos, showPositionHints }) => {
                 >
                     {value.map((strOrPos, j) => {
                         if (typeof strOrPos === 'string') {
+                            const glyph = strOrPos.replace('?', '')
                             return (
-                                <DropLocation
-                                    text={strOrPos.substring(0, 1) as string}
-                                    key={j}
-                                >
+                                <DropLocation text={glyph} key={j}>
                                     <Outline
-                                        text={
-                                            showPositionHints
-                                                ? (strOrPos.substring(
-                                                      0,
-                                                      1
-                                                  ) as string)
-                                                : '?'
-                                        }
+                                        text={showPositionHints ? glyph : '?'}
                                     />
                                 </DropLocation>
                             )
