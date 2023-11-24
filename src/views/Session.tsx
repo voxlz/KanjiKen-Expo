@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useRef } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { View, useWindowDimensions, Text } from 'react-native'
 import HealthBar from '../components/HealthBar'
 import StatusBar from '../components/StatusBar'
@@ -21,10 +21,9 @@ import { ButtonStyles } from '../components/Button'
 //     ProgressContext,
 //     ProgressDispatchContext,
 // } from '../contexts/ProgressContextProvider'
-import { Exercise, LvL, Skills } from '../types/progress'
+import { Exercise } from '../types/progress'
 import Intro from './Intro'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
-import { ScheduleHandler } from '../ScheduleHandler'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 
 /** The general challenge view for building a kanji through components */
