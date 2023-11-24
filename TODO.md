@@ -9,6 +9,7 @@
 -   [x] #5 - Possible to see next answer for a split second after continue.
 -   [ ] #6 - Duplicate characters are both fade out in composition, even if only one was used.
 -   [ ] #7 - Don't introduce compound before lvl 5 (or something) has been reached on components.
+-   [ ] #8 - Remove answer from random choices, otherwise you can cheat.
 
 ## Features for next release
 

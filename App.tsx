@@ -13,7 +13,7 @@ import {
     KleeOne_600SemiBold,
 } from '@expo-google-fonts/klee-one'
 import * as SplashScreen from 'expo-splash-screen'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import DragContextProvider from './src/contexts/DragContextProvider'
 import ChallengeContextProvider from './src/contexts/ChallengeContextProvider'
@@ -22,7 +22,7 @@ import HealthContextProvider from './src/contexts/HealthContextProvider'
 import Animated from 'react-native-reanimated'
 import TaskAnimContextProvider from './src/contexts/TaskAnimContextProvider'
 import SchedulerContextProvider from './src/contexts/SchedulerContextProvider'
-import { SafeAreaView } from 'react-native'
+import { View } from 'react-native'
 // import Banner from './src/components/BannerAd'
 
 // Used for web to render tailwind
@@ -41,10 +41,6 @@ export default function App() {
         'KanjiKen-Regular': require('./assets/fonts/KanjiKen-Regular.ttf'),
     })
 
-    // useEffect(() => {
-    //     setGlyphDict(gd())
-    // }, [])
-
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
             await SplashScreen.hideAsync()
@@ -56,8 +52,8 @@ export default function App() {
     }
 
     return (
-        // <SafeAreaView>
-        <Animated.View className="flex-1 bg-white" onLayout={onLayoutRootView}>
+        // <SafeAreaView>r
+        <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
             <GestureHandlerRootView className="w-full h-full max-w-full max-h-full">
                 <StatusBar style="auto" />
                 <SchedulerContextProvider>
@@ -75,7 +71,6 @@ export default function App() {
                     </HealthContextProvider>
                 </SchedulerContextProvider>
             </GestureHandlerRootView>
-        </Animated.View>
-        // </SafeAreaView>
+        </View>
     )
 }

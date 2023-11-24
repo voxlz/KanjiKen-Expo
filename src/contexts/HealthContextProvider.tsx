@@ -8,6 +8,7 @@ import {
     withTiming,
 } from 'react-native-reanimated'
 import { createContext } from '../utils/react'
+import { router } from 'expo-router'
 
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
@@ -27,18 +28,22 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
         console.log('added health', diff)
         const newHealth = health + diff
         healthProcent.value = withTiming((newHealth / maxHealth) * 100)
+        const isDead = newHealth <= 0
 
         // You took damage
         if (diff < 0) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
             healthColor.value = 0
-            if (newHealth > 0)
+            if (!isDead) {
                 healthColor.value = withDelay(
                     300,
                     withSpring(1, {
                         duration: 500,
                     })
                 )
+            } else {
+                setTimeout(() => router.back(), 500)
+            }
             // healthColor.value = withDelay(750, withTiming(1, { duration: 100 }));
         }
 
