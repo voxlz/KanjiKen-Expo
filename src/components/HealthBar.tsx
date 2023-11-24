@@ -60,12 +60,12 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
 
     return (
         <View style={{ gap: 12 }} className="flex-row px-8 ">
-            <SVGImg
+            {/* <SVGImg
                 width={height * 1.4}
                 height={height * 1.4}
                 style={{ marginTop: -height * 0.2 }}
                 className="bg-red-400"
-            />
+            /> */}
             <Animated.View
                 style={healthBackground}
                 className="flex-grow  border-[3px] items-end justify-center"

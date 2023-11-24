@@ -1,7 +1,5 @@
-import React, { FC, useEffect, useState, useRef } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { View, useWindowDimensions, Text } from 'react-native'
-import HealthBar from '../components/HealthBar'
-import StatusBar from '../components/StatusBar'
 import BottomBar from '../components/BottomBar'
 import {
     SetChallengeContext,
@@ -17,15 +15,11 @@ import {
 import { useContext } from '../utils/react'
 import Recognize from './Recognize'
 import { ButtonStyles } from '../components/Button'
-// import {
-//     ProgressContext,
-//     ProgressDispatchContext,
-// } from '../contexts/ProgressContextProvider'
-import { Exercise, LvL, Skills } from '../types/progress'
+import { Exercise } from '../types/progress'
 import Intro from './Intro'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
-import { ScheduleHandler } from '../ScheduleHandler'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
+import UpperBar from '../components/UpperBar'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
@@ -113,9 +107,8 @@ const Session: FC<{}> = ({}) => {
         )
 
     return (
-        <Animated.View className="items-center pt-16  w-full h-full flex-grow ">
-            <HealthBar glyphWidth={glyphWidth} />
-            <StatusBar seenCount={seenCount} text={skillTitle} />
+        <Animated.View className="items-center pt-14  w-full h-full flex-grow ">
+            <UpperBar skillTitle={skillTitle} glyphWidth={glyphWidth} />
             <View className="flex-grow flex-shrink items-center">
                 {exercise?.skill === 'compose' ? (
                     <Compose
