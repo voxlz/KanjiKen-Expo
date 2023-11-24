@@ -13,7 +13,7 @@ const Interactable = ({ text, style }: Props) => {
             style={style}
             className="flex-grow flex-shrink flex-col bg-ui-very_light rounded-xl border-[3px] border-b-[5px] border-ui-disabled"
         >
-            {/* Oh this? This bad boy is to ensure smooth text animation when rescaling the width and height.  I love web dev.*/}
+            {/* Oh this? *slaps 7 flexboxes* This bad boy is to ensure smooth text animation when rescaling the width and height.  I love web dev.*/}
             <View className="flex-grow" />
             <View className="flex-row">
                 <View className="flex-grow" />

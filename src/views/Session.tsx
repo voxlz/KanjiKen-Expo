@@ -46,7 +46,8 @@ const Session: FC<{}> = ({}) => {
     const resetSkillAnim = useContext(ResetSkillAnimContext)
 
     useEffect(() => {
-        scheduler.loadFromDisk
+        scheduler
+            .loadFromDisk()
             .then(() => {
                 console.log('load from disk successful')
             })

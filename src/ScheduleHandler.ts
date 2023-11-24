@@ -24,30 +24,53 @@ export class ScheduleHandler {
         reviewed_at: [],
     })
 
-    loadFromDisk = new Promise<boolean>((resolve, reject) => {
+    loadFromDisk = async () => {
         try {
-            AsyncStorage.getItem('schedule')
-                .then((schedule) => {
-                    if (schedule) this.#schedule = JSON.parse(schedule)
-                    else reject()
-                    AsyncStorage.getItem('progress').then((progress) => {
-                        if (progress) this.#progress = JSON.parse(progress)
-                        else reject()
-                    })
-                })
-                .then(() => (this.isLoaded = true))
-                .then(() => resolve(true))
-                .catch(() => reject())
+            const startTime = performance.now()
+            await AsyncStorage.getItem('schedule').then((schedule) => {
+                if (schedule) {
+                    this.#schedule = JSON.parse(schedule)
+                    console.log('Schedule length', this.#schedule.length)
+                }
+            })
+            await AsyncStorage.getItem('progress').then((progress) => {
+                if (progress) {
+                    this.#progress = JSON.parse(progress)
+                    console.log(
+                        'Progress length',
+                        Object.keys(this.#progress).length
+                    )
+                }
+            })
+            this.isLoaded = true
+            const endTime = performance.now()
+            console.log(
+                `ScheduleHandler loadFromDisk() took ${
+                    endTime - startTime
+                } milliseconds.`
+            )
         } catch (error) {
             console.warn('Failed to load schedule from disk')
-            reject()
         }
-    })
+    }
 
-    saveToDisk = () => {
+    saveToDisk = async () => {
         try {
-            AsyncStorage.setItem('schedule', JSON.stringify(this.#schedule))
-            AsyncStorage.setItem('progress', JSON.stringify(this.#progress))
+            const startTime = performance.now()
+            await AsyncStorage.setItem(
+                'schedule',
+                JSON.stringify(this.#schedule)
+            )
+            await AsyncStorage.setItem(
+                'progress',
+                JSON.stringify(this.#progress)
+            )
+            const endTime = performance.now()
+            console.log(
+                `ScheduleHandler saveToDisk() took ${
+                    endTime - startTime
+                } milliseconds.`
+            )
         } catch (error) {
             console.warn('Failed to save schedule to disk')
         }
