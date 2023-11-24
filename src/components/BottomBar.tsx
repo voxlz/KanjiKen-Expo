@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useContext } from '../utils/react'
 import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
+import StyledButton from './StyledButton'
 
 type Props = {
     onContinue: () => boolean | undefined
@@ -44,13 +45,11 @@ const BottomBar: FC<Props> = ({
             style={[animatedStyles]}
             className="w-full py-6  mb-4 justify-end"
         >
-            <View style={{ height: 0.85 * altWidth }} className="px-8 ">
-                <Button
-                    text={continueBtnText}
-                    onPress={onContinue}
-                    styleName={continueBtnStyle}
-                />
-            </View>
+            <StyledButton
+                text={continueBtnText}
+                onPress={onContinue}
+                styleName={continueBtnStyle}
+            />
             <View
                 className="absolute h-40  w-full bottom-0 -z-10"
                 style={{

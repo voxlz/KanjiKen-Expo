@@ -108,8 +108,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         do {
             const seenGlyph = getRandomSeenGlyphInfo()
             if (
-                !choices.map((info) => info.glyph).includes(seenGlyph.glyph) ||
-                Object.keys(scheduler.getProgress()).length < findRandom
+                (!choices.map((info) => info.glyph).includes(seenGlyph.glyph) ||
+                    Object.keys(scheduler.getProgress()).length < findRandom) 
             ) {
                 choices = choices.concat(seenGlyph)
                 findRandom -= 1

@@ -58,7 +58,7 @@ const themePress = {
 
 export type ButtonStyles = keyof typeof themeOptions
 
-type Props = {
+export type BtnProps = {
     onPress?: () => boolean | undefined | void
     text?: string
     styleName?: ButtonStyles
@@ -66,7 +66,7 @@ type Props = {
 }
 
 /** Basic button for button use. Grows to fill available. Configure color pallet. */
-const Button: FC<Props> = ({
+const Button: FC<BtnProps> = ({
     text,
     styleName = 'forest',
     onPress,

@@ -1,7 +1,7 @@
 import { Link } from 'expo-router'
 import React, { FC } from 'react'
-import { Pressable, Text, View } from 'react-native'
-import Button from '../src/components/Button'
+import { View } from 'react-native'
+import StyledButton from '../src/components/StyledButton'
 
 type Props = {}
 
@@ -12,10 +12,10 @@ const Home: FC<Props> = ({}) => (
         className=""
     >
         <Link href="/session" asChild>
-            <Button text="Start Session" />
+            <StyledButton text="Start Session" />
         </Link>
         <Link href="/dictionary" asChild>
-            <Button text="Dictionary" />
+            <StyledButton text="Dictionary" />
         </Link>
     </View>
 )

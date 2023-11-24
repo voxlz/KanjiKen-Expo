@@ -29,31 +29,10 @@ import { View } from 'react-native'
 // import "./src/input";
 
 export default function App() {
-    let [fontsLoaded] = useFonts({
-        NotoSansJP_100Thin,
-        NotoSansJP_300Light,
-        NotoSansJP_400Regular,
-        NotoSansJP_500Medium,
-        NotoSansJP_700Bold,
-        NotoSansJP_900Black,
-        KleeOne_400Regular,
-        KleeOne_600SemiBold,
-        'KanjiKen-Regular': require('./assets/fonts/KanjiKen-Regular.ttf'),
-    })
 
-    const onLayoutRootView = useCallback(async () => {
-        if (fontsLoaded) {
-            await SplashScreen.hideAsync()
-        }
-    }, [fontsLoaded])
-
-    if (!fontsLoaded) {
-        return null
-    }
 
     return (
         // <SafeAreaView>r
-        <View className="flex-1 bg-white" onLayout={onLayoutRootView}>
             <GestureHandlerRootView className="w-full h-full max-w-full max-h-full">
                 <StatusBar style="auto" />
                 <SchedulerContextProvider>
@@ -71,6 +50,5 @@ export default function App() {
                     </HealthContextProvider>
                 </SchedulerContextProvider>
             </GestureHandlerRootView>
-        </View>
     )
 }

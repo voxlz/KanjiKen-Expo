@@ -20,15 +20,13 @@ import Intro from './Intro'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import UpperBar from '../components/UpperBar'
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
     // How wide is a glyph part of a 1x4 row with margins and gap considered?
     // Calc the scale, use this to scale UI
-    const { width: windowWidth } = useWindowDimensions()
-    const margin = 32 * 2
-    const gap = 3 * 12
-    const glyphWidth = (windowWidth - margin - gap) / 4
+
     const [isLoading, setIsLoading] = useState(true)
 
     // Context
@@ -38,6 +36,7 @@ const Session: FC<{}> = ({}) => {
     const getGlyph = useContext(GetGlyphContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
+    const glyphWidth = useContext(GlyphWidthContext)
 
     useEffect(() => {
         scheduler
@@ -107,7 +106,7 @@ const Session: FC<{}> = ({}) => {
         )
 
     return (
-        <Animated.View className="items-center pt-14  w-full h-full flex-grow ">
+        <Animated.View className="items-center w-full h-full flex-grow ">
             <UpperBar skillTitle={skillTitle} glyphWidth={glyphWidth} />
             <View className="flex-grow flex-shrink items-center">
                 {exercise?.skill === 'compose' ? (
