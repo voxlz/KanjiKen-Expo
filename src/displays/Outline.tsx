@@ -1,4 +1,4 @@
-import { View, Text, StyleProp, ViewStyle } from 'react-native'
+import { Text, StyleProp, ViewStyle } from 'react-native'
 import React, { FC } from 'react'
 import Animated from 'react-native-reanimated'
 
@@ -10,8 +10,17 @@ type Props = {
 const Outline: FC<Props> = ({ text, style }) => {
     return (
         <Animated.View
-            style={style}
-            className="flex-grow flex-shrink bg-none rounded-xl border-[3px] border-ui-disabled border-dashed items-center justify-center"
+            style={[
+                style,
+                {
+                    // Tailwind utils break dashed border on android
+                    borderStyle: 'dashed',
+                    borderWidth: 3,
+                    borderRadius: 12,
+                    borderColor: 'rgb(174, 174, 174)',
+                },
+            ]}
+            className="flex-grow flex-shrink bg-none  items-center justify-center"
         >
             <Text
                 style={{ fontFamily: 'KleeOne_600SemiBold' }}
