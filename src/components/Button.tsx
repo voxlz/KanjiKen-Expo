@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
-import { Pressable, Text } from 'react-native'
+import { Pressable, StyleProp, Text } from 'react-native'
 import { font } from '../utils/fonts'
+import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils'
 
 const themeOptions = {
     normal: {
@@ -63,6 +64,7 @@ export type BtnProps = {
     text?: string
     styleName?: ButtonStyles
     lang?: 'eng' | 'jap'
+    style?: StyleProp<ViewProps>
 }
 
 /** Basic button for button use. Grows to fill available. Configure color pallet. */

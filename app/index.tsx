@@ -8,8 +8,12 @@ type Props = {}
 /** Homepage of the application. Where you start the exercises for example. */
 const Home: FC<Props> = ({}) => (
     <View
-        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-        className=""
+        style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 12,
+        }}
     >
         <Link href="/session" asChild>
             <StyledButton text="Start Session" />

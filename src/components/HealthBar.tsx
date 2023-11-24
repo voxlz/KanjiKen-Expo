@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
-import { View } from 'react-native'
-import SVGImg from '../../assets/ph_heart-duotone.svg'
+import { View, Pressable } from 'react-native'
+import SVGImg from '../../assets/ph_x-circle-duotone.svg'
 import {
     RelativeHealthContext,
     HealthColorContext,
@@ -9,6 +9,7 @@ import Animated, {
     interpolateColor,
     useAnimatedStyle,
 } from 'react-native-reanimated'
+import { router } from 'expo-router'
 
 type Props = {
     glyphWidth: number // 1/3th height of alt component
@@ -59,7 +60,7 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
     })
 
     return (
-        <View style={{ gap: 12 }} className="flex-row px-8">
+        <View style={{ gap: 12 }} className="flex-row px-8  items-center">
             <Animated.View
                 style={healthBackground}
                 className="flex-grow  border-[3px] items-end justify-center"
@@ -72,12 +73,9 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
                     {/* <Text className="text-forest-800">200</Text> */}
                 </Animated.View>
             </Animated.View>
-            <SVGImg
-                width={height * 1.4}
-                height={height * 1.4}
-                style={{ marginTop: -height * 0.2 }}
-                className="bg-red-400"
-            />
+            <Pressable onPress={() => router.back()}>
+                <SVGImg width={height * 1.6} height={height * 1.6} />
+            </Pressable>
         </View>
     )
 }
