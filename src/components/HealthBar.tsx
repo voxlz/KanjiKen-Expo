@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { View, Pressable } from 'react-native'
-import SVGImg from '../../assets/ph_x-circle-duotone.svg'
+import SVGImg from '../../assets/icons/ph_x-circle-duotone.svg'
 import {
     RelativeHealthContext,
     HealthColorContext,

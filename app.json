@@ -2,7 +2,8 @@
     "expo": {
         "name": "Kanjiken",
         "slug": "Kanjiken",
-        "version": "0.1.0",
+        "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
+        "version": "0.1.1",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "scheme": "kanjiken",
