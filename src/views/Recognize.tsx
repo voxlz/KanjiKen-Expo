@@ -1,28 +1,19 @@
 import React, { FC } from 'react'
-import KanjiMeaning from '../displays/KanjiMeaning'
-import {
-    ChoicesContext,
-    ExpectedChoiceContext,
-} from '../contexts/ChallengeContextProvider'
-import {
-    GetGlyphContext,
-    SeenCountContext,
-} from '../contexts/ChallengeContextProvider'
-import { useContext } from '../utils/react'
-import { OnCorrectChoiceContext } from '../contexts/ChallengeContextProvider'
-import { AddHealthContext } from '../contexts/HealthContextProvider'
-import Outline from '../displays/Outline'
-import KanjiSkillTemplate from './KanjiSkillTemplate'
-import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import ChoicesButtons from '../components/ChoicesButton'
+import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
+import KanjiMeaning from '../displays/KanjiMeaning'
+import Outline from '../displays/Outline'
+import { useContext } from '../utils/react'
+import KanjiSkillTemplate from './KanjiSkillTemplate'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider'
+import { glyphDict } from '../data/glyphDict'
 
 type Props = { glyphWidth: number }
 
 /** Drag components to build a glyph */
 const Recognize: FC<Props> = ({ glyphWidth }) => {
-    const getGlyph = useContext(GetGlyphContext)
-    const glyphInfo = getGlyph?.()
-
+    const scheduler = useContext(SchedulerContext)
+    const glyphInfo = glyphDict[scheduler.getCurrent().glyph]
     return (
         <>
             <KanjiSkillTemplate

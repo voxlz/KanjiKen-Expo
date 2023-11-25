@@ -1,28 +1,20 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import Animated, {
-    BaseAnimationBuilder,
-    EntryAnimationsValues,
-    EntryExitAnimationFunction,
     Extrapolation,
-    ZoomIn,
-    ZoomOut,
     interpolate,
     useAnimatedStyle,
     useDerivedValue,
     useSharedValue,
-    withDelay,
     withTiming,
 } from 'react-native-reanimated'
-import {
-    GetGlyphContext,
-    OnCorrectChoiceContext,
-} from '../contexts/ChallengeContextProvider'
+import { OnCorrectChoiceContext } from '../contexts/ChallengeContextProvider'
 import { Text, View } from 'react-native'
 import Button from '../components/Button'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import { ContinueAnimInstantResetContext as SkillAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'
-import { SeenCountContext } from '../contexts/ChallengeContextProvider'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider'
+import { glyphDict } from '../data/glyphDict'
 
 type Props = {
     glyphWidth: number
@@ -34,10 +26,11 @@ type Props = {
  * Let's user instantly challenge themselves.
  */
 const Intro: FC<Props> = ({ glyphWidth }) => {
-    const getGlyph = useContext(GetGlyphContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const skillAnim = useContext(SkillAnimInstantResetContext)
-    const glyphInfo = getGlyph?.()
+    const scheduler = useContext(SchedulerContext)
+    const glyph = scheduler.getCurrent().glyph
+    const glyphInfo = glyphDict[glyph]
 
     const [showMeaning, setShowMeaning] = useState(false)
     const fadeAnim = useSharedValue(0)
@@ -80,12 +73,6 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
             <View className="items-center">
                 <View className="w-2/4  h-auto aspect-square">
                     <Animated.View
-                        // entering={ZoomIn.springify()
-                        //     .stiffness(250)
-                        //     .damping(21)
-                        //     .restDisplacementThreshold(0.01)
-                        //     .restSpeedThreshold(2)}
-                        // exiting={ZoomOut}
                         style={builderStyle}
                         className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                     >
@@ -94,7 +81,7 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                             className="text-8xl p-2 -mb-6"
                             adjustsFontSizeToFit
                         >
-                            {glyphInfo?.glyph}
+                            {glyph}
                         </Text>
                     </Animated.View>
                 </View>

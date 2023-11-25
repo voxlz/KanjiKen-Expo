@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { View, useWindowDimensions, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import BottomBar from '../components/BottomBar'
 import {
     SetChallengeContext,
@@ -7,11 +7,7 @@ import {
 } from '../contexts/ChallengeContextProvider'
 import Animated from 'react-native-reanimated'
 import Compose from './Compose'
-import { learnOrder } from '../data/learnOrder'
-import {
-    GetGlyphContext,
-    ExpectedChoiceContext,
-} from '../contexts/ChallengeContextProvider'
+import { ExpectedChoiceContext } from '../contexts/ChallengeContextProvider'
 import { useContext } from '../utils/react'
 import Recognize from './Recognize'
 import { ButtonStyles } from '../components/Button'
@@ -21,37 +17,23 @@ import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../context
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import UpperBar from '../components/UpperBar'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
+import { glyphDict } from '../data/glyphDict'
 
 /** The general challenge view for building a kanji through components */
 const Session: FC<{}> = ({}) => {
     // How wide is a glyph part of a 1x4 row with margins and gap considered?
     // Calc the scale, use this to scale UI
 
-    const [isLoading, setIsLoading] = useState(true)
-
     // Context
     const scheduler = useContext(SchedulerContext)
     const setChallenge = useContext(SetChallengeContext)
     const seenCount = useContext(SeenCountContext)
-    const getGlyph = useContext(GetGlyphContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
     const glyphWidth = useContext(GlyphWidthContext)
 
     useEffect(() => {
-        scheduler
-            .loadFromDisk()
-            .then(() => {
-                console.log('load from disk successful')
-            })
-            .catch(() => {
-                const learnInfoArr = learnOrder.map((glyph) => getGlyph(glyph))
-                scheduler.init(learnInfoArr)
-            })
-            .finally(() => {
-                nextExercise()
-                setIsLoading(false)
-            })
+        nextExercise()
     }, [])
 
     // State
@@ -62,14 +44,16 @@ const Session: FC<{}> = ({}) => {
         useState<ButtonStyles>('forest')
 
     const nextExercise = () => {
-        // If we are currently on an exercise, mark as reviewd.
+        // If we are currently on an exercise, mark as reviewd and go to next.
         if (exercise) {
             resetSkillAnim()
-            scheduler.onReview(1, exercise.level, getGlyph(exercise.glyph))
+            scheduler.onReview(1, exercise.level, glyphDict[exercise.glyph])
         }
-        const next = scheduler.getNext()
+        // Regardless, let's load the current challenge
+        const next = scheduler.getCurrent()
         setExercise(next)
-        setChallenge?.(scheduler.getNext())
+
+        setChallenge?.(next)
 
         switch (next.skill) {
             case 'compose':
@@ -98,24 +82,19 @@ const Session: FC<{}> = ({}) => {
         return undefined
     }
 
-    if (isLoading || !exercise)
-        return (
-            <View className="flex-grow justify-center items-center">
-                <Text>Loading</Text>
-            </View>
-        )
+    if (!exercise) return <Text>ERRORRRR</Text>
 
     return (
         <Animated.View className="items-center w-full h-full flex-grow ">
             <UpperBar skillTitle={skillTitle} glyphWidth={glyphWidth} />
             <View className="flex-grow flex-shrink items-center">
-                {exercise?.skill === 'compose' ? (
+                {exercise.skill === 'compose' ? (
                     <Compose
                         key={seenCount}
                         glyphWidth={glyphWidth}
                         showPositionHints={exercise.level === 0}
                     />
-                ) : exercise?.skill === 'recognize' ? (
+                ) : exercise.skill === 'recognize' ? (
                     <Recognize key={seenCount} glyphWidth={glyphWidth} />
                 ) : (
                     <Intro

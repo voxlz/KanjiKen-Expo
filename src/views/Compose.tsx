@@ -7,24 +7,22 @@ import {
     ChoicesContext,
     ExpectedChoiceContext,
 } from '../contexts/ChallengeContextProvider'
-import {
-    GetGlyphContext,
-    SeenCountContext,
-} from '../contexts/ChallengeContextProvider'
+import { SeenCountContext } from '../contexts/ChallengeContextProvider'
 import { useContext } from '../utils/react'
 import KanjiSkillTemplate from './KanjiSkillTemplate'
 import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider'
+import { glyphDict } from '../data/glyphDict'
 
 type Props = { glyphWidth: number; showPositionHints: boolean }
 
 /** Drag components to build a glyph */
 const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
-    const getGlyph = useContext(GetGlyphContext)
     const seenCount = useContext(SeenCountContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const choices = useContext(ChoicesContext)
-
-    const glyphInfo = getGlyph?.()
+    const scheduler = useContext(SchedulerContext)
+    const glyphInfo = glyphDict[scheduler.getCurrent().glyph]
 
     return (
         <>

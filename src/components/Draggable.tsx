@@ -14,7 +14,6 @@ import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import {
     ExpectedChoiceContext,
     OnCorrectChoiceContext,
-    GetGlyphContext,
 } from '../contexts/ChallengeContextProvider'
 import GlyphHint from './GlyphHint'
 import { DropInfo, MeasureType } from '../types/dropInfo'
@@ -28,11 +27,9 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated'
 import { useContext } from '../utils/react'
-import {
-    ContinueAnimContext,
-    ContinueAnimInstantResetContext,
-} from '../contexts/TaskAnimContextProvider'
+import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { Learnable } from '../types/progress'
+import { glyphDict } from '../data/glyphDict'
 
 const { UIManager } = NativeModules
 
@@ -72,9 +69,7 @@ const Draggable: FC<Props> = ({
     const drops = useContext(DropsContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
-    const getGlyph = useContext(GetGlyphContext)
     const addHealth = useContext(AddHealthContext)
-    const animation = useContext(ContinueAnimContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
     const [droppedBefore, setDroppedBefore] = useState(false)
@@ -292,7 +287,9 @@ const Draggable: FC<Props> = ({
                         x: 0,
                         y: 0,
                     }}
-                    hintText={getGlyph?.(glyph)?.meanings?.primary ?? ''}
+                    hintText={
+                        (glyph && glyphDict[glyph].meanings?.primary) ?? ''
+                    }
                     show={isBeingDragged}
                 />
             </Animated.View>

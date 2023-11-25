@@ -17,6 +17,11 @@ import { useFonts } from 'expo-font'
 import { useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
+import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
+import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
+import DragContextProvider from '../src/contexts/DragContextProvider'
+import HealthContextProvider from '../src/contexts/HealthContextProvider'
+import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
 
 export default function Layout() {
     let [fontsLoaded] = useFonts({
@@ -42,19 +47,32 @@ export default function Layout() {
     }
     return (
         <GlyphWidthContextProvider>
-            <SafeAreaView
-                className="flex-1 py-4 bg-white"
-                onLayout={onLayoutRootView}
-            >
-                <StatusBar backgroundColor="white" />
-                <Stack
-                    screenOptions={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: 'white', flexGrow: 1 },
-                    }}
-                    initialRouteName="/"
-                />
-            </SafeAreaView>
+            <SchedulerContextProvider>
+                <HealthContextProvider>
+                    <DragContextProvider>
+                        <TaskAnimContextProvider>
+                            <ChallengeContextProvider>
+                                <SafeAreaView
+                                    className="flex-1 py-4 bg-white"
+                                    onLayout={onLayoutRootView}
+                                >
+                                    <StatusBar backgroundColor="white" />
+                                    <Stack
+                                        screenOptions={{
+                                            headerShown: false,
+                                            contentStyle: {
+                                                backgroundColor: 'white',
+                                                flexGrow: 1,
+                                            },
+                                        }}
+                                        initialRouteName="/home"
+                                    />
+                                </SafeAreaView>
+                            </ChallengeContextProvider>
+                        </TaskAnimContextProvider>
+                    </DragContextProvider>
+                </HealthContextProvider>
+            </SchedulerContextProvider>
         </GlyphWidthContextProvider>
     )
 }

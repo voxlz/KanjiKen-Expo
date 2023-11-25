@@ -16,13 +16,18 @@ export class ScheduleHandler {
     #progress: Partial<{
         [glyph in Learnable]: { skills: Partial<{ [skill in Skills]: LvL }> }
     }> = {}
-    isLoaded = false
+    hasSchedule = false
 
     generalInfo = (glyph: Learnable) => ({
         glyph: glyph,
         level: 0,
         reviewed_at: [],
     })
+
+    clear = () => {
+        this.#schedule = []
+        this.#progress = {}
+    }
 
     loadFromDisk = async () => {
         try {
@@ -31,6 +36,7 @@ export class ScheduleHandler {
                 if (schedule) {
                     this.#schedule = JSON.parse(schedule)
                     console.log('Schedule length', this.#schedule.length)
+                    this.hasSchedule = true
                 }
             })
             await AsyncStorage.getItem('progress').then((progress) => {
@@ -42,7 +48,6 @@ export class ScheduleHandler {
                     )
                 }
             })
-            this.isLoaded = true
             const endTime = performance.now()
             console.log(
                 `ScheduleHandler loadFromDisk() took ${
@@ -76,7 +81,7 @@ export class ScheduleHandler {
         }
     }
 
-    init(glyphs: GlyphInfo[]) {
+    initSchedule(glyphs: GlyphInfo[]) {
         // Load default learn order
         glyphs.forEach((glyph) => {
             this.#schedule.push({
@@ -84,6 +89,7 @@ export class ScheduleHandler {
                 skill: 'intro',
             })
         })
+        this.hasSchedule = true
     }
 
     /** Get a copy of the progress. Should not be edited. */
@@ -140,7 +146,12 @@ export class ScheduleHandler {
     }
 
     /** Get the next valid exercise the user should see. */
-    getNext() {
+    getCurrent() {
+        if (this.#schedule.length === 0)
+            console.warn(
+                'trying to access current exercise before schedule is initialized / loaded'
+            )
+
         // Find next valid element (With timeout for crash safety)
         let i = 10000
         while (i > 0) {
