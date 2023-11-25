@@ -12,7 +12,7 @@ const UpperBar: FC<Props> = ({ skillTitle, glyphWidth }) => {
     const seenCount = useContext(SeenCountContext)
 
     return (
-        <View style={{ gap: 8 }} className="flex-grow self-stretch  mb-8">
+        <View style={{ gap: 8 }} className=" flex-grow self-stretch  mb-8">
             <HealthBar glyphWidth={glyphWidth} />
             <StatusBar seenCount={seenCount} text={skillTitle} />
         </View>

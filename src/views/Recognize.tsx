@@ -17,7 +17,7 @@ const Recognize: FC<Props> = ({ glyphWidth }) => {
     return (
         <>
             <KanjiSkillTemplate
-                KanjiComp={<Outline text="?" />}
+                KanjiComp={<Outline text="?" dashed={false} />}
                 KanjiSuccComp={<KanjiBoxCorrect text={glyphInfo?.glyph} />}
                 TextComp={
                     <KanjiMeaning text={glyphInfo?.meanings.primary ?? ''} />

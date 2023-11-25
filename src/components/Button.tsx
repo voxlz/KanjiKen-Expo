@@ -17,7 +17,7 @@ const themeOptions = {
         press: ' bg-ui-light ',
         border: 'border-ui-disabled',
         text: 'text-ui-text',
-        font: 'NotoSansJP_400Regular',
+        font: 'KleeOne_600SemiBold',
         textTransform: 'none',
     },
     forest: {
@@ -44,7 +44,6 @@ const themePress = {
         press: ' bg-error-500 ',
         border: 'border-error-900',
         text: 'text-ui-text',
-        font: 'NotoSansJP_400Regular',
         textTransform: 'none',
     },
     correct: {
@@ -52,7 +51,6 @@ const themePress = {
         press: 'bg-forest-300',
         border: 'border-forest-700',
         text: 'text-ui-text',
-        font: 'NotoSansJP_400Regular',
         textTransform: 'none',
     },
 } as const
@@ -81,7 +79,7 @@ const Button: FC<BtnProps> = ({
 
     const theme =
         pressedStyle && pressedStyle
-            ? themePress[pressedStyle]
+            ? { ...themeOptions[styleName], ...themePress[pressedStyle] }
             : themeOptions[styleName]
 
     return (

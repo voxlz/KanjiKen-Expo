@@ -22,6 +22,7 @@ import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
 import DragContextProvider from '../src/contexts/DragContextProvider'
 import HealthContextProvider from '../src/contexts/HealthContextProvider'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
+import { View } from 'react-native'
 
 export default function Layout() {
     let [fontsLoaded] = useFonts({
@@ -52,8 +53,8 @@ export default function Layout() {
                     <DragContextProvider>
                         <TaskAnimContextProvider>
                             <ChallengeContextProvider>
-                                <SafeAreaView
-                                    className="flex-1 py-4 bg-white"
+                                <View
+                                    className="flex-1 py-4 mt-10 bg-white"
                                     onLayout={onLayoutRootView}
                                 >
                                     <StatusBar backgroundColor="white" />
@@ -67,7 +68,7 @@ export default function Layout() {
                                         }}
                                         initialRouteName="/home"
                                     />
-                                </SafeAreaView>
+                                </View>
                             </ChallengeContextProvider>
                         </TaskAnimContextProvider>
                     </DragContextProvider>

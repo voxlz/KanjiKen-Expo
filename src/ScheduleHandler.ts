@@ -137,9 +137,9 @@ export class ScheduleHandler {
                 })
             }
 
-            console.log('newLevel', newLevel)
-            console.log('updated progress', this.#progress[excercise.glyph])
-            console.log('schedule', this.#schedule.slice(0, 10))
+            // console.log('newLevel', newLevel)
+            // console.log('updated progress', this.#progress[excercise.glyph])
+            // console.log('schedule', this.#schedule.slice(0, 10))
 
             this.saveToDisk()
         }

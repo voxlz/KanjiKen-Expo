@@ -9,7 +9,7 @@ type Props = {
 /** Display challenge title and challenge number */
 const StatusBar: FC<Props> = ({ seenCount, text }) => (
     <View
-        className="flex justify-start  px-9 basis-10 items-start"
+        className="flex-row justify-between  px-9 basis-10 items-start"
         style={{ gap: 4 }}
     >
         <Text
@@ -18,12 +18,12 @@ const StatusBar: FC<Props> = ({ seenCount, text }) => (
         >
             {text}
         </Text>
-        <Text
+        {/* <Text
             style={{ fontFamily: 'NotoSansJP_400Regular' }}
             className="text-xl capitalize"
         >
             {seenCount}/20
-        </Text>
+        </Text> */}
     </View>
 )
 

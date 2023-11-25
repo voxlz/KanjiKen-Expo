@@ -58,7 +58,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
     const setChallenge = (excercise: Exercise) => {
         let info = glyphDict[excercise.glyph]
-        
+
         // Set the answers
         let answers: string[]
         switch (excercise.skill) {
@@ -123,8 +123,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         setSeenCount((id) => id + 1)
     }
 
-    console.log('corr order', correctOrder)
-
     /** Get the next correct choice. Returns "FINISH" if finished */
     const getExpectedChoice = correctOrder
         ? correctOrder[orderIdx] ?? 'FINISH'
@@ -135,7 +133,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     }
     /** What happens when user answers correctly */
     const onCorrectChoice = () => {
-        console.log('correct choice pressed')
         setOrderIdx(orderIdx + 1)
     }
 

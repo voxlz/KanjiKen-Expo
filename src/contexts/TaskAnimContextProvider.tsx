@@ -36,7 +36,7 @@ const TaskAnimContextProvider: FC<{ children?: ReactNode }> = ({
     const windUp = 200
 
     const start = () => {
-        console.log('Started animation')
+        // console.log('Started animation')
 
         progress.value = -1
         progress.value = withSequence(

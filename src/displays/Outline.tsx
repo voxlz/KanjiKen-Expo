@@ -5,16 +5,17 @@ import Animated from 'react-native-reanimated'
 type Props = {
     text?: string
     style?: StyleProp<ViewStyle>
+    dashed?: boolean
 }
 
-const Outline: FC<Props> = ({ text, style }) => {
+const Outline: FC<Props> = ({ text, style, dashed = true }) => {
     return (
         <Animated.View
             style={[
                 style,
                 {
                     // Tailwind utils break dashed border on android
-                    borderStyle: 'dashed',
+                    borderStyle: dashed ? 'dashed' : 'solid',
                     borderWidth: 3,
                     borderRadius: 12,
                     borderColor: 'rgb(174, 174, 174)',
