@@ -78,7 +78,7 @@ const Button: FC<BtnProps> = ({
     >()
 
     const theme =
-        pressedStyle && pressedStyle
+        pressedStyle && themeOptions
             ? { ...themeOptions[styleName], ...themePress[pressedStyle] }
             : themeOptions[styleName]
 

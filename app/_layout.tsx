@@ -47,16 +47,13 @@ export default function Layout() {
         return null
     }
     return (
-        <GlyphWidthContextProvider>
-            <SchedulerContextProvider>
-                <HealthContextProvider>
-                    <DragContextProvider>
-                        <TaskAnimContextProvider>
-                            <ChallengeContextProvider>
-                                <View
-                                    className="flex-1 py-4 mt-10 bg-white"
-                                    onLayout={onLayoutRootView}
-                                >
+        <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
+            <GlyphWidthContextProvider>
+                <SchedulerContextProvider>
+                    <HealthContextProvider>
+                        <DragContextProvider>
+                            <TaskAnimContextProvider>
+                                <ChallengeContextProvider>
                                     <StatusBar backgroundColor="white" />
                                     <Stack
                                         screenOptions={{
@@ -68,12 +65,12 @@ export default function Layout() {
                                         }}
                                         initialRouteName="/home"
                                     />
-                                </View>
-                            </ChallengeContextProvider>
-                        </TaskAnimContextProvider>
-                    </DragContextProvider>
-                </HealthContextProvider>
-            </SchedulerContextProvider>
-        </GlyphWidthContextProvider>
+                                </ChallengeContextProvider>
+                            </TaskAnimContextProvider>
+                        </DragContextProvider>
+                    </HealthContextProvider>
+                </SchedulerContextProvider>
+            </GlyphWidthContextProvider>
+        </View>
     )
 }
