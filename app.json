@@ -4,6 +4,14 @@
         "slug": "Kanjiken",
         "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
         "version": "0.1.1",
+        "android": {
+            "versionCode": 2,
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.voxlz.KanjiKen"
+        },
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "scheme": "kanjiken",
@@ -17,13 +25,6 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.voxlz.KanjiKen"
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            },
-            "package": "com.voxlz.KanjiKen"
         },
         "web": {
             "favicon": "./assets/favicon.png",
