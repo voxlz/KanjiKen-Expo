@@ -7,11 +7,16 @@
 -   [x] #3 - Space out intro and first exercise
 -   [x] #4 - Intro btns clickable when opacity 0.
 -   [x] #5 - Possible to see next answer for a split second after continue.
--   [ ] #6 - Duplicate characters are both fade out in composition, even if only one was used.
--   [ ] #7 - Don't introduce compound before lvl 5 (or something) has been reached on components.
--   [ ] #8 - Remove answer from random choices, otherwise you can cheat.
+-   [ ] #6 - Duplicate characters all fade out in composition, even if only one was used.
+-   [ ] #7 - Don't introduce character before certain proficiency has been reached on it's components.
+-   [x] #8 - Remove answer from random choices, otherwise you can cheat.
+-   [ ] #9 - Daily goal: Introduce a "win" condition! (20 min / day)
+-   [ ] #10 - Show similar kanji as alternatives
+-   [ ] #11 - Add dictionary defintion to english word. (High english proficiency should not be required)
+-   [ ] #12 - Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical decomposition)
+-   [ ] #13 - Show resoanble choices for the first few kanji. Currently random.
 
-## Features for next release
+## Features for ofiical release
 
 -   [x] Save progress to disk
 -   [ ] Hint system on misstake

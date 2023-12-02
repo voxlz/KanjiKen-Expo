@@ -22,12 +22,7 @@ const Recognize: FC<Props> = ({ glyphWidth }) => {
                 TextComp={
                     <KanjiMeaning text={glyphInfo?.meanings.primary ?? ''} />
                 }
-                ChoicesComp={
-                    <ChoicesButtons
-                        glyphInfo={glyphInfo}
-                        glyphWidth={glyphWidth}
-                    />
-                }
+                ChoicesComp={<ChoicesButtons glyphInfo={glyphInfo} />}
             />
         </>
     )

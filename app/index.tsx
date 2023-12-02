@@ -31,10 +31,10 @@ const Home: FC<Props> = ({}) => {
                         text="Start Session"
                         onPress={() => router.push('/session')}
                     />
-                    {/* <StyledButton
-                    text="Dictionary"
-                    onPress={() => router.push('/dictionary')}
-                /> */}
+                    <StyledButton
+                        text="Dictionary"
+                        onPress={() => router.push('/dictionary')}
+                    />
                     <StyledButton
                         text="Erase Progress"
                         onPress={() => {

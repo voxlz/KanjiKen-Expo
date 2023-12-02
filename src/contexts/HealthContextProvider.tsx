@@ -18,8 +18,8 @@ export const AddHealthContext = createContext<(health: number) => void>()
 const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     children,
 }) => {
-    const [health, setHealth] = useState(40)
-    const [maxHealth] = useState(40)
+    const [health, setHealth] = useState(30)
+    const [maxHealth] = useState(30)
 
     const healthProcent = useSharedValue((health / maxHealth) * 100)
     const healthColor = useSharedValue(1)
