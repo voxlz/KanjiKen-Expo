@@ -16,6 +16,15 @@ type Props = {
 }
 
 /** Keeps track of current health */
+
+export function ExitBtn({ height }: { height: number }) {
+    return (
+        <Pressable onPress={() => router.back()}>
+            <SVGImg width={height * 1.6} height={height * 1.6} />
+        </Pressable>
+    )
+}
+
 const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
     const relativeHealth = useContext(RelativeHealthContext)
     const healthColor = useContext(HealthColorContext)
@@ -73,9 +82,7 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
                     {/* <Text className="text-forest-800">200</Text> */}
                 </Animated.View>
             </Animated.View>
-            <Pressable onPress={() => router.back()}>
-                <SVGImg width={height * 1.6} height={height * 1.6} />
-            </Pressable>
+            <ExitBtn height={height}></ExitBtn>
         </View>
     )
 }

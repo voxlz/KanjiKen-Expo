@@ -9,6 +9,7 @@ import {
 import { AddHealthContext } from '../contexts/HealthContextProvider'
 import { useContext } from '../utils/react'
 import CharacterGrid from './CharacterGrid'
+import { View } from 'react-native'
 
 const ChoicesButtons: FC<{ glyphInfo: GlyphInfo }> = ({ glyphInfo }) => {
     const seenCount = useContext(SeenCountContext)
@@ -26,7 +27,11 @@ const ChoicesButtons: FC<{ glyphInfo: GlyphInfo }> = ({ glyphInfo }) => {
     }
 
     return (
-        <CharacterGrid chars={choices} onPress={onPress} idAppend={seenCount} />
+            <CharacterGrid
+                chars={choices}
+                onPress={onPress}
+                idAppend={seenCount}
+            />
     )
 }
 

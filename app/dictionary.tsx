@@ -2,13 +2,14 @@ import React, { FC } from 'react'
 import { Text, View } from 'react-native'
 import { useContext } from '../src/utils/react'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
-import CharacterGrid from '../src/components/CharacterGrid'
 import { glyphDict } from '../src/data/glyphDict'
 import { Learnable } from '../src/types/progress'
 import { FlatList } from 'react-native-gesture-handler'
-import Button from '../src/components/Button'
 import { GlyphWidthContext } from '../src/contexts/GlyphWidthContextProvider'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import Svg, { Circle, ClipPath, Path, Rect } from 'react-native-svg'
+import Button from '../src/components/Button'
+import { GlyphInfo } from '../src/contexts/ChallengeContextProvider'
+import { ExitBtn } from '../src/components/HealthBar'
 
 type Props = {}
 
@@ -27,15 +28,20 @@ const Dictionary: FC<Props> = ({}) => {
     }
     const glyphWidth = useContext(GlyphWidthContext)
     // <CharacterGrid chars={glyphs} />
+    const width = (glyphWidth * 8) / 10
+    const radius = width
+
     return (
         <View className="mt-14">
-            <Text>Discovered</Text>
             <FlatList
                 data={groupedGlyphs}
-                // numColumns={5}
-                // className=""
-                // contentContainerStyle={{ alignItems: 'center', gap: 8 }}
-                // columnWrapperStyle={{ gap: 8 }}
+                ListHeaderComponent={
+                    <View className="flex-row justify-between px-4 bg-gradient-to-b to-transparent from-black">
+                        <Text className="text-xl">Discovered</Text>
+                        <ExitBtn height={20} />
+                    </View>
+                }
+                stickyHeaderIndices={[0]}
                 renderItem={(item) => (
                     <View
                         className="m-4 p-4  mb-0 rounded-lg border-gray-200"
@@ -45,7 +51,119 @@ const Dictionary: FC<Props> = ({}) => {
                             <Text>Forest - Camp</Text>
                             <Text>1 | 5 | 20</Text>
                         </View>
-                        <CharacterGrid chars={item.item} />
+                        <View
+                            style={{ gap: 8 }}
+                            className="flex-row max-w-fullflex-shrink flex-wrap h-auto"
+                        >
+                            {item.item.map((alt: GlyphInfo, i: number) => {
+                                let lvl =
+                                    (prog[alt.glyph]?.skills.recognize ?? 0) +
+                                    (prog[alt.glyph]?.skills.compose ?? 0)
+                                let degrees: number
+                                let state: 'new' | 'learned' | 'maxed'
+                                if (lvl < 5) {
+                                    degrees = (lvl / 5) * 360
+                                    state = 'new'
+                                } else if (lvl < 10) {
+                                    degrees = ((lvl - 5) / 5) * 360
+                                    state = 'learned'
+                                } else {
+                                    degrees = 0
+                                    state = 'maxed'
+                                }
+
+                                const angle = (degrees * Math.PI) / 180
+                                const x =
+                                    ((Math.fround(Math.sin(angle)) + 1) / 2) *
+                                    width *
+                                    2
+                                const y =
+                                    ((Math.fround(Math.cos(angle) * -1) + 1) /
+                                        2) *
+                                    width *
+                                    2
+                                // console.log('x:', x, 'y:', y)
+                                return (
+                                    <View className="relative" key={i}>
+                                        <View
+                                            style={{
+                                                width: (glyphWidth * 8) / 10,
+                                                height: (glyphWidth * 8) / 10,
+                                            }}
+                                        >
+                                            <Button
+                                                text={alt.glyph}
+                                                lang="jap"
+                                                styleName="choices"
+                                                btnClass={
+                                                    'bg-transparent ' +
+                                                    (state === 'new'
+                                                        ? 'border-[#666666]'
+                                                        : state === 'learned'
+                                                        ? 'border-[#326A00]'
+                                                        : 'border-[#B58D00]')
+                                                }
+                                                textStyle={{
+                                                    fontSize: 34,
+                                                    lineHeight: 38,
+                                                }}
+                                            />
+                                        </View>
+                                        <Svg
+                                            className="bg-transparent absolute -z-10"
+                                            style={{
+                                                width: width * 2,
+                                                height: width * 2,
+                                                margin: -width / 2,
+                                            }}
+                                            clipPath="#roundedRect"
+                                        >
+                                            <ClipPath id="roundedRect">
+                                                <Rect
+                                                    x={width / 2 + 1}
+                                                    y={width / 2 + 1}
+                                                    width={width - 2}
+                                                    height={width - 2}
+                                                    rx="13"
+                                                    ry="13"
+                                                />
+                                            </ClipPath>
+                                            <Circle
+                                                fill={
+                                                    state === 'new'
+                                                        ? '#ECEAEA'
+                                                        : state === 'learned'
+                                                        ? '#9DE55F'
+                                                        : '#FFD600'
+                                                }
+                                                cx={width}
+                                                cy={width}
+                                                r={width}
+                                                clipPath="#roundedRect"
+                                            />
+                                            <Path
+                                                fill={
+                                                    state === 'new'
+                                                        ? '#9DE55F'
+                                                        : state === 'learned'
+                                                        ? '#65D800'
+                                                        : undefined
+                                                }
+                                                d={`
+                                                    M ${width} ${width} 
+                                                    L ${width} 0 
+                                                    A ${radius} ${radius} 0 
+                                                    ${
+                                                        degrees >= 180 ? 1 : 0
+                                                    } 1 ${x} ${y}
+                                                    `}
+                                                clipPath="#roundedRect"
+                                            />
+                                        </Svg>
+                                    </View>
+                                )
+                            })}
+                        </View>
                     </View>
                 )}
             />

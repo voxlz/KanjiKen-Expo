@@ -17,15 +17,15 @@ const CharacterGrid: FC<Props> = ({ chars, onPress, idAppend }) => {
 
     return (
         <View
-            style={{ gap: 8 }}
-            className="flex-row max-w-fullflex-shrink flex-wrap h-auto"
+            style={{ gap: 12 }}
+            className="flex-row max-w-fullflex-shrink flex-wrap h-auto justify-center "
         >
             {chars.map((alt: GlyphInfo, i: number) => {
                 return (
                     <View
                         style={{
-                            width: (glyphWidth * 8) / 10,
-                            height: (glyphWidth * 8) / 10,
+                            width: glyphWidth,
+                            height: glyphWidth,
                         }}
                         key={i + alt.glyph! + idAppend}
                     >

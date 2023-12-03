@@ -1,11 +1,17 @@
 import React, { FC, useState } from 'react'
-import { Pressable, StyleProp, Text } from 'react-native'
+import { Pressable, StyleProp, Text, TextStyle, ViewStyle } from 'react-native'
 import { font } from '../utils/fonts'
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils'
+import tailwindConfig from '../../tailwind.config'
+import resolveConfig from 'tailwindcss/resolveConfig'
+
+const fullConfig = resolveConfig(tailwindConfig)
+
+// fullConfig.theme?.extend?.colors['forest']
 
 const themeOptions = {
     normal: {
-        bg: ' bg-ui-very_light ',
+        bg: ' bg-ui-very_light',
         press: ' bg-ui-light ',
         border: 'border-ui-disabled',
         text: 'text-ui-text',
@@ -62,7 +68,9 @@ export type BtnProps = {
     text?: string
     styleName?: ButtonStyles
     lang?: 'eng' | 'jap'
-    style?: StyleProp<ViewProps>
+    btnClass?: string
+    // btnStyle?: StyleProp<ViewStyle>
+    textStyle?: StyleProp<TextStyle>
 }
 
 /** Basic button for button use. Grows to fill available. Configure color pallet. */
@@ -71,6 +79,8 @@ const Button: FC<BtnProps> = ({
     styleName = 'forest',
     onPress,
     lang = 'eng',
+    btnClass,
+    textStyle,
 }) => {
     const [pressed, setPressed] = useState(false)
     const [pressedStyle, setPressedStyle] = useState<
@@ -95,18 +105,24 @@ const Button: FC<BtnProps> = ({
             }}
             onPressIn={() => setPressed(true)}
             onPressOut={() => setPressed(false)}
-            className={`w-full  flex-grow  justify-center rounded-2xl  border-[3px]  ${
-                pressed ? ' border-b-[3px] ' : ' border-b-[5px] '
-            } ${pressed ? ' mt-[2px] ' : ' mt-[0px] '}  ${
-                !pressed ? theme.bg : theme.press
-            }  ${theme.border}
-            `}
+            className={
+                `
+                w-full  flex-grow  justify-center rounded-2xl  border-[3px]  
+                ${pressed ? ' border-b-[3px] ' : ' border-b-[5px] '} 
+                ${pressed ? ' mt-[2px] ' : ' mt-[0px] '}  
+                ${!pressed ? theme.bg : theme.press}  
+                ${theme.border}
+            ` + btnClass
+            }
         >
             <Text
-                style={{
-                    fontFamily: font(text, theme.font),
-                    textTransform: theme.textTransform,
-                }}
+                style={[
+                    {
+                        fontFamily: font(text, theme.font),
+                        textTransform: theme.textTransform,
+                    },
+                    textStyle,
+                ]}
                 className={`text-center  ${
                     lang === 'eng' ? 'text-lg text' : 'text-4xl -mb-2'
                 } -mt-1 ${theme.text} translate-x-1/2 `}
