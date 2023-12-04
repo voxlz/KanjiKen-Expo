@@ -22,7 +22,7 @@ const Home: FC<Props> = ({}) => {
                 style={{
                     flex: 1,
                     alignItems: 'stretch',
-                    justifyContent: 'center',
+                    justifyContent: 'space-around',
                     gap: 12,
                 }}
             >
@@ -35,7 +35,10 @@ const Home: FC<Props> = ({}) => {
                         text="Dictionary"
                         onPress={() => router.push('/dictionary')}
                     />
+                </View>
+                <View>
                     <StyledButton
+                        styleName="normal"
                         text="Erase Progress"
                         onPress={() => {
                             console.log('deleted progress')
