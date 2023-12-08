@@ -1,5 +1,12 @@
 # TODO - Kanjiken Expo
 
+<!-- Next id -->
+<script>
+node
+const file = require('node:fs').readFileSync('TODO.md', 'utf8')
+Math.max.apply(null, file.match(/\d+/g));
+</script>
+
 Use the the following versioning system: vs.m.b
 - s: Stable. New stable release.
 - m: Minor change. Includes some features and issues. 
@@ -11,7 +18,8 @@ Use the the following versioning system: vs.m.b
 
 | #id | Prio | Description                                                   |
 | --- | ---- | ------------------------------------------------------------- |
-| #29 | ^    | Dictionary Section (See all learned kanji)                    |
+| #19 | ^    | Modal popups (tutorial, confirmation, changelog)              |
+| #32 | ^    | Health Regen                                                  |
 | #28 | -    | Hint system on misstake                                       |
 | #27 | -    | Placement test                                                |
 | #26 | -    | Progress overview view                                        |
@@ -19,7 +27,7 @@ Use the the following versioning system: vs.m.b
 | #24 | -    | Daily Streak Counter system                                   |
 | #23 | -    | XP level system to track progress                             |
 | #22 | -    | Word exercises (Learn kanji pronouncation + Basic vocabulary) |
-| #19 | -    | Modal box for popups                                          |
+| #31 | -    | Dictionary skill filter                                       |
 
 ### Issues
 
@@ -27,10 +35,8 @@ Use the the following versioning system: vs.m.b
 | --- | ---- | ---------------------------------------------------------------------------------------------------------- |
 | #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                                       |
-| #17 | -    | Hitbox sometimes seems off / does not register properly. (State issue?)                                    |
 | #15 | -    | Confirmation on dangourus actions. (Like deleting save)                                                    |
-| #16 | -    | Exiting after finishing an exercise and then going back in has dubble buttons.                             |
-| #14 | -    | No damage on dropping on filled drop locations.                                                            |
+| #30 | ^    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                                   |
 | #13 | -    | Show resoanble choices for the first few kanji. Currently random.                                          |
 | #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  decomposition) |
 | #11 | -    | Add dictionary defintion to english word. (High english proficiency should not be required)                |
@@ -46,29 +52,37 @@ Use the the following versioning system: vs.m.b
 
 #### Features
 
-| #id | Prio | Description |
-| --- | ---- | ----------- |
+| #id | Prio | Description                                     |
+| --- | ---- | ----------------------------------------------- |
+| #29 | ^    | Added Discovery Section (See all learned kanji) |
+
 
 #### Issues
 
-| #id | Prio | Description |
-| --- | ---- | ----------- |
+| #id | Prio | Description                                                                                         |
+| --- | ---- | --------------------------------------------------------------------------------------------------- |
+| #17 | ^    | Z-fighting sometimes resulted in missed dropoffs on drag gesture.                                   |
+| #16 | ^    | Exiting partway through an excercise may lead to broken visuals.                                    |
+| #14 | ^    | Damage on dropping on filled drop locations.                                                        |
+| #32 | -    | Drop gesture now checks for box-position instead of finger pos. Should make dragging more reliable. |
+| #33 | ^    | Drag hitboxes could be more forgiving. (Drag gesture)                                               |
+
 
 ### v0.1.1
 
 #### Features
 
-| #id | Prio | Description           |
-| --- | ---- | --------------------- |
-| #20 | ^    | Save progress to disk |
+| #id | Prio | Description                                  |
+| --- | ---- | -------------------------------------------- |
+| #20 | ^    | Data persistance: Now saves progress to disk |
 
 #### Issues
 
-| #id | Prio | Description                                                    |
-| --- | ---- | -------------------------------------------------------------- |
-| #1  | ^    | Double pressing continue will advance 2 exercises.             |
-| #2  | ^    | Broken intro for composition kanji (2+ parts)                  |
-| #3  | ^    | Space out intro and first exercise                             |
-| #4  | ^    | Intro btns clickable when opacity 0.                           |
-| #5  | ^    | Possible to see next answer for a split second after continue. |
-| #8  | ^    | Remove answer from random choices, otherwise you can cheat.    |
+| #id | Prio | Description                                                             |
+| --- | ---- | ----------------------------------------------------------------------- |
+| #1  | ^    | Double pressing continue will advance 2 exercises.                      |
+| #2  | ^    | Composition kanji don't get an "intro" screen                           |
+| #3  | ^    | Space out intro and first exercise                                      |
+| #4  | ^    | Intro buttons are clickable even when opacity 0.                        |
+| #5  | ^    | Possible to see next answer for a split second after pressing continue. |
+| #8  | ^    | Remove answer from choices in "compose" exercise.                       |

@@ -72,12 +72,15 @@ const KanjiSkillTemplate: FC<Props> = ({
         <View className="items-center justify-between flex-grow">
             <View className="items-center">
                 <View className="w-2/4 aspect-square">
-                    <Animated.View style={[builderStyle]} className="flex-grow">
+                    <Animated.View
+                        style={[builderStyle, { elevation: 1, zIndex: 1 }]}
+                        className="flex-grow"
+                    >
                         {KanjiComp}
                     </Animated.View>
                     <Animated.View
-                        style={kanjiStyle}
-                        className={'absolute  w-full h-full'}
+                        style={[kanjiStyle, { elevation: 0, zIndex: 0 }]}
+                        className={'absolute w-full h-full -z-10'}
                     >
                         {KanjiSuccComp}
                     </Animated.View>

@@ -13,6 +13,7 @@ import KanjiSkillTemplate from './KanjiSkillTemplate'
 import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
+import { defaultGap } from '../utils/consts'
 
 type Props = { glyphWidth: number; showPositionHints: boolean }
 
@@ -40,7 +41,7 @@ const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
                 }
                 ChoicesComp={
                     <View
-                        style={{ gap: 12 }}
+                        style={{ gap: defaultGap }}
                         className="flex-row max-w-full flex-shrink flex-wrap h-auto px-8"
                     >
                         {choices?.map((alt, i) => {

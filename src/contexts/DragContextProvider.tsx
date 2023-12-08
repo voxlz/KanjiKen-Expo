@@ -23,6 +23,8 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [hover, setHover] = useState<DropInfo>()
 
     const updateHover = (loc?: XY) => {
+        // console.log(loc)
+
         const newHover = drops.find(
             (drop) =>
                 loc &&

@@ -12,7 +12,7 @@ import {
 export const ContinueAnimContext = CC<SharedValue<number>>()
 export const ContinueAnimInstantResetContext = CC<SharedValue<number>>()
 export const StartFinishAnimationContext = CC<() => void>()
-export const ResetFinishAnimationContext = CC<() => void>()
+export const ResetFinishAnimationContext = CC<(instant?: boolean) => void>()
 
 const TaskAnimContextProvider: FC<{ children?: ReactNode }> = ({
     children,
@@ -51,13 +51,18 @@ const TaskAnimContextProvider: FC<{ children?: ReactNode }> = ({
         )
     }
 
-    const reset = () => {
+    const reset = (instant: boolean = false) => {
         console.log('Reset animation')
-        progress.value = 1
-        progress.value = withSequence(
-            withSpring(0, springAnimation),
-            withTiming(-1, { duration: 0 })
-        )
+
+        if (!instant) {
+            progress.value = 1
+            progress.value = withSequence(
+                withSpring(0, springAnimation),
+                withTiming(-1, { duration: 0 })
+            )
+        } else {
+            progress.value = -1
+        }
 
         progressInstantReset.value = -1
     }

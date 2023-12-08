@@ -19,7 +19,7 @@ import UpperBar from '../components/UpperBar'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { glyphDict } from '../data/glyphDict'
 
-/** The general challenge view for building a kanji through components */
+/** The general challenge view for doing kanji exercises */
 const Session: FC<{}> = ({}) => {
     // How wide is a glyph part of a 1x4 row with margins and gap considered?
     // Calc the scale, use this to scale UI
@@ -32,8 +32,11 @@ const Session: FC<{}> = ({}) => {
     const resetSkillAnim = useContext(ResetSkillAnimContext)
     const glyphWidth = useContext(GlyphWidthContext)
 
+    // When session starts
     useEffect(() => {
+        console.log('session start')
         nextExercise()
+        resetSkillAnim(true) // In case they exited during an exercise.
     }, [])
 
     // State

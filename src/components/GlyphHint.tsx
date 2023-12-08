@@ -25,6 +25,7 @@ const GlyphHint: FC<Props> = ({ show, hintText, anchor }) => {
                 top: anchor.top - (text?.height ?? 0) - 10,
                 width: show ? text?.width ?? 1000 : 0,
                 height: show ? text?.height : 0,
+                pointerEvents: 'none',
             }}
             className="absolute w-32 h-16 z-20"
         >

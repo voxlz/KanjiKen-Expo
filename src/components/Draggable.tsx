@@ -30,6 +30,9 @@ import { useContext } from '../utils/react'
 import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { Learnable } from '../types/progress'
 import { glyphDict } from '../data/glyphDict'
+import { DropsDispatchContext } from '../contexts/DragContextProvider'
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
+import { defaultGap } from '../utils/consts'
 
 const { UIManager } = NativeModules
 
@@ -67,9 +70,11 @@ const Draggable: FC<Props> = ({
 }) => {
     const hoverUpdate = useContext(HoverUpdateContext)
     const drops = useContext(DropsContext)
+    const dropsDispatch = useContext(DropsDispatchContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const addHealth = useContext(AddHealthContext)
+    const glyphWidth = useContext(GlyphWidthContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
     const [droppedBefore, setDroppedBefore] = useState(false)
@@ -105,6 +110,10 @@ const Draggable: FC<Props> = ({
         }
         moveTo(newTrans)
         setDroppedBefore(true)
+
+        // Update containsGlyph in dropLocation
+        hover.containsGlyph = glyph
+        dropsDispatch({ type: 'changed', dropInfo: hover })
     }
 
     const dropCancelled = () => {
@@ -127,7 +136,7 @@ const Draggable: FC<Props> = ({
             update: { type: 'spring', springDamping: 1 },
         })
 
-    /** TAP - Memod as requested in documentation*/
+    /** TAP - Memo'd as recommended in documentation */
     const tap = React.useMemo(
         () =>
             Gesture.Tap()
@@ -143,7 +152,7 @@ const Draggable: FC<Props> = ({
         [anchor, drops, expectedChoice, glyph, prepForLayout]
     )
 
-    /** DRAG */
+    /** DRAG - Memo'd as recommended in documentation*/
     const drag = React.useMemo(
         () =>
             Gesture.Pan()
@@ -153,7 +162,15 @@ const Draggable: FC<Props> = ({
                     currSize && setDragStartSize(currSize)
                 })
                 .onChange((drag) => {
-                    hoverUpdate?.({ x: drag.absoluteX, y: drag.absoluteY })
+                    // Since user might have started drag by dragging edge, check hover based on draggable center instead.
+                    const center = glyphWidth / 2
+                    const cxDiff = center - drag.x
+                    const cyDiff = center - drag.y
+                    hoverUpdate?.({
+                        x: drag.absoluteX + cxDiff,
+                        y: drag.absoluteY + cyDiff,
+                    })
+
                     let tx = drag.translationX
                     let ty = drag.translationY
 
@@ -191,6 +208,7 @@ const Draggable: FC<Props> = ({
                     else if (
                         !droppedBefore &&
                         expectedChoice !== 'FINISH' && // not already finished
+                        !hover?.containsGlyph &&
                         hover
                     ) {
                         console.log('failed', droppedBefore)
@@ -249,6 +267,12 @@ const Draggable: FC<Props> = ({
                     elevation: isBeingDragged ? 10 : 1,
                     height: currSize ? currSize.height : width,
                     width: currSize ? currSize.width : width,
+                }}
+                hitSlop={{
+                    top: defaultGap / 2,
+                    bottom: defaultGap / 2,
+                    left: defaultGap / 2,
+                    right: defaultGap / 2,
                 }}
             >
                 <Animated.View

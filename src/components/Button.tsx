@@ -107,7 +107,7 @@ const Button: FC<BtnProps> = ({
             onPressOut={() => setPressed(false)}
             className={
                 `
-                w-full  flex-grow  justify-center rounded-2xl  border-[3px]  
+                w-full  flex-grow  justify-center rounded-xl  border-[3px]  
                 ${pressed ? ' border-b-[3px] ' : ' border-b-[5px] '} 
                 ${pressed ? ' mt-[2px] ' : ' mt-[0px] '}  
                 ${!pressed ? theme.bg : theme.press}  
