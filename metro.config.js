@@ -19,6 +19,12 @@
 const { getDefaultConfig } = require('expo/metro-config')
 const config = getDefaultConfig(__dirname)
 
+// Include files from KanjiKen-Dict project under "dict" path
+// https://dushyant37.medium.com/how-to-import-files-from-outside-of-root-directory-with-react-native-metro-bundler-18207a348427
+const kanjiDictPath = require('path').resolve(__dirname + '/../')
+config.resolver.extraNodeModules = { kanjiDict: kanjiDictPath }
+config.watchFolders = [kanjiDictPath]
+
 // Override default config to allow for SVG
 config.transformer.babelTransformerPath = require.resolve(
     'react-native-svg-transformer'

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import Button from '../components/Button'
 import todo from '../../TODO.md'
-import dictChanges from '../../../../KanjiKen-Dict/TODO.md'
+import dictChanges from '../../TODO_DICT.md'
 import { ScrollView } from 'react-native-gesture-handler'
 
 type Props = { onDismiss: () => void }
