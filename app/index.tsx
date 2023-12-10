@@ -2,11 +2,8 @@ import { router } from 'expo-router'
 import React, { FC } from 'react'
 import { View, Text } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
-import { glyphDict } from '../src/data/glyphDict'
-import { learnOrder } from '../src/data/learnOrder'
 import { version } from './_layout'
 
 type Props = {}
@@ -33,6 +30,10 @@ const Home: FC<Props> = ({}) => {
                     <StyledButton
                         text="Discovered"
                         onPress={() => router.push('/discovery')}
+                    />
+                    <StyledButton
+                        text="Changelog"
+                        onPress={() => router.push('/changelog')}
                     />
                 </View>
                 {/* <View>

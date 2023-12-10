@@ -14,7 +14,7 @@ import {
     NotoSansJP_900Black,
 } from '@expo-google-fonts/noto-sans-jp'
 import { useFonts } from 'expo-font'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
@@ -24,7 +24,8 @@ import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
 import { View, Text } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants'
-import Button from '../src/components/Button'
+
+import ChangeLog from '../src/modals/ChangeLog'
 export const version = Constants.expoConfig?.version
 
 export default function Layout() {
@@ -39,7 +40,6 @@ export default function Layout() {
         'klee-bold': KleeOne_600SemiBold,
         'KanjiKen-Regular': require('./../assets/fonts/KanjiKen-Regular.ttf'),
     })
-    const [showChangelog, setShowChangelog] = useState(true)
 
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
@@ -75,34 +75,7 @@ export default function Layout() {
 
     return (
         <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
-            {showChangelog && (
-                <>
-                    <View className="absolute top-0 bottom-0 left-0 right-0 z-10 bg-black opacity-25" />
-                    <View
-                        style={{ borderWidth: 0 }}
-                        className="absolute bg-slate-100 top-16 bottom-12 left-5 right-5 z-20 rounded-xl justify-between border-forest-900"
-                    >
-                        <View className="p-8">
-                            <Text className="text-xl font-noto-md">
-                                Changelog
-                            </Text>
-                            <View
-                                style={{
-                                    borderBottomColor: 'black',
-                                    borderBottomWidth: 1,
-                                }}
-                                className="mt-4 mb-8 opacity-20"
-                            />
-                        </View>
-                        <View className="h-32 p-8">
-                            <Button
-                                text="Dissmiss"
-                                onPress={() => setShowChangelog(false)}
-                            />
-                        </View>
-                    </View>
-                </>
-            )}
+            <ChangeLog />
             <GlyphWidthContextProvider>
                 <SchedulerContextProvider>
                     <HealthContextProvider>

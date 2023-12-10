@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Session from './src/views/Session'
+import React from 'react'
 
 // Used for web to render tailwind
 // import "./src/input";

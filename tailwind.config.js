@@ -3,6 +3,7 @@ module.exports = {
     content: [
         './app.d.{js,jsx,ts,tsx}',
         './App.{js,jsx,ts,tsx}',
+        './TODO.md',
         './src/**/*.{js,jsx,ts,tsx}',
         './app/**/*.{js,jsx,ts,tsx}',
     ],

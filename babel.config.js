@@ -6,6 +6,12 @@ module.exports = function (api) {
             'expo-router/babel',
             'nativewind/babel',
             'react-native-reanimated/plugin',
+            [
+                'babel-plugin-inline-import',
+                {
+                    extensions: ['.md', '.txt'],
+                },
+            ],
         ],
     }
 }

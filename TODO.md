@@ -1,16 +1,9 @@
-# TODO - Kanjiken Expo
-
-<!-- Next id -->
-<script>
-node
-const file = require('node:fs').readFileSync('TODO.md', 'utf8')
-Math.max.apply(null, file.match(/\d+/g));
-</script>
+# TODO
 
 Use the the following versioning system: vs.m.b
-- s: Stable. New stable release.
-- m: Minor change. Includes some features and issues. 
-- b: Bug change. Fixes issues with the program. 
+- s: Stable / Milestone release.
+- m: Feature release.
+- b: Hotfix. Fixes issues with the program. 
 
 ## Open
 
@@ -20,7 +13,6 @@ Use the the following versioning system: vs.m.b
 | --- | ---- | ------------------------------------------------------------- |
 | #19 | ^    | Modal popups (tutorial, confirmation, changelog)              |
 | #32 | ^    | Health Regen                                                  |
-| #33 | ^    | Changelog on startup of new version                           |
 | #28 | -    | Hint system on misstake                                       |
 | #27 | -    | Placement test                                                |
 | #26 | -    | Progress overview view                                        |
@@ -39,7 +31,7 @@ Use the the following versioning system: vs.m.b
 | #15 | -    | Confirmation on dangourus actions. (Like deleting save)                                                    |
 | #30 | ^    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                                   |
 | #13 | -    | Show resoanble choices for the first few kanji. Currently random.                                          |
-| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  decomposition) |
+| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition)   |
 | #11 | -    | Add dictionary defintion to english word. (High english proficiency should not be required)                |
 | #10 | -    | Show similar kanji as alternatives                                                                         |
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                    |
@@ -49,13 +41,14 @@ Use the the following versioning system: vs.m.b
 
 ## Changelog
 
-### v0.1.2
+### v0.2.0
 
 #### Features
 
-| #id | Prio | Description                                     |
-| --- | ---- | ----------------------------------------------- |
-| #29 | ^    | Added Discovery Section (See all learned kanji) |
+| #id | Prio | Description                                        |
+| --- | ---- | -------------------------------------------------- |
+| #29 | ^    | Added Discovery Section \n(See all learned kanji)  |
+| #33 | ^    | Added change log. Shows on startup of new version. |
 
 
 #### Issues
@@ -66,17 +59,11 @@ Use the the following versioning system: vs.m.b
 | #16 | ^    | Exiting the session partway through an excercise may lead to broken visuals.                             |
 | #14 | ^    | Damage on dropping on already filled drop locations.                                                     |
 | #32 | -    | Drop gesture now checks for box-position instead of finger position. Should make dragging more reliable. |
-| #33 | ^    | Drag hitboxes are now more forgiving. (Drag gesture)                                                     |
-| #33 | ^    | Removed delete progress button. (For now, just reinstall the app)                                        |
+| #33 | ^    | Drag hitboxes are now more forgiving. \n(Drag gesture)                                                   |
+| #33 | ^    | Removed delete progress button. \n(For now, just reinstall the app)                                      |
 
 
 ### v0.1.1
-
-#### Features
-
-| #id | Prio | Description                                  |
-| --- | ---- | -------------------------------------------- |
-| #20 | ^    | Data persistance: Now saves progress to disk |
 
 #### Issues
 
@@ -88,3 +75,18 @@ Use the the following versioning system: vs.m.b
 | #4  | ^    | Intro buttons are clickable even when opacity 0.                        |
 | #5  | ^    | Possible to see next answer for a split second after pressing continue. |
 | #8  | ^    | Remove answer from choices in "compose" exercise.                       |
+
+
+### v0.1.0
+
+#### Features
+
+| #id | Prio | Description                                  |
+| --- | ---- | -------------------------------------------- |
+| #20 | ^    | Data persistance: Now saves progress to disk |
+| #?? | ^    | Added kanji composition and meaning database |
+| #?? | ^    | Added skill "Recognize" to session           |
+| #?? | ^    | Added skill "Compose" to session             |
+| #?? | ^    | Added spaced repetition system               |
+| #?? | ^    | Added drag and drop gesture                  |
+
