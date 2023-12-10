@@ -18,7 +18,7 @@ type Props = {}
 const Discovery: FC<Props> = ({}) => {
     const scheduler = useContext(SchedulerContext)
     const prog = scheduler.getProgress()
-    const glyphs = learnOrder.map((glyph) => glyphDict[glyph as Learnable])
+    const glyphs = learnOrder.map((glyph: Learnable) => glyphDict[glyph])
     const groupedGlyphs = []
     const chunkSize = 20
     for (let i = 0; i < glyphs.length; i += chunkSize) {

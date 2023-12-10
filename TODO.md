@@ -1,9 +1,10 @@
 # TODO
 
 Use the the following versioning system: vs.m.b
+
 - s: Stable / Milestone release.
 - m: Feature release.
-- b: Hotfix. Fixes issues with the program. 
+- b: Hotfix. Fixes issues with the program.
 
 ## Open
 
@@ -38,7 +39,6 @@ Use the the following versioning system: vs.m.b
 | #7  | -    | Don't introduce character before certain proficiency has been reached on it's components.                  |
 | #6  | -    | Duplicate characters all fade out in composition, even if only one was used.                               |
 
-
 ## Changelog
 
 ### v0.2.0
@@ -50,18 +50,16 @@ Use the the following versioning system: vs.m.b
 | #29 | ^    | Added Discovery Section \n(See all learned kanji)  |
 | #33 | ^    | Added change log. Shows on startup of new version. |
 
-
 #### Issues
 
 | #id | Prio | Description                                                                                              |
 | --- | ---- | -------------------------------------------------------------------------------------------------------- |
 | #17 | ^    | Z-fighting sometimes resulted in missed dropoffs on drag gesture.                                        |
-| #16 | ^    | Exiting the session partway through an excercise may lead to broken visuals.                             |
+| #16 | ^    | Exiting the session partway through an exercise may lead to broken visuals.                             |
 | #14 | ^    | Damage on dropping on already filled drop locations.                                                     |
 | #32 | -    | Drop gesture now checks for box-position instead of finger position. Should make dragging more reliable. |
 | #33 | ^    | Drag hitboxes are now more forgiving. \n(Drag gesture)                                                   |
 | #33 | ^    | Removed delete progress button. \n(For now, just reinstall the app)                                      |
-
 
 ### v0.1.1
 
@@ -76,7 +74,6 @@ Use the the following versioning system: vs.m.b
 | #5  | ^    | Possible to see next answer for a split second after pressing continue. |
 | #8  | ^    | Remove answer from choices in "compose" exercise.                       |
 
-
 ### v0.1.0
 
 #### Features
@@ -89,4 +86,3 @@ Use the the following versioning system: vs.m.b
 | #?? | ^    | Added skill "Compose" to session             |
 | #?? | ^    | Added spaced repetition system               |
 | #?? | ^    | Added drag and drop gesture                  |
-

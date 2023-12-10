@@ -120,8 +120,11 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                             </Text>
                             <HorRule opacity={0.2} />
                             {changeLog?.map(
-                                ({ version, issues, features, dictionary }) => (
-                                    <View key={version}>
+                                (
+                                    { version, issues, features, dictionary },
+                                    i
+                                ) => (
+                                    <View key={i}>
                                         <Text className="font-noto-black mt-4 text-lg">
                                             {version}
                                         </Text>
@@ -141,8 +144,9 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                                     </View>
                                 )
                             )}
+                            <HorRule opacity={0.1} />
                         </ScrollView>
-                        <View className="h-32 p-8">
+                        <View className="h-24 p-6 pt-2">
                             <Button
                                 text="Dissmiss"
                                 onPress={() =>

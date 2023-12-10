@@ -14,18 +14,16 @@ import {
     NotoSansJP_900Black,
 } from '@expo-google-fonts/noto-sans-jp'
 import { useFonts } from 'expo-font'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
 import DragContextProvider from '../src/contexts/DragContextProvider'
 import HealthContextProvider from '../src/contexts/HealthContextProvider'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
-import { View, Text } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { View } from 'react-native'
 import Constants from 'expo-constants'
 
-import ChangeLog from '../src/modals/ChangeLog'
 export const version = Constants.expoConfig?.version
 
 export default function Layout() {
@@ -50,32 +48,8 @@ export default function Layout() {
     if (!fontsLoaded) {
         return null
     }
-
-    // Check if new version.
-    AsyncStorage.getItem('version', (err, result) => {
-        if (err) console.log('err.cause', err.cause)
-        console.log('result', result)
-
-        // First time opening the app
-        if (result === null || result === '') {
-            console.log('first time opening the app')
-            // WELCOME TO KANJIKEN
-        } else if (result === version) {
-            console.log('same version as last time')
-        } else {
-            console.log('new version')
-        }
-
-        if (version) {
-            AsyncStorage.setItem('version', version)
-        } else {
-            console.error('no version found')
-        }
-    })
-
     return (
         <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
-            <ChangeLog />
             <GlyphWidthContextProvider>
                 <SchedulerContextProvider>
                     <HealthContextProvider>
