@@ -24,7 +24,7 @@ const TextCenter: FC<Props> = ({ text, style }) => (
             <View className="flex-grow" />
             <View>
                 <Text
-                    style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                    style={{ fontFamily: 'klee-bold' }}
                     className=" text-ui-text text-4xl leading-none"
                 >
                     {text}

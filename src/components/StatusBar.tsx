@@ -13,7 +13,7 @@ const StatusBar: FC<Props> = ({ seenCount, text }) => (
         style={{ gap: 4 }}
     >
         <Text
-            style={{ fontFamily: 'NotoSansJP_700Bold' }}
+            style={{ fontFamily: 'noto-bold' }}
             className="text-xl capitalize"
         >
             {text}

@@ -20,6 +20,7 @@ Use the the following versioning system: vs.m.b
 | --- | ---- | ------------------------------------------------------------- |
 | #19 | ^    | Modal popups (tutorial, confirmation, changelog)              |
 | #32 | ^    | Health Regen                                                  |
+| #33 | ^    | Changelog on startup of new version                           |
 | #28 | -    | Hint system on misstake                                       |
 | #27 | -    | Placement test                                                |
 | #26 | -    | Progress overview view                                        |
@@ -59,13 +60,14 @@ Use the the following versioning system: vs.m.b
 
 #### Issues
 
-| #id | Prio | Description                                                                                         |
-| --- | ---- | --------------------------------------------------------------------------------------------------- |
-| #17 | ^    | Z-fighting sometimes resulted in missed dropoffs on drag gesture.                                   |
-| #16 | ^    | Exiting partway through an excercise may lead to broken visuals.                                    |
-| #14 | ^    | Damage on dropping on filled drop locations.                                                        |
-| #32 | -    | Drop gesture now checks for box-position instead of finger pos. Should make dragging more reliable. |
-| #33 | ^    | Drag hitboxes could be more forgiving. (Drag gesture)                                               |
+| #id | Prio | Description                                                                                              |
+| --- | ---- | -------------------------------------------------------------------------------------------------------- |
+| #17 | ^    | Z-fighting sometimes resulted in missed dropoffs on drag gesture.                                        |
+| #16 | ^    | Exiting the session partway through an excercise may lead to broken visuals.                             |
+| #14 | ^    | Damage on dropping on already filled drop locations.                                                     |
+| #32 | -    | Drop gesture now checks for box-position instead of finger position. Should make dragging more reliable. |
+| #33 | ^    | Drag hitboxes are now more forgiving. (Drag gesture)                                                     |
+| #33 | ^    | Removed delete progress button. (For now, just reinstall the app)                                        |
 
 
 ### v0.1.1

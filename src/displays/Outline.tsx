@@ -21,10 +21,10 @@ const Outline: FC<Props> = ({ text, style, dashed = true }) => {
                     borderColor: 'rgb(174, 174, 174)',
                 },
             ]}
-            className="flex-grow flex-shrink bg-none  items-center justify-center"
+            className="flex-grow flex-shrink bg-none items-center justify-center"
         >
             <Text
-                style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                style={{ fontFamily: text !== '?' ? 'klee-bold' : undefined }}
                 className="text-center text-ui-disabled text-4xl leading-none"
             >
                 {text}

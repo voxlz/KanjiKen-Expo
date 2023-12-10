@@ -3,9 +3,9 @@
         "name": "Kanjiken",
         "slug": "Kanjiken",
         "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "android": {
-            "versionCode": 2,
+            "versionCode": 3,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"

@@ -77,7 +77,7 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                         className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                     >
                         <Text
-                            style={{ fontFamily: 'KleeOne_600SemiBold' }}
+                            style={{ fontFamily: 'klee-bold' }}
                             className="text-8xl p-2 -mb-6"
                             adjustsFontSizeToFit
                         >

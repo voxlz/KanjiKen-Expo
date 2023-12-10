@@ -15,7 +15,7 @@ const themeOptions = {
         press: ' bg-ui-light ',
         border: 'border-ui-disabled',
         text: 'text-ui-text',
-        font: 'NotoSansJP_700Bold',
+        font: 'noto-bold',
         textTransform: 'none',
     },
     choices: {
@@ -23,7 +23,7 @@ const themeOptions = {
         press: ' bg-ui-light ',
         border: 'border-ui-disabled',
         text: 'text-ui-text',
-        font: 'KleeOne_600SemiBold',
+        font: 'klee-bold',
         textTransform: 'none',
     },
     forest: {
@@ -31,7 +31,7 @@ const themeOptions = {
         press: 'bg-forest-300',
         border: 'border-forest-700',
         text: 'text-forest-700',
-        font: 'NotoSansJP_900Black',
+        font: 'noto-black',
         textTransform: 'uppercase',
     },
     secondary: {
@@ -39,7 +39,7 @@ const themeOptions = {
         press: 'bg-transparent',
         border: 'border-transparent',
         text: 'text-forest-900',
-        font: 'NotoSansJP_700Bold',
+        font: 'noto-bold',
         textTransform: 'none',
     },
 } as const

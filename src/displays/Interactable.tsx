@@ -20,7 +20,7 @@ const Interactable = ({ text, style }: Props) => {
                 <View>
                     <Text
                         style={{
-                            fontFamily: font(text, 'KleeOne_600SemiBold'),
+                            fontFamily: font(text, 'klee-bold'),
                         }}
                         className=" text-ui-text text-4xl leading-none"
                     >

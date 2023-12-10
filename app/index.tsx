@@ -7,8 +7,7 @@ import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
 import { glyphDict } from '../src/data/glyphDict'
 import { learnOrder } from '../src/data/learnOrder'
-import Constants from 'expo-constants'
-const version = Constants.expoConfig?.version
+import { version } from './_layout'
 
 type Props = {}
 
@@ -32,11 +31,11 @@ const Home: FC<Props> = ({}) => {
                         onPress={() => router.push('/session')}
                     />
                     <StyledButton
-                        text="Dictionary"
-                        onPress={() => router.push('/dictionary')}
+                        text="Discovered"
+                        onPress={() => router.push('/discovery')}
                     />
                 </View>
-                <View>
+                {/* <View>
                     <StyledButton
                         styleName="normal"
                         text="Erase Progress"
@@ -51,7 +50,7 @@ const Home: FC<Props> = ({}) => {
                             })
                         }}
                     />
-                </View>
+                </View> */}
             </View>
             <View className="items-center justify-center mb-20">
                 <Text className="text-md text-ui-light">KanjiKen</Text>

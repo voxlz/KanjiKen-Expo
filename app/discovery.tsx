@@ -15,7 +15,7 @@ import { learnOrder } from '../src/data/learnOrder'
 type Props = {}
 
 /** Forgot to write a component discription. */
-const Dictionary: FC<Props> = ({}) => {
+const Discovery: FC<Props> = ({}) => {
     const scheduler = useContext(SchedulerContext)
     const prog = scheduler.getProgress()
     const glyphs = learnOrder.map((glyph) => glyphDict[glyph as Learnable])
@@ -182,4 +182,4 @@ const Dictionary: FC<Props> = ({}) => {
     )
 }
 
-export default Dictionary
+export default Discovery

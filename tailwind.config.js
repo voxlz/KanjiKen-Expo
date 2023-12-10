@@ -8,6 +8,18 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                'noto-md': 'noto-md',
+                'noto-thin': 'noto-thin',
+                'noto-light': 'noto-light',
+                'noto-reg': 'noto-reg',
+                'noto-md': 'noto-md',
+                'noto-bold': 'noto-bold',
+                'noto-black': 'noto-black',
+                'klee-reg': 'klee-reg',
+                'klee-bold': 'klee-bold',
+                kanjiken: 'KanjiKen-Regular',
+            },
             colors: {
                 forest: {
                     50: '#f3faeb',
