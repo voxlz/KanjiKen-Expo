@@ -6,11 +6,12 @@
 
 #### Issues
 
-| #id | Prio | Description                                    |
-| --- | ---- | ---------------------------------------------- |
-| #?? | -    | 天 (Heaven) missing composition                |
-| #?? | -    | 井 (Well) ambigous                             |
-| #?? | -    | 八 (Eigth) is suspiciously high in learn order |
+| #id | Prio | Description                                     |
+| --- | ---- | ----------------------------------------------- |
+| #?? | -    | 天 (Heaven) missing composition                 |
+| #?? | -    | 井 (Well) ambigous                              |
+| #?? | -    | 八 (Eigth) is suspiciously high in learn order  |
+| #?? | -    | ㇀ is a stroke and should not be in learn order |
 
 #### Changes that would simplify front-end
 

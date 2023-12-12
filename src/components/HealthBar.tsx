@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import { View, Pressable } from 'react-native'
 import SVGImg from '../../assets/icons/ph_x-circle-duotone.svg'
 import {
@@ -10,10 +10,10 @@ import Animated, {
     useAnimatedStyle,
 } from 'react-native-reanimated'
 import { router } from 'expo-router'
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
+import { useContext } from '../utils/react'
 
-type Props = {
-    glyphWidth: number // 1/3th height of alt component
-}
+type Props = {}
 
 /** Keeps track of current health */
 
@@ -25,11 +25,12 @@ export function ExitBtn({ height }: { height: number }) {
     )
 }
 
-const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
+const HealthBar: FC<Props> = () => {
     const relativeHealth = useContext(RelativeHealthContext)
     const healthColor = useContext(HealthColorContext)
+    const glyphWidth = useContext(GlyphWidthContext)
 
-    const height = altWidth / 3
+    const height = glyphWidth / 3
 
     const healthBarStyle = useAnimatedStyle(() => {
         if (healthColor && relativeHealth) {
@@ -69,21 +70,18 @@ const HealthBar: FC<Props> = ({ glyphWidth: altWidth }) => {
     })
 
     return (
-        <View style={{ gap: 12 }} className="flex-row px-8  items-center">
+        <Animated.View
+            style={healthBackground}
+            className="flex-grow border-[3px] items-end justify-center"
+        >
+            {/* <Text className=" text-forest-200">300</Text> */}
             <Animated.View
-                style={healthBackground}
-                className="flex-grow  border-[3px] items-end justify-center"
+                style={healthBarStyle}
+                className="absolute rounded-md items-end justify-center inset-3 self-start"
             >
-                {/* <Text className=" text-forest-200">300</Text> */}
-                <Animated.View
-                    style={healthBarStyle}
-                    className="absolute rounded-md items-end justify-center inset-3 self-start"
-                >
-                    {/* <Text className="text-forest-800">200</Text> */}
-                </Animated.View>
+                {/* <Text className="text-forest-800">200</Text> */}
             </Animated.View>
-            <ExitBtn height={height}></ExitBtn>
-        </View>
+        </Animated.View>
     )
 }
 
