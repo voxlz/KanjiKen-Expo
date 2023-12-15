@@ -25,7 +25,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     children,
 }) => {
     // Keep track of stats
-    const [health, setHealth] = useState(30)
+    const [health, _setHealth] = useState(30)
     const [maxHealth] = useState(30)
     const [regenCashe, setRegenCashe] = useState<RegenObj>()
 
@@ -37,6 +37,20 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     useEffect(() => {
         healthProcent.value = withTiming((health / maxHealth) * 100)
     }, [health])
+
+    useEffect(() => {
+        AsyncStorage.getItem('health', (err, res) => {
+            if (res) {
+                _setHealth(JSON.parse(res))
+            }
+        })
+    }, [])
+
+    const setHealth = (someFunc: (oldHealth: number) => number) => {
+        const newHealth = someFunc(health)
+        AsyncStorage.setItem('health', JSON.stringify(newHealth))
+        _setHealth(newHealth)
+    }
 
     const getRegenObj = async () => {
         const regenStr = await AsyncStorage.getItem('regen')
