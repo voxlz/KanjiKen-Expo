@@ -10,29 +10,29 @@ Use the the following versioning system: vs.m.b
 
 ### Features
 
-| #id | Prio | Description                                                                                               |
-| --- | ---- | --------------------------------------------------------------------------------------------------------- |
-| #32 | ↑    | Health Regen                                                                                              |
-| #?? | ↑    | Game Over / Low Health Screen (Time till full health)                                                     |
-| #28 | ↑    | Login + sync between apps (allows me to whipe save and test new user experience wihtout loosing progress) |
-| #28 | -    | Hint system on misstake                                                                                   |
-| #27 | -    | Placement test                                                                                            |
-| #26 | -    | Progress overview view                                                                                    |
-| #25 | -    | Game over view / popup                                                                                    |
-| #24 | -    | Daily Streak Counter system                                                                               |
-| #23 | -    | XP level system to track progress                                                                         |
-| #22 | -    | Word exercises (Learn kanji pronouncation + Basic vocabulary)                                             |
-| #31 | -    | Dictionary skill filter                                                                                   |
-| #11 | -    | Add dictionary defintion to english word. (High english proficiency should not be required)               |
-| #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                   |
-| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition)  |
-| #10 | -    | Show similar kanji as alternatives                                                                        |
+| #id | Prio | Description                                                                                                             |
+| --- | ---- | ----------------------------------------------------------------------------------------------------------------------- |
+| #28 | ↑    | Cloud backup / Device Sync (Let's me test features without loosing progress. Nice if you have 2 phones for some reason) |
+| #32 | ↑    | Health Regen                                                                                                            |
+| #?? | ↑    | Game Over / Low Health Screen (Time till full health)                                                                   |
+| #23 | -    | XP level system to track progress                                                                                       |
+| #22 | -    | Word exercises (Learn kanji pronouncation + Basic vocabulary)                                                           |
+| #10 | -    | Show similar kanji as alternatives                                                                                      |
+| #26 | -    | Progress overview view                                                                                                  |
+| #27 | -    | Placement test                                                                                                          |
+| #28 | -    | Hint system on misstake                                                                                                 |
+| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition)                |
+| #25 | -    | Game over view / popup                                                                                                  |
+| #31 | -    | Dictionary skill filter                                                                                                 |
+| #24 | -    | Daily Streak Counter system                                                                                             |
+| #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                                 |
+| #11 | -    | Add dictionary defintion to english word. (High english proficiency should not be required)                             |
 
 ### Issues
 
 | #id | Prio | Description                                                                                                |
 | --- | ---- | ---------------------------------------------------------------------------------------------------------- |
-| #?? | ↑    | Reproducable crash about 8 lessons in on new save                                                          |
+| #?? | ↑    | Hardlock crash about 8 lessons in on new save                                                              |
 | #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                                       |
 | #13 | -    | Show resoanble choices for the first few kanji. Currently random.                                          |
@@ -42,6 +42,20 @@ Use the the following versioning system: vs.m.b
 | #15 | ↓    | Confirmation on dangourus actions. (Like deleting save)                                                    |
 
 ## Changelog
+
+### v0.3.0
+
+#### UpdateDesc
+
+A hardlock bug motivated the implementation of user authentication 
+and cloud backup.
+
+#### Features
+
+| #id | Prio | Description         |
+| --- | ---- | ------------------- |
+| #?? | ↑    | User authentication |
+
 
 ### v0.2.0
 

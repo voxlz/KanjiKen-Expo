@@ -13,7 +13,7 @@
         "@expo-google-fonts/klee-one": "^0.2.3",
         "@expo-google-fonts/noto-sans-jp": "^0.2.3",
         "@expo/webpack-config": "^19.0.0",
-        "@react-native-async-storage/async-storage": "1.18.2",
+        "@react-native-async-storage/async-storage": "^1.21.0",
         "babel-plugin-inline-import": "^3.0.0",
         "expo": "~49.0.15",
         "expo-constants": "~14.4.2",

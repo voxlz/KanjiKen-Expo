@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
-import Button from '../components/Button'
 import todo from '../../TODO.md'
 import dictChanges from '../../TODO_DICT.md'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -12,6 +11,9 @@ type TodoType = {
     TODO: {
         Changelog: {
             [version: string]: {
+                UpdateDesc?: {
+                    raw: string
+                }
                 Internal?: {
                     raw: string
                 }
@@ -33,6 +35,7 @@ type ChangeTableEntry = {
 type ChangeLog = [
     {
         version: string
+        description: string
         features?: ChangeTableEntry[]
         issues?: ChangeTableEntry[]
         dictionary?: ChangeTableEntry[]
@@ -49,28 +52,33 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
 
     useEffect(() => {
         const md2json = require('md-2-json')
-        const json = md2json.parse(todo) as TodoType
-        const dictJson = md2json.parse(dictChanges)
+        const expoTodo = md2json.parse(todo) as TodoType
+        const dictTodo = md2json.parse(dictChanges) as TodoType
 
-        setChangeLog(
-            Object.entries(json.TODO.Changelog).map(([key, value]) => {
-                const test = dictJson.TODO.Changelog
-                const dictIssueStr = test[key]?.Issues?.raw
-                return {
-                    version: key,
-                    features: value.Features
-                        ? getTable(value.Features.raw)
-                        : undefined,
-                    issues: value.Issues
-                        ? getTable(value.Issues.raw)
-                        : undefined,
-                    dictionary: dictIssueStr
-                        ? getTable(dictIssueStr)
-                        : undefined,
+        setChangeLog(() => {
+            const changelog = Object.entries(expoTodo.TODO.Changelog).map(
+                ([key, value]) => {
+                    const test = dictTodo.TODO.Changelog
+                    const dictIssueStr = test[key]?.Issues?.raw
+                    const version = {
+                        version: key,
+                        description: value.UpdateDesc?.raw,
+                        features: value.Features
+                            ? getTable(value.Features.raw)
+                            : undefined,
+                        issues: value.Issues
+                            ? getTable(value.Issues.raw)
+                            : undefined,
+                        dictionary: dictIssueStr
+                            ? getTable(dictIssueStr)
+                            : undefined,
+                    }
+                    console.log('changeLog', version)
+                    return version
                 }
-            }) as ChangeLog
-        )
-        console.log('changeLog', changeLog)
+            ) as ChangeLog
+            return changelog
+        })
     }, [])
 
     const BulletList: React.FC<{
@@ -85,10 +93,11 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                 {entries.map(({ Description }, i) => (
                     <View className="flex-row" key={i}>
                         <Text className="mb-2 mr-2">{`\u2022`}</Text>
-                        <Text className="mb-2">{`${Description.replaceAll(
-                            '\\n',
-                            '\n'
-                        )}`}</Text>
+                        <Text className="mb-2">{`${
+                            Description
+                                ? Description.replaceAll('\\n', '\n')
+                                : ''
+                        }`}</Text>
                     </View>
                 ))}
             </>
@@ -122,13 +131,29 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                             <HorRule opacity={0.2} />
                             {changeLog?.map(
                                 (
-                                    { version, issues, features, dictionary },
+                                    {
+                                        version,
+                                        issues,
+                                        features,
+                                        dictionary,
+                                        description,
+                                    },
                                     i
                                 ) => (
                                     <View key={i}>
                                         <Text className="font-noto-black mt-4 text-lg">
                                             {version}
                                         </Text>
+                                        {description && (
+                                            <>
+                                                <Text className="uppercase font-noto-black mb-2 mt-4 text-xs">
+                                                    Description
+                                                </Text>
+                                                <Text className="mb-2">{`${description
+                                                    .replaceAll(/\n/g, '')
+                                                    .trim()}`}</Text>
+                                            </>
+                                        )}
                                         <BulletList
                                             text="Features"
                                             entries={features ?? []}
