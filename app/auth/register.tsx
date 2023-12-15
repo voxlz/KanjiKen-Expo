@@ -1,4 +1,4 @@
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import {
     createUserWithEmailAndPassword,
     getAuth,
@@ -30,9 +30,15 @@ interface FormRegister {
 }
 
 const UserRegisterView: FC = () => {
-    const { control, setError, getValues, handleSubmit } =
+    const { control, setError, getValues, handleSubmit, setValue } =
         useForm<FormRegister>()
     const auth = getAuth()
+    const params = useLocalSearchParams()
+
+    useEffect(() => {
+        setValue('Email', params['email'] as string)
+        setValue('Password', params['password'] as string)
+    }, [])
 
     const signUpWithEmail: SubmitHandler<FormRegister> = (data) => {
         console.log('register attempt', data)
@@ -149,35 +155,39 @@ const UserRegisterView: FC = () => {
                 />
             </View>
 
-            {/* <LineBreak text="OR" />
+            <LineBreak text="OR" />
 
-            <Text className="m-0 mb-3 mt-4 text-center text-sm font-semibold ">
-                Sign up with
-            </Text>
-            <View className="flex-row w-full gap-4">
-                <Pressable
-                    className="group focus:outline-none flex-grow"
-                    onPress={() => signInWithGoogle(auth)}
-                >
-                    <BorderBoxBtn className="justify-center">
-                        <View className=" flex-row   items-center">
-                            <GoogleLogo />
-                            <Text>Google</Text>
-                        </View>
-                    </BorderBoxBtn>
-                </Pressable>
-                <Pressable
-                    className="group focus:outline-none flex-grow"
-                    onPointerDown={() => signInWithTwitter(auth)}
-                >
-                    <BorderBoxBtn className="justify-center">
-                        <View className="flex-row items-center">
-                            <TwitterLogo />
-                            <Text>Twitter</Text>
-                        </View>
-                    </BorderBoxBtn>
-                </Pressable>
-            </View> */}
+            {false && (
+                <>
+                    <Text className="m-0 mb-3 mt-4 text-center text-sm font-semibold ">
+                        Sign up with
+                    </Text>
+                    <View className="flex-row w-full gap-4">
+                        <Pressable
+                            className="group focus:outline-none flex-grow"
+                            onPress={() => signInWithGoogle(auth)}
+                        >
+                            <BorderBoxBtn className="justify-center">
+                                <View className=" flex-row   items-center">
+                                    <GoogleLogo />
+                                    <Text>Google</Text>
+                                </View>
+                            </BorderBoxBtn>
+                        </Pressable>
+                        <Pressable
+                            className="group focus:outline-none flex-grow"
+                            onPointerDown={() => signInWithTwitter(auth)}
+                        >
+                            <BorderBoxBtn className="justify-center">
+                                <View className="flex-row items-center">
+                                    <TwitterLogo />
+                                    <Text>Twitter</Text>
+                                </View>
+                            </BorderBoxBtn>
+                        </Pressable>
+                    </View>
+                </>
+            )}
 
             <View style={{ gap: 4 }} className="flex-row mt-6 justify-center">
                 <Text className="text-sm">Already have an account?</Text>
@@ -186,7 +196,10 @@ const UserRegisterView: FC = () => {
                     onPress={() =>
                         router.replace({
                             pathname: '/auth/login',
-                            params: { email: getValues('Email') },
+                            params: {
+                                email: getValues('Email'),
+                                password: getValues('Password'),
+                            },
                         })
                     }
                 >

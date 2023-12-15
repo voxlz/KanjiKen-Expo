@@ -8,8 +8,8 @@ import GoogleLogo from '../../assets/logos/google.svg'
 import TwitterLogo from '../../assets/logos/twitter.svg'
 // import { useContext } from '../../src/utils/react'
 // import UserContext from '../../src/login_pytte/UserContext'
-import { router } from 'expo-router'
-import React, { FC } from 'react'
+import { router, useLocalSearchParams } from 'expo-router'
+import React, { FC, useEffect } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import InputText from '../../src/login_pytte/InputText'
 import {
@@ -36,13 +36,9 @@ interface Form {
 const UserLoginView: FC = () => {
     // const { socket, setUser, fireApp } = useContext(UserContext)
     const auth = getAuth()
-    const {
-        getValues,
-        setError,
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<Form>()
+    const { getValues, setError, control, handleSubmit, setValue } =
+        useForm<Form>()
+    const params = useLocalSearchParams()
 
     const signInWithEmail: SubmitHandler<Form> = (data) => {
         console.log('login attempt', data)
@@ -114,10 +110,10 @@ const UserLoginView: FC = () => {
     //     [history, setUser, socket]
     // )
 
-    // // Remember email
-    // useEffect(() => {
-    //     setValue('email', (history.location.state as any)?.email ?? '')
-    // }, [history.location.state, setValue])
+    useEffect(() => {
+        setValue('Email', params['email'] as string)
+        setValue('Password', params['password'] as string)
+    }, [])
 
     // useRedirectSignedInUser(auth)
     // useOAuthHandler(auth, login)
@@ -151,33 +147,37 @@ const UserLoginView: FC = () => {
 
             <LineBreak text="OR" />
 
-            <Text className="m-0 text-sm font-semibold text-center mb-3 mt-4 ">
-                Sign in with
-            </Text>
-            <View className="flex-row gap-4 w-full">
-                <Pressable
-                    className="flex-grow group focus:outline-none "
-                    onPress={() => signInWithGoogle(auth)}
-                >
-                    <BorderBoxBtn className="justify-center ">
-                        <View className="flex-row justify-between items-center ">
-                            <GoogleLogo className="-ml-4" />
-                            <Text>Google</Text>
-                        </View>
-                    </BorderBoxBtn>
-                </Pressable>
-                <Pressable
-                    className="flex-grow group focus:outline-none"
-                    onPress={() => signInWithTwitter(auth)}
-                >
-                    <BorderBoxBtn className="justify-center">
-                        <View className=" flex-row  items-center">
-                            <TwitterLogo className="-ml-4" />
-                            <Text>Twitter</Text>
-                        </View>
-                    </BorderBoxBtn>
-                </Pressable>
-            </View>
+            {false && (
+                <>
+                    <Text className="m-0 text-sm font-semibold text-center mb-3 mt-4 ">
+                        Sign in with
+                    </Text>
+                    <View className="flex-row gap-4 w-full">
+                        <Pressable
+                            className="flex-grow group focus:outline-none "
+                            onPress={() => signInWithGoogle(auth)}
+                        >
+                            <BorderBoxBtn className="justify-center ">
+                                <View className="flex-row justify-between items-center ">
+                                    <GoogleLogo className="-ml-4" />
+                                    <Text>Google</Text>
+                                </View>
+                            </BorderBoxBtn>
+                        </Pressable>
+                        <Pressable
+                            className="flex-grow group focus:outline-none"
+                            onPress={() => signInWithTwitter(auth)}
+                        >
+                            <BorderBoxBtn className="justify-center">
+                                <View className=" flex-row  items-center">
+                                    <TwitterLogo className="-ml-4" />
+                                    <Text>Twitter</Text>
+                                </View>
+                            </BorderBoxBtn>
+                        </Pressable>
+                    </View>
+                </>
+            )}
 
             <View style={{ gap: 4 }} className="flex-row justify-center mt-6">
                 <Text className="text-sm">No account yet?</Text>
@@ -186,7 +186,10 @@ const UserLoginView: FC = () => {
                     onPress={() =>
                         router.replace({
                             pathname: '/auth/register',
-                            params: { email: getValues('Email') },
+                            params: {
+                                email: getValues('Email'),
+                                password: getValues('Password'),
+                            },
                         })
                     }
                 >
