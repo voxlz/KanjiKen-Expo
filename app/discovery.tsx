@@ -44,7 +44,7 @@ const Discovery: FC<Props> = ({}) => {
                 renderItem={(item) => {
                     return (
                         <View
-                            className="m-4 p-4 rounded-lg mb-0 border-gray-200"
+                            className="m-4 p-4 rounded-lg mb-0 border-gray-200 "
                             style={{ borderStyle: 'solid', borderWidth: 2 }}
                         >
                             <View className="justify-between flex-row mb-4">
@@ -55,7 +55,7 @@ const Discovery: FC<Props> = ({}) => {
                             </View>
                             <View
                                 style={{ gap: 10 }}
-                                className="flex-row max-w-fullflex-shrink flex-wrap h-auto"
+                                className="flex-row max-w-fullflex-shrink flex-wrap h-auto "
                             >
                                 {item.item.map((alt: GlyphInfo, i: number) => {
                                     let lvl =
@@ -100,15 +100,17 @@ const Discovery: FC<Props> = ({}) => {
                                                     text={alt.glyph}
                                                     lang="jap"
                                                     styleName="choices"
-                                                    btnClass={
-                                                        'bg-transparent ' +
-                                                        (state === 'new'
-                                                            ? 'border-[#666666]'
-                                                            : state ===
-                                                              'learned'
-                                                            ? 'border-[#326A00]'
-                                                            : 'border-[#B58D00]')
-                                                    }
+                                                    btnStyle={{
+                                                        backgroundColor:
+                                                            'transparent',
+                                                        borderColor:
+                                                            state === 'new'
+                                                                ? '#666666'
+                                                                : state ===
+                                                                  'learned'
+                                                                ? '#326A00'
+                                                                : '#B58D00',
+                                                    }}
                                                     textStyle={{
                                                         fontSize: 34,
                                                         lineHeight: 38,

@@ -23,6 +23,7 @@ import HealthContextProvider from '../src/contexts/HealthContextProvider'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
 import { View } from 'react-native'
 import Constants from 'expo-constants'
+import '../firebaseConfig'
 
 export const version = Constants.expoConfig?.version
 

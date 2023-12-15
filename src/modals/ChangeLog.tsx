@@ -4,6 +4,7 @@ import Button from '../components/Button'
 import todo from '../../TODO.md'
 import dictChanges from '../../TODO_DICT.md'
 import { ScrollView } from 'react-native-gesture-handler'
+import StyledButton from '../components/StyledButton'
 
 type Props = { onDismiss: () => void }
 
@@ -146,8 +147,8 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                             )}
                             <HorRule opacity={0.1} />
                         </ScrollView>
-                        <View className="h-24 p-6 pt-2">
-                            <Button
+                        <View className="p-6 pt-2">
+                            <StyledButton
                                 text="Dissmiss"
                                 onPress={() =>
                                     onDismiss

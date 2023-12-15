@@ -29,7 +29,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [maxHealth] = useState(30)
     const [regenCashe, setRegenCashe] = useState<RegenObj>()
 
-    console.log('health', health)
+    // console.log('health', health)
 
     // Animation variables
     const healthProcent = useSharedValue((health / maxHealth) * 100)
@@ -67,7 +67,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
         const value = healthPerSec * secondsPassed
         const max = maxHealth - health
         const min = 0 - health
-        console.log('value', value, max, maxHealth, health)
+        // console.log('value', value, max, maxHealth, health)
 
         // Make sure this does not push health beyond max.
         return clamp({
@@ -80,7 +80,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     /** Call this to get an accurate readout on health */
     const refreshHealthbar = async () => {
         const regen = await getRegenHealth()
-        console.log('regen', regen)
+        // console.log('regen', regen)
         setHealth((health) => {
             const newHealth = health + regen
             if (newHealth <= 0) onDamage(true)
@@ -100,7 +100,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
     /** Change health */
     const addHealth = async (diff: number) => {
-        console.log('added health', diff)
+        // console.log('added health', diff)
         setHealth((health) => {
             const newHealth = health + diff
 

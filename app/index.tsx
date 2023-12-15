@@ -12,6 +12,7 @@ import {
 import { useContext } from '../src/utils/react'
 import { TimeTillFullHealthContext } from '../src/contexts/HealthContextProvider'
 import { useFocusEffect } from 'expo-router'
+import { getAuth } from 'firebase/auth'
 
 type Props = {}
 
@@ -40,13 +41,14 @@ const Home: FC<Props> = ({}) => {
     const refreshHealthbar = useContext(RefreshHealthbarContext)
     const setHealthRegen = useContext(SetHealthRegenContext)
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
+    const auth = getAuth()
 
     useInterval(() => {
         refreshHealthbar()
     }, 1000)
 
     const newLocal = useCallback(() => {
-        setHealthRegen(60 )
+        setHealthRegen(60)
     }, [])
 
     useFocusEffect(newLocal)
@@ -90,7 +92,7 @@ const Home: FC<Props> = ({}) => {
                     <HealthBar />
                     <Text>{timeTillFullHealth()}</Text>
                 </View>
-                <View style={{ gap: 12 }}>
+                <View style={{ gap: 12 }} className="px-8">
                     <StyledButton
                         text="Start Session"
                         onPress={() => router.push('/session')}
@@ -102,6 +104,10 @@ const Home: FC<Props> = ({}) => {
                     <StyledButton
                         text="Changelog"
                         onPress={() => router.push('/changelog')}
+                    />
+                    <StyledButton
+                        text="Login"
+                        onPress={() => router.push('/auth/login')}
                     />
                 </View>
                 {/* <View>
@@ -124,6 +130,11 @@ const Home: FC<Props> = ({}) => {
             <View className="items-center justify-center mb-20">
                 <Text className="text-md text-ui-light">KanjiKen</Text>
                 <Text className="text-md text-ui-light">Version {version}</Text>
+                <Text className="text-md text-ui-light">
+                    {auth.currentUser !== null
+                        ? `Logged in as: ${auth.currentUser.displayName}`
+                        : 'Not logged in'}{' '}
+                </Text>
             </View>
         </>
     )

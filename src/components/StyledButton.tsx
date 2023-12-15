@@ -9,10 +9,7 @@ import { useContext } from '../utils/react'
 const StyledButton: FC<BtnProps> = ({ text, onPress, styleName, lang }) => {
     const glyphWidth = useContext(GlyphWidthContext)
     return (
-        <View
-            style={{ height: 0.85 * glyphWidth }}
-            className="px-8 self-stretch"
-        >
+        <View style={{ height: 0.75 * glyphWidth }} className="self-stretch">
             <Button
                 text={text}
                 onPress={onPress}

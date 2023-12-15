@@ -43,13 +43,15 @@ const BottomBar: FC<Props> = ({
     return (
         <Animated.View
             style={[animatedStyles]}
-            className="w-full py-6  mb-4 justify-end"
+            className="w-full py-6   mb-4 justify-end"
         >
-            <StyledButton
-                text={continueBtnText}
-                onPress={onContinue}
-                styleName={continueBtnStyle}
-            />
+            <View className="px-8">
+                <StyledButton
+                    text={continueBtnText}
+                    onPress={onContinue}
+                    styleName={continueBtnStyle}
+                />
+            </View>
             <View
                 className="absolute h-40  w-full bottom-0 -z-10"
                 style={{

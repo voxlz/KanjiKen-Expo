@@ -13,7 +13,7 @@ const themeOptions = {
     normal: {
         bg: ' bg-ui-very_light',
         press: ' bg-ui-light ',
-        border: 'border-ui-disabled',
+        border: '#AEAEAE',
         text: 'text-ui-text',
         font: 'noto-bold',
         textTransform: 'none',
@@ -21,7 +21,7 @@ const themeOptions = {
     choices: {
         bg: ' bg-ui-very_light ',
         press: ' bg-ui-light ',
-        border: 'border-ui-disabled',
+        border: '#AEAEAE',
         text: 'text-ui-text',
         font: 'klee-bold',
         textTransform: 'none',
@@ -29,7 +29,7 @@ const themeOptions = {
     forest: {
         bg: 'bg-forest-200',
         press: 'bg-forest-300',
-        border: 'border-forest-700',
+        border: '#406823',
         text: 'text-forest-700',
         font: 'noto-black',
         textTransform: 'uppercase',
@@ -37,7 +37,7 @@ const themeOptions = {
     secondary: {
         bg: 'bg-transparent',
         press: 'bg-transparent',
-        border: 'border-transparent',
+        border: 'transparent',
         text: 'text-forest-900',
         font: 'noto-bold',
         textTransform: 'none',
@@ -64,13 +64,14 @@ const themePress = {
 export type ButtonStyles = keyof typeof themeOptions
 
 export type BtnProps = {
-    onPress?: () => boolean | undefined | void
+    onPress?: () => boolean | undefined | void | Promise<void>
     text?: string
     styleName?: ButtonStyles
     lang?: 'eng' | 'jap'
-    btnClass?: string
-    // btnStyle?: StyleProp<ViewStyle>
+    className?: string
+    btnStyle?: StyleProp<ViewStyle>
     textStyle?: StyleProp<TextStyle>
+    children?: React.ReactElement
 }
 
 /** Basic button for button use. Grows to fill available. Configure color pallet. */
@@ -79,7 +80,8 @@ const Button: FC<BtnProps> = ({
     styleName = 'forest',
     onPress,
     lang = 'eng',
-    btnClass,
+    className: btnClass,
+    btnStyle,
     textStyle,
 }) => {
     const [pressed, setPressed] = useState(false)
@@ -98,7 +100,7 @@ const Button: FC<BtnProps> = ({
                 if (pressedStyle === undefined) {
                     setPressed(false)
                     const success = onPress?.()
-                    if (success !== undefined) {
+                    if (success === true) {
                         setPressedStyle(success ? 'correct' : 'wrong')
                     }
                 }
@@ -106,14 +108,13 @@ const Button: FC<BtnProps> = ({
             onPressIn={() => setPressed(true)}
             onPressOut={() => setPressed(false)}
             className={
-                `
-                w-full  flex-grow  justify-center rounded-xl  border-[3px]  
+                `w-full  flex-grow  justify-center rounded-xl  border-[3px]  
                 ${pressed ? ' border-b-[3px] ' : ' border-b-[5px] '} 
                 ${pressed ? ' mt-[2px] ' : ' mt-[0px] '}  
                 ${!pressed ? theme.bg : theme.press}  
-                ${theme.border}
-            ` + btnClass
+             ` + btnClass
             }
+            style={[{ borderColor: theme.border }, btnStyle]}
         >
             <Text
                 style={[

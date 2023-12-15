@@ -21,9 +21,9 @@ const config = getDefaultConfig(__dirname)
 
 // Include files from KanjiKen-Dict project under "dict" path
 // https://dushyant37.medium.com/how-to-import-files-from-outside-of-root-directory-with-react-native-metro-bundler-18207a348427
-const kanjiDictPath = require('path').resolve(__dirname + '/../')
-config.resolver.extraNodeModules = { kanjiDict: kanjiDictPath }
-config.watchFolders = [kanjiDictPath]
+// const kanjiDictPath = require('path').resolve(__dirname + '/../')
+// config.resolver.extraNodeModules = { kanjiDict: kanjiDictPath }
+// config.watchFolders = [kanjiDictPath]
 
 // Override default config to allow for SVG
 config.transformer.babelTransformerPath = require.resolve(
@@ -32,7 +32,7 @@ config.transformer.babelTransformerPath = require.resolve(
 config.resolver.assetExts = config.resolver.assetExts.filter(
     (ext) => ext !== 'svg'
 )
-config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg']
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg', 'cjs']
 config.resolver.assetExts = [...config.resolver.assetExts, 'md', 'txt'] // bundle md and txt files
 
 module.exports = config
