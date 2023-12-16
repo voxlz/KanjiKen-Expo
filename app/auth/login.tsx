@@ -44,8 +44,6 @@ const UserLoginView: FC = () => {
             .then(() => {
                 console.log('login attempt')
                 router.replace('/')
-                // const user = userCredential.user
-                // login(user)
             })
             .catch((error) => {
                 var errorCode = error.code
@@ -87,34 +85,10 @@ const UserLoginView: FC = () => {
             })
     }
 
-    // const login = useCallback(
-    //     (firebaseUser: User | null) => {
-    //         if (firebaseUser === null)
-    //             return console.error('acc had no user object')
-
-    //         // console.log('Get or create user data')
-
-    //         // socket.emit(
-    //         //     'getOrCreateUserData',
-    //         //     firebaseUser,
-    //         //     (data: DataUser) => {
-    //         //         console.log('USER ACC', firebaseUser)
-    //         //         console.log('USER DATA', data)
-    //         //         setUser(data)
-    //         //         router.replace('/index')
-    //         //     }
-    //         // )
-    //     },
-    //     [history, setUser, socket]
-    // )
-
     useEffect(() => {
         setValue('Email', params['email'] as string)
         setValue('Password', params['password'] as string)
     }, [])
-
-    // useRedirectSignedInUser(auth)
-    // useOAuthHandler(auth, login)
 
     return (
         <View>
@@ -145,7 +119,7 @@ const UserLoginView: FC = () => {
 
             <LineBreak text="OR" />
 
-            {false && (
+            {true && (
                 <>
                     <Text className="m-0 text-sm font-semibold text-center mb-3 mt-4 ">
                         Sign in with

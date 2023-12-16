@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import React, { FC, useCallback, useEffect, useRef } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
 import { version } from './_layout'
@@ -39,11 +39,31 @@ export function useInterval(callback: () => unknown, delay: number) {
 
 /** Homepage of the application. Where you start the exercises for example. */
 const Home: FC<Props> = ({}) => {
+    const [userName, setUserName] = useState<string>()
+    const [serverTouch, setServerTouch] = useState<Date>()
     const refreshHealthbar = useContext(RefreshHealthbarContext)
     const setHealthRegen = useContext(SetHealthRegenContext)
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
     const auth = getAuth()
     const scheduler = useContext(SchedulerContext)
+
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+            if (user?.displayName) {
+                setUserName(user.displayName)
+                scheduler
+                    .getBackupData()
+                    .then((data) => {
+                        if (
+                            data?.touched.getTime() !== serverTouch?.getTime()
+                        ) {
+                            setServerTouch(data?.touched)
+                        }
+                    })
+                    .catch((error) => console.log(error))
+            }
+        })
+    }, [])
 
     // UPDATE HEALTHBAR
     // useInterval(() => {
@@ -132,17 +152,23 @@ const Home: FC<Props> = ({}) => {
                 </View> */}
             </View>
             <View className="items-center justify-center mb-6">
-                <Text className="text-md text-ui-light">KanjiKen</Text>
-                <Text className="text-md text-ui-light">Version {version}</Text>
+                <Text className="text-md text-ui-light">
+                    KanjiKen v{version}
+                </Text>
                 <Text className="text-md text-ui-light">
                     {auth.currentUser !== null
-                        ? `Logged in as: ${auth.currentUser.displayName}`
+                        ? `Logged in as: ${userName}`
                         : 'Not logged in'}{' '}
                 </Text>
                 <Text className="text-md text-ui-light">
                     {auth.currentUser !== null
-                        ? `Last synced: ${''}`
-                        : 'Not logged in'}{' '}
+                        ? `Last synced: ${
+                              scheduler.getTouched()?.getTime() ===
+                              serverTouch?.getTime()
+                                  ? 'Synced'
+                                  : serverTouch?.toString().slice(4, -8)
+                          }`
+                        : 'Never synced'}
                 </Text>
             </View>
             <View className="mb-20 px-8">

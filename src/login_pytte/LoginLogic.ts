@@ -9,7 +9,7 @@ export const signInWithGoogle = async (auth: Auth) => {
   const provider = new GoogleAuthProvider()
   provider.addScope("profile")
   provider.addScope("email")
-  await signInWithRedirect(auth, provider)
+  await sing(auth, provider)
 }
 
 export const signInWithTwitter = async (auth: Auth) => {

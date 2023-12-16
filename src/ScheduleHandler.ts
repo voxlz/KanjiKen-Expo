@@ -23,6 +23,7 @@ type userData = {
             }>
         }
     }>
+    touched?: Date // When was this last updated
 }
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
@@ -50,24 +51,23 @@ export class ScheduleHandler {
     loadFromDisk = async () => {
         try {
             const startTime = performance.now()
-            await AsyncStorage.getItem('schedule').then((schedule) => {
+
+            // Load from disk
+            const userData = await AsyncStorage.getItem('userData')
+            if (userData) {
+                this.#userData = JSON.parse(userData)
+            } else {
+                // DEPRICATED - REMOVE NEXT UPDATE
+                console.log('OLD SAVE USED')
+                const schedule = await AsyncStorage.getItem('schedule')
+                const progress = await AsyncStorage.getItem('progress')
                 if (schedule) {
                     this.#userData.schedule = JSON.parse(schedule)
-                    console.log(
-                        'Schedule length',
-                        this.#userData.schedule.length
-                    )
                 }
-            })
-            await AsyncStorage.getItem('progress').then((progress) => {
                 if (progress) {
                     this.#userData.progress = JSON.parse(progress)
-                    console.log(
-                        'Progress length',
-                        Object.keys(this.#userData.progress).length
-                    )
                 }
-            })
+            }
 
             if (!this.hasSchedule()) {
                 this.initSchedule()
@@ -87,14 +87,12 @@ export class ScheduleHandler {
     saveToDisk = async () => {
         try {
             const startTime = performance.now()
+
             await AsyncStorage.setItem(
-                'schedule',
-                JSON.stringify(this.#userData.schedule)
+                'userData',
+                JSON.stringify(this.#userData)
             )
-            await AsyncStorage.setItem(
-                'progress',
-                JSON.stringify(this.#userData.progress)
-            )
+
             const endTime = performance.now()
             console.log(
                 `ScheduleHandler saveToDisk() took ${
@@ -115,6 +113,7 @@ export class ScheduleHandler {
 
         setDoc(this.getDocRef(auth.currentUser.uid), {
             json: JSON.stringify(this.#userData),
+            touched: Date.now(),
         })
             .then(() => console.log('userData set'))
             .catch((reason) => console.log(`could not set userData: ${reason}`))
@@ -122,15 +121,19 @@ export class ScheduleHandler {
 
     getBackupData = async () => {
         const auth = getAuth()
-        if (!auth.currentUser)
-            return console.log("Can't read backup: User not logged in.")
+        if (!auth.currentUser) {
+            throw new Error("Can't read backup: User not logged in.")
+        }
 
         const docSnap = await getDoc(this.getDocRef(auth.currentUser.uid))
 
         if (docSnap.exists()) {
             console.log('Found userData on server')
+            return {
+                json: JSON.parse(docSnap.data()['json']) as userData,
+                touched: new Date(docSnap.data()['touched']),
+            }
         } else {
-            // docSnap.data() will be undefined in this case
             console.log('No such document!')
         }
     }
@@ -144,11 +147,16 @@ export class ScheduleHandler {
                 skill: 'intro',
             })
         })
+        this.#userData.touched = new Date()
     }
 
     /** Get a copy of the progress. Should not be edited. */
     getProgress() {
         return { ...this.#userData.progress }
+    }
+
+    getTouched() {
+        return this.#userData.touched
     }
 
     // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
@@ -191,6 +199,8 @@ export class ScheduleHandler {
                     skill: glyphInfo.comps.position ? 'compose' : 'recognize',
                 })
             }
+
+            this.#userData.touched = new Date()
 
             // console.log('newLevel', newLevel)
             // console.log('updated progress', this.#save.progress[excercise.glyph])
