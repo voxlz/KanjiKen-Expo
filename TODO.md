@@ -33,6 +33,7 @@ Use the the following versioning system: vs.m.b
 | #id | Prio | Description                                                                                                |
 | --- | ---- | ---------------------------------------------------------------------------------------------------------- |
 | #?? | ↑    | Hardlock crash about 8 lessons in on new save                                                              |
+| #?? | ↑    | You can see the answer breafly duing exercise transition                                                   |
 | #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                                       |
 | #13 | -    | Show resoanble choices for the first few kanji. Currently random.                                          |
@@ -56,6 +57,11 @@ and cloud backup.
 | --- | ---- | ------------------- |
 | #?? | ↑    | User authentication |
 
+#### Issues
+
+| #id | Prio | Description                                                     |
+| --- | ---- | --------------------------------------------------------------- |
+| #?? | ^    | You can now drag in the recognize skill aswell. (User feedback) |
 
 ### v0.2.0
 

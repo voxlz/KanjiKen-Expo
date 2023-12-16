@@ -4,6 +4,8 @@ import { ScheduleHandler } from '../ScheduleHandler'
 import { View, Text } from 'react-native'
 import { learnOrder } from '../data/learnOrder'
 import { glyphDict } from '../data/glyphDict'
+import { setDoc, doc, getFirestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
 
@@ -13,17 +15,32 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
 }) => {
     const [loaded, setLoaded] = useState(false)
     const scheduler = useRef(new ScheduleHandler()).current
+    const db = getFirestore()
+    const auth = getAuth()
 
+    console.log('once')
     useEffect(() => {
         scheduler.loadFromDisk().then(() => {
             console.log('load from disk successful')
-            if (!scheduler.hasSchedule) {
-                const learnInfoArr = learnOrder.map((glyph) => glyphDict[glyph])
-                scheduler.initSchedule(learnInfoArr)
-            }
             setLoaded(true)
         })
     }, [])
+
+    // Backup to server on startup
+    useEffect(() => {
+        if (loaded)
+            if (!auth.currentUser) {
+                console.log('sub to auth change')
+                return auth.onAuthStateChanged((user) => {
+                    console.log('auth state changed', user?.displayName)
+                    if (user) {
+                        scheduler.backupData()
+                    }
+                })
+            } else {
+                scheduler.backupData()
+            }
+    }, [loaded])
 
     if (!loaded)
         return (

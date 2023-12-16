@@ -73,7 +73,7 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                             ? getTable(dictIssueStr)
                             : undefined,
                     }
-                    console.log('changeLog', version)
+                    // console.log('changeLog', version)
                     return version
                 }
             ) as ChangeLog

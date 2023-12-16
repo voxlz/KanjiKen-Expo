@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { View } from 'react-native'
-import Alternative from '../components/Alternative'
+import Choice from '../components/Choice'
 import KanjiComps from '../components/KanjiComps'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import {
@@ -14,50 +14,38 @@ import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import { defaultGap } from '../utils/consts'
+import DraggableChoicesButtons from '../components/DraggableChoicesButtons'
 
 type Props = { glyphWidth: number; showPositionHints: boolean }
 
 /** Drag components to build a glyph */
 const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
     const seenCount = useContext(SeenCountContext)
-    const expectedChoice = useContext(ExpectedChoiceContext)
-    const choices = useContext(ChoicesContext)
     const scheduler = useContext(SchedulerContext)
-    const glyphInfo = glyphDict[scheduler.getCurrent().glyph]
+    const solution = glyphDict[scheduler.getCurrent().glyph]
 
     return (
         <>
             <KanjiSkillTemplate
                 KanjiComp={
                     <KanjiComps
-                        pos={glyphInfo?.comps.position}
+                        pos={solution?.comps.position}
                         key={seenCount}
                         showPositionHints={showPositionHints}
                     />
                 }
-                KanjiSuccComp={<KanjiBoxCorrect text={glyphInfo?.glyph} />}
+                KanjiSuccComp={<KanjiBoxCorrect text={solution?.glyph} />}
                 TextComp={
-                    <KanjiMeaning text={glyphInfo?.meanings.primary ?? ''} />
+                    <KanjiMeaning text={solution?.meanings.primary ?? ''} />
                 }
                 ChoicesComp={
-                    <View
-                        style={{ gap: defaultGap }}
-                        className="flex-row max-w-full flex-shrink flex-wrap h-auto px-8"
-                    >
-                        {choices?.map((alt, i) => {
-                            const isCorrectAnswer =
-                                glyphInfo?.comps.order.includes(alt.glyph!)
-                            return (
-                                <Alternative
-                                    key={i + alt.glyph! + seenCount}
-                                    altInfo={alt}
-                                    width={glyphWidth}
-                                    isCorrectAnswer={isCorrectAnswer ?? false}
-                                    expectedChoice={expectedChoice}
-                                />
-                            )
-                        })}
-                    </View>
+                    <DraggableChoicesButtons
+                        isCorrectAnswer={(glyph) =>
+                            solution?.comps.order.includes(glyph)
+                        }
+                        clickable={false}
+                        hintOnDrag={true}
+                    />
                 }
             />
         </>

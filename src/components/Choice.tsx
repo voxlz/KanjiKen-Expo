@@ -1,39 +1,46 @@
-import React, { FC, useState } from "react";
-import { View, Pressable } from "react-native";
-import Draggable from "./Draggable";
-import Interactable from "../displays/Interactable";
-import Outline from "../displays/Outline";
-import { useMeasure } from "../functions/useMeasure";
-import { GlyphInfo } from "../contexts/ChallengeContextProvider";
+import React, { FC, useState } from 'react'
+import { View, Pressable } from 'react-native'
+import Draggable from './Draggable'
+import Interactable from '../displays/Interactable'
+import Outline from '../displays/Outline'
+import { useMeasure } from '../functions/useMeasure'
+import {
+    ExpectedChoiceContext,
+    GlyphInfo,
+} from '../contexts/ChallengeContextProvider'
+import { useContext } from '../utils/react'
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 
 type Props = {
-  altInfo: GlyphInfo;
-  width: number;
-  expectedChoice: string;
-  isCorrectAnswer: boolean;
-};
+    altInfo: GlyphInfo
+    isCorrectAnswer: boolean
+    clickable?: boolean
+    hintOnDrag: boolean
+}
 
 /** Draggable on top of an outline */
-const Alternative: FC<Props> = ({
+const Choice: FC<Props> = ({
     altInfo,
-    width,
-    expectedChoice,
     isCorrectAnswer,
+    hintOnDrag,
+    clickable = false,
 }) => {
     const glyph = altInfo.glyph
     const { measure: anchor, onLayout, ref } = useMeasure()
     const [, setShow] = useState(false)
     const [isBeingDragged, setIsBeingDragged] = useState(false) // is draggable being dragging?
+    const glyphWidth = useContext(GlyphWidthContext)
+    const expectedChoice = useContext(ExpectedChoiceContext)
 
     return (
         <View
             className="aspect-square flex-grow flex-shrink z-0"
-            style={{ width: width, zIndex: isBeingDragged ? 30 : 10 }}
+            style={{ width: glyphWidth, zIndex: isBeingDragged ? 30 : 10 }}
         >
             {/* ----------- Outline - Bottom layer-------------- */}
             <Pressable
                 className="aspect-square flex-grow flex-shrink basis-1/5 z-0"
-                style={{ width: width }}
+                style={{ width: glyphWidth }}
                 ref={ref}
                 onLayout={onLayout}
                 onPress={() => setShow((state) => !state)}
@@ -54,11 +61,13 @@ const Alternative: FC<Props> = ({
             >
                 <Draggable
                     anchor={anchor}
-                    width={width}
+                    width={glyphWidth}
                     glyph={glyph}
                     isCorrectAnswer={isCorrectAnswer}
                     isBeingDragged={isBeingDragged}
                     setIsBeingDragged={setIsBeingDragged}
+                    clickable={clickable}
+                    hintOnDrag={hintOnDrag}
                 >
                     <Interactable text={glyph} />
                 </Draggable>
@@ -70,4 +79,4 @@ const Alternative: FC<Props> = ({
     )
 }
 
-export default Alternative;
+export default Choice

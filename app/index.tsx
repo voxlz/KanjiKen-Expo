@@ -12,7 +12,8 @@ import {
 import { useContext } from '../src/utils/react'
 import { TimeTillFullHealthContext } from '../src/contexts/HealthContextProvider'
 import { useFocusEffect } from 'expo-router'
-import { getAuth } from 'firebase/auth'
+import { getAuth, signOut } from 'firebase/auth'
+import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 
 type Props = {}
 
@@ -42,21 +43,26 @@ const Home: FC<Props> = ({}) => {
     const setHealthRegen = useContext(SetHealthRegenContext)
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
     const auth = getAuth()
+    const scheduler = useContext(SchedulerContext)
 
-    useInterval(() => {
-        refreshHealthbar()
-    }, 1000)
+    // UPDATE HEALTHBAR
+    // useInterval(() => {
+    //     refreshHealthbar()
+    //     console.log('update')
+    // }, 1000)
 
-    const newLocal = useCallback(() => {
+    // REGEN
+    const startRegen = useCallback(() => {
         setHealthRegen(60)
     }, [])
+    useFocusEffect(startRegen)
 
-    useFocusEffect(newLocal)
-
+    // SHOW CHANGELOG IF NEW VERSION
     useEffect(() => {
         // Check if new version.
         AsyncStorage.getItem('version', (err, result) => {
-            if (err) console.log('err.cause', err.cause)
+            if (err) return console.log('err.cause', err.cause)
+
             console.log('result', result)
 
             // First time opening the app
@@ -99,15 +105,13 @@ const Home: FC<Props> = ({}) => {
                     />
                     <StyledButton
                         text="Discovered"
+                        styleName="normal"
                         onPress={() => router.push('/discovery')}
                     />
                     <StyledButton
                         text="Changelog"
+                        styleName="normal"
                         onPress={() => router.push('/changelog')}
-                    />
-                    <StyledButton
-                        text="Login"
-                        onPress={() => router.push('/auth/login')}
                     />
                 </View>
                 {/* <View>
@@ -127,7 +131,7 @@ const Home: FC<Props> = ({}) => {
                     />
                 </View> */}
             </View>
-            <View className="items-center justify-center mb-20">
+            <View className="items-center justify-center mb-6">
                 <Text className="text-md text-ui-light">KanjiKen</Text>
                 <Text className="text-md text-ui-light">Version {version}</Text>
                 <Text className="text-md text-ui-light">
@@ -135,6 +139,24 @@ const Home: FC<Props> = ({}) => {
                         ? `Logged in as: ${auth.currentUser.displayName}`
                         : 'Not logged in'}{' '}
                 </Text>
+                <Text className="text-md text-ui-light">
+                    {auth.currentUser !== null
+                        ? `Last synced: ${''}`
+                        : 'Not logged in'}{' '}
+                </Text>
+            </View>
+            <View className="mb-20 px-8">
+                <StyledButton
+                    text={auth.currentUser === null ? 'Sign in' : 'Sign out'}
+                    styleName={auth.currentUser === null ? 'normal' : 'danger'}
+                    onPress={() => {
+                        if (auth.currentUser === null) {
+                            router.push('/auth/login')
+                        } else {
+                            signOut(auth)
+                        }
+                    }}
+                />
             </View>
         </>
     )

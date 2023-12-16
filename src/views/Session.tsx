@@ -98,7 +98,7 @@ const Session: FC<{}> = ({}) => {
                         showPositionHints={exercise.level === 0}
                     />
                 ) : exercise.skill === 'recognize' ? (
-                    <Recognize key={seenCount} glyphWidth={glyphWidth} />
+                    <Recognize key={seenCount} />
                 ) : (
                     <Intro
                         key={seenCount}

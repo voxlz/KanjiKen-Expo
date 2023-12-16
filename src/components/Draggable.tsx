@@ -50,6 +50,8 @@ type Props = {
     width: number
     setIsBeingDragged: (bool: boolean) => void
     isBeingDragged: boolean
+    clickable: boolean
+    hintOnDrag: boolean
 } & ViewProps
 
 type Size = {
@@ -66,6 +68,8 @@ const Draggable: FC<Props> = ({
     isCorrectAnswer,
     setIsBeingDragged,
     isBeingDragged,
+    clickable = false,
+    hintOnDrag = true,
     // ...props
 }) => {
     const hoverUpdate = useContext(HoverUpdateContext)
@@ -253,7 +257,7 @@ const Draggable: FC<Props> = ({
     scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
 
     return (
-        <GestureDetector gesture={drag}>
+        <GestureDetector gesture={!clickable ? drag : composed}>
             <Animated.View
                 id="animate_position"
                 className="absolute"
@@ -314,7 +318,7 @@ const Draggable: FC<Props> = ({
                     hintText={
                         (glyph && glyphDict[glyph].meanings?.primary) ?? ''
                     }
-                    show={isBeingDragged}
+                    show={hintOnDrag && isBeingDragged}
                 />
             </Animated.View>
         </GestureDetector>

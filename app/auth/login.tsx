@@ -1,5 +1,5 @@
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 // import '../old/modules/Login/Login.scss'
 // import { UserData as DataUser } from '../shared/schemaTypes'
 // import UserContext from '../contexts/UserContext'
@@ -13,7 +13,6 @@ import React, { FC, useEffect } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import InputText from '../../src/login_pytte/InputText'
 import {
-    BorderBox,
     LineBreak,
     BorderBoxBtn,
 } from '../../src/login_pytte/LoginHelperComponents'
@@ -21,7 +20,6 @@ import {
     signInWithGoogle,
     signInWithTwitter,
 } from '../../src/login_pytte/LoginLogic'
-import { TextInput } from 'react-native-gesture-handler'
 import StyledButton from '../../src/components/StyledButton'
 // import { CommonSubmitButton } from '../components/common/CommonSubmitButton'
 // import { LineBreak } from '../components/common/LineBreak'
