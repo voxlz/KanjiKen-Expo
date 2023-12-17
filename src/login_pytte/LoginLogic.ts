@@ -1,3 +1,4 @@
+import appleAuth from '@invertase/react-native-apple-authentication'
 import auth from '@react-native-firebase/auth'
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
@@ -38,7 +39,32 @@ export const signInWithGoogle = async () => {
     }
 }
 
-export const signInWithTwitter = async () => {
-    // const provider = new TwitterAuthProvider()
-    // await signInWithRedirect(auth, provider)
+export const signInWithApple = async () => {
+    // Start the sign-in request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
+        // See: https://github.com/invertase/react-native-apple-authentication#faqs
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    })
+
+    // Ensure Apple returned a user identityToken
+    if (!appleAuthRequestResponse.identityToken) {
+        throw new Error('Apple Sign-In failed - no identify token returned')
+    }
+
+    // Create a Firebase credential from the response
+    const { identityToken, nonce, email, fullName } = appleAuthRequestResponse
+    const appleCredential = auth.AppleAuthProvider.credential(
+        identityToken,
+        nonce
+    )
+
+    // Sign the user in with the credential
+    await auth().signInWithCredential(appleCredential)
+    if (email) await auth().currentUser?.updateEmail(email)
+    if (fullName)
+        await auth().currentUser?.updateProfile({
+            displayName: fullName.nickname,
+        })
 }

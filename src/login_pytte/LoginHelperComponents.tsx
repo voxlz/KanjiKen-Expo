@@ -27,7 +27,7 @@ export const BorderBoxBtn: FC<{
 }> = ({ children, className }) => (
     <View
         className={
-            ' border border-ui-bol px-3 rounded-xl w-full flex h-11 items-center focus-within:ring-2  group-focus:ring-2  select-none bg-white dark:bg-black shadow-sm hover:bg-background ' +
+            ' border border-ui-bol px-3 rounded-xl w-full flex h-12 items-center focus-within:ring-2  group-focus:ring-2  select-none bg-white dark:bg-black shadow-sm hover:bg-background ' +
             className
         }
     >
@@ -36,7 +36,7 @@ export const BorderBoxBtn: FC<{
 )
 
 export const LineBreak: FC<{ text: string }> = ({ text }) => (
-    <View className="h-5 my-6  mt-10 flex w-full flex-row">
+    <View className="h-5 my-10 mt-8 flex w-full flex-row">
         <View className="border-b flex-grow mb-1 w-1 border-lineColor"></View>
         <Text className="mx-2 font-bold text-xs text-weakColor self-end">
             {text}

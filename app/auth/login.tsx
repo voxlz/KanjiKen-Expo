@@ -1,30 +1,12 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-// import '../old/modules/Login/Login.scss'
-// import { UserData as DataUser } from '../shared/schemaTypes'
-// import UserContext from '../contexts/UserContext'
-// import { signInWithGoogle, signInWithTwitter } from '../logic/LoginLogic'
-import GoogleLogo from '../../assets/logos/google.svg'
-import TwitterLogo from '../../assets/logos/twitter.svg'
-// import { useContext } from '../../src/utils/react'
-// import UserContext from '../../src/login_pytte/UserContext'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { FC, useEffect } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import InputText from '../../src/login_pytte/InputText'
-import {
-    LineBreak,
-    BorderBoxBtn,
-} from '../../src/login_pytte/LoginHelperComponents'
-import {
-    signInWithGoogle,
-    signInWithTwitter,
-} from '../../src/login_pytte/LoginLogic'
+import { LineBreak } from '../../src/login_pytte/LoginHelperComponents'
 import StyledButton from '../../src/components/StyledButton'
 import auth from '@react-native-firebase/auth'
-// import { CommonSubmitButton } from '../components/common/CommonSubmitButton'
-// import { LineBreak } from '../components/common/LineBreak'
-// import InputText from '../components/common/InputText'
-// import { BorderBox, BorderBoxBtn } from '../components/LoginHelperComponents'
+import SignInProviders from '../../src/login_pytte/SignInProviders'
 
 interface Form {
     Email: string
@@ -119,39 +101,9 @@ const UserLoginView: FC = () => {
 
             <LineBreak text="OR" />
 
-            {true && (
-                <>
-                    <Text className="m-0 text-sm font-semibold text-center mb-3 mt-4 ">
-                        Sign in with
-                    </Text>
-                    <View className="flex-row gap-4 w-full">
-                        <Pressable
-                            className="flex-grow group focus:outline-none "
-                            onPress={() => signInWithGoogle()}
-                        >
-                            <BorderBoxBtn className="justify-center ">
-                                <View className="flex-row justify-between items-center ">
-                                    <GoogleLogo className="-ml-4" />
-                                    <Text>Google</Text>
-                                </View>
-                            </BorderBoxBtn>
-                        </Pressable>
-                        <Pressable
-                            className="flex-grow group focus:outline-none"
-                            onPress={() => signInWithTwitter()}
-                        >
-                            <BorderBoxBtn className="justify-center">
-                                <View className=" flex-row  items-center">
-                                    <TwitterLogo className="-ml-4" />
-                                    <Text>Twitter</Text>
-                                </View>
-                            </BorderBoxBtn>
-                        </Pressable>
-                    </View>
-                </>
-            )}
+            <SignInProviders />
 
-            <View style={{ gap: 4 }} className="flex-row justify-center mt-6">
+            <View style={{ gap: 4 }} className="flex-row justify-center mt-10">
                 <Text className="text-sm">No account yet?</Text>
                 <Pressable
                     className="focus:outline-none focus:ring-2"

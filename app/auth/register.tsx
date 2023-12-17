@@ -10,13 +10,14 @@ import {
 } from '../../src/login_pytte/LoginHelperComponents'
 import {
     signInWithGoogle,
-    signInWithTwitter,
+    signInWithApple,
 } from '../../src/login_pytte/LoginLogic'
 import login from './login'
 import GoogleLogo from '../../assets/logos/google.svg'
 import TwitterLogo from '../../assets/logos/twitter.svg'
 import StyledButton from '../../src/components/StyledButton'
 import auth from '@react-native-firebase/auth'
+import SignInProviders from '../../src/login_pytte/SignInProviders'
 
 interface FormRegister {
     Username: string
@@ -152,39 +153,9 @@ const UserRegisterView: FC = () => {
 
             <LineBreak text="OR" />
 
-            {false && (
-                <>
-                    <Text className="m-0 mb-3 mt-4 text-center text-sm font-semibold ">
-                        Sign up with
-                    </Text>
-                    <View className="flex-row w-full gap-4">
-                        <Pressable
-                            className="group focus:outline-none flex-grow"
-                            onPress={() => signInWithGoogle()}
-                        >
-                            <BorderBoxBtn className="justify-center">
-                                <View className=" flex-row   items-center">
-                                    <GoogleLogo />
-                                    <Text>Google</Text>
-                                </View>
-                            </BorderBoxBtn>
-                        </Pressable>
-                        <Pressable
-                            className="group focus:outline-none flex-grow"
-                            onPointerDown={() => signInWithTwitter()}
-                        >
-                            <BorderBoxBtn className="justify-center">
-                                <View className="flex-row items-center">
-                                    <TwitterLogo />
-                                    <Text>Twitter</Text>
-                                </View>
-                            </BorderBoxBtn>
-                        </Pressable>
-                    </View>
-                </>
-            )}
+            <SignInProviders />
 
-            <View style={{ gap: 4 }} className="flex-row mt-6 justify-center">
+            <View style={{ gap: 4 }} className="flex-row mt-10 justify-center">
                 <Text className="text-sm">Already have an account?</Text>
                 <Pressable
                     className="focus:outline-none focus:ring-2"

@@ -26,7 +26,8 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.voxlz.KanjiKen",
-            "googleServicesFile": "./GoogleService-Info.plist"
+            "googleServicesFile": "./GoogleService-Info.plist",
+            "usesAppleSignIn": true
         },
         "web": {
             "favicon": "./assets/favicon.png",
@@ -48,7 +49,7 @@
                 "expo-build-properties",
                 {
                     "ios": {
-                        "useFrameworks": "static",
+                        "useFrameworks": "static"
                         // "deploymentTarget": "13.0"
                     }
                 }
