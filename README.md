@@ -8,10 +8,31 @@ The kanji app to end all other kanji apps. Hopefully.
 yarn install
 ```
 
-## Start Expo Go Server:
+## Start Expo:
 
 ```
 yarn start
+```
+
+## Add new secrets to EXPO
+
+```
+(eas secret:delete) if you are replacing it
+eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json
+```
+
+## Google sign-in on android
+To get this to work i had to copy the SHA1 key into firebase configuration and download and update ./google-services.json:
+
+```
+keytool -list -v -keystore ./android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+## Adding native code.
+Expo does support certain native code through it's "plugin" list in "app.json". After having "yarn add"'ed the packacke, run this to rebuild the app.
+
+```
+expo prebuild --clean
 ```
 
 ## Android Emulator

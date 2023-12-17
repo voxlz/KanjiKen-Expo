@@ -127,7 +127,7 @@ const UserLoginView: FC = () => {
                     <View className="flex-row gap-4 w-full">
                         <Pressable
                             className="flex-grow group focus:outline-none "
-                            onPress={() => signInWithGoogle(auth)}
+                            onPress={() => signInWithGoogle()}
                         >
                             <BorderBoxBtn className="justify-center ">
                                 <View className="flex-row justify-between items-center ">

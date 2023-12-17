@@ -1,10 +1,8 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import { createContext, useContext } from '../utils/react'
+import { createContext } from '../utils/react'
 import { ScheduleHandler } from '../ScheduleHandler'
 import { View, Text } from 'react-native'
-import { learnOrder } from '../data/learnOrder'
-import { glyphDict } from '../data/glyphDict'
-import { setDoc, doc, getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
