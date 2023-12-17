@@ -1,4 +1,3 @@
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { SubmitHandler, useForm } from 'react-hook-form'
 // import '../old/modules/Login/Login.scss'
 // import { UserData as DataUser } from '../shared/schemaTypes'
@@ -21,6 +20,7 @@ import {
     signInWithTwitter,
 } from '../../src/login_pytte/LoginLogic'
 import StyledButton from '../../src/components/StyledButton'
+import auth from '@react-native-firebase/auth'
 // import { CommonSubmitButton } from '../components/common/CommonSubmitButton'
 // import { LineBreak } from '../components/common/LineBreak'
 // import InputText from '../components/common/InputText'
@@ -33,14 +33,14 @@ interface Form {
 
 const UserLoginView: FC = () => {
     // const { socket, setUser, fireApp } = useContext(UserContext)
-    const auth = getAuth()
     const { getValues, setError, control, handleSubmit, setValue } =
         useForm<Form>()
     const params = useLocalSearchParams()
 
     const signInWithEmail: SubmitHandler<Form> = (data) => {
         console.log('login attempt', data)
-        signInWithEmailAndPassword(auth, data.Email, data.Password)
+        auth()
+            .signInWithEmailAndPassword(data.Email, data.Password)
             .then(() => {
                 console.log('login attempt')
                 router.replace('/')
@@ -138,7 +138,7 @@ const UserLoginView: FC = () => {
                         </Pressable>
                         <Pressable
                             className="flex-grow group focus:outline-none"
-                            onPress={() => signInWithTwitter(auth)}
+                            onPress={() => signInWithTwitter()}
                         >
                             <BorderBoxBtn className="justify-center">
                                 <View className=" flex-row  items-center">

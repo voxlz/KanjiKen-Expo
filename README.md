@@ -32,7 +32,7 @@ keytool -list -v -keystore ./android/app/debug.keystore -alias androiddebugkey -
 Expo does support certain native code through it's "plugin" list in "app.json". After having "yarn add"'ed the packacke, run this to rebuild the app.
 
 ```
-expo prebuild --clean
+npx expo prebuild --clean 
 ```
 
 ## Android Emulator

@@ -11,8 +11,8 @@ import { clamp } from './utils/js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { learnOrder } from './data/learnOrder'
 import { glyphDict } from './data/glyphDict'
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import firestore from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
 
 type userData = {
     schedule: Exercise[]
@@ -34,7 +34,15 @@ export class ScheduleHandler {
     }
     #userData: userData = this.emptyUserData
     hasSchedule = () => this.#userData.schedule === this.emptyUserData.schedule
-    getDocRef = (uid: string) => doc(getFirestore(), 'userData', uid)
+
+    // Firestore backup / sync
+    userDataCollection = firestore().collection('userData')
+    getDocRef = () => {
+        const currentUser = auth().currentUser
+        if (currentUser) {
+            return this.userDataCollection.doc(currentUser.uid)
+        } else console.log('DocRef Error: Not authenticatied')
+    }
 
     generalInfo = (glyph: Learnable) => ({
         glyph: glyph,
@@ -104,37 +112,21 @@ export class ScheduleHandler {
         }
     }
 
-    backupData = async () => {
-        const auth = getAuth()
-        if (!auth.currentUser)
-            return console.log("Can't backup: User not logged in.")
+    backupData = () => {
         if (!this.hasSchedule())
             return console.log("Can't backup: userData is not initialized")
 
-        setDoc(this.getDocRef(auth.currentUser.uid), {
-            json: JSON.stringify(this.#userData),
-            touched: Date.now(),
-        })
+        this.getDocRef()
+            ?.set({ json: JSON.stringify(this.#userData) })
             .then(() => console.log('userData set'))
             .catch((reason) => console.log(`could not set userData: ${reason}`))
     }
 
     getBackupData = async () => {
-        const auth = getAuth()
-        if (!auth.currentUser) {
-            throw new Error("Can't read backup: User not logged in.")
-        }
-
-        const docSnap = await getDoc(this.getDocRef(auth.currentUser.uid))
-
-        if (docSnap.exists()) {
-            console.log('Found userData on server')
-            return {
-                json: JSON.parse(docSnap.data()['json']) as userData,
-                touched: new Date(docSnap.data()['touched']),
-            }
-        } else {
-            console.log('No such document!')
+        const serverData = await this.getDocRef()?.get()
+        if (serverData && serverData.exists) {
+            const data = serverData.data()
+            if (data) return JSON.parse(data['json']) as userData
         }
     }
 

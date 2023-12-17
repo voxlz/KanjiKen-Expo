@@ -2,8 +2,7 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { createContext } from '../utils/react'
 import { ScheduleHandler } from '../ScheduleHandler'
 import { View, Text } from 'react-native'
-import { getFirestore } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import auth from '@react-native-firebase/auth'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
 
@@ -13,8 +12,6 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
 }) => {
     const [loaded, setLoaded] = useState(false)
     const scheduler = useRef(new ScheduleHandler()).current
-    const db = getFirestore()
-    const auth = getAuth()
 
     console.log('once')
     useEffect(() => {
@@ -27,9 +24,9 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
     // Backup to server on startup
     useEffect(() => {
         if (loaded)
-            if (!auth.currentUser) {
+            if (!auth().currentUser) {
                 console.log('sub to auth change')
-                return auth.onAuthStateChanged((user) => {
+                return auth().onAuthStateChanged((user) => {
                     console.log('auth state changed', user?.displayName)
                     if (user) {
                         scheduler.backupData()

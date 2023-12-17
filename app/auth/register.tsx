@@ -1,10 +1,4 @@
 import { router, useLocalSearchParams } from 'expo-router'
-import {
-    createUserWithEmailAndPassword,
-    getAuth,
-    updateProfile,
-    User,
-} from 'firebase/auth'
 import React, { FC, useCallback, useContext, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Button from '../../src/components/Button'
@@ -22,6 +16,7 @@ import login from './login'
 import GoogleLogo from '../../assets/logos/google.svg'
 import TwitterLogo from '../../assets/logos/twitter.svg'
 import StyledButton from '../../src/components/StyledButton'
+import auth from '@react-native-firebase/auth'
 
 interface FormRegister {
     Username: string
@@ -32,7 +27,6 @@ interface FormRegister {
 const UserRegisterView: FC = () => {
     const { control, setError, getValues, handleSubmit, setValue } =
         useForm<FormRegister>()
-    const auth = getAuth()
     const params = useLocalSearchParams()
 
     useEffect(() => {
@@ -63,7 +57,8 @@ const UserRegisterView: FC = () => {
             })
             return
         }
-        createUserWithEmailAndPassword(auth, data.Email, data.Password)
+        auth()
+            .createUserWithEmailAndPassword(data.Email, data.Password)
             .then((userCredential) => {
                 console.log('Account created!')
                 router.replace('/')
@@ -165,7 +160,7 @@ const UserRegisterView: FC = () => {
                     <View className="flex-row w-full gap-4">
                         <Pressable
                             className="group focus:outline-none flex-grow"
-                            onPress={() => signInWithGoogle(auth)}
+                            onPress={() => signInWithGoogle()}
                         >
                             <BorderBoxBtn className="justify-center">
                                 <View className=" flex-row   items-center">
@@ -176,7 +171,7 @@ const UserRegisterView: FC = () => {
                         </Pressable>
                         <Pressable
                             className="group focus:outline-none flex-grow"
-                            onPointerDown={() => signInWithTwitter(auth)}
+                            onPointerDown={() => signInWithTwitter()}
                         >
                             <BorderBoxBtn className="justify-center">
                                 <View className="flex-row items-center">

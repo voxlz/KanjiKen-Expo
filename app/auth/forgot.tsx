@@ -1,10 +1,10 @@
-import { getAuth, sendPasswordResetEmail } from 'firebase/auth'
 import React, { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { router, useLocalSearchParams } from 'expo-router'
 import { View, Text, Pressable } from 'react-native'
 import InputText from '../../src/login_pytte/InputText'
 import StyledButton from '../../src/components/StyledButton'
+import auth from '@react-native-firebase/auth'
 
 interface FormForgot {
     Email: string
@@ -12,7 +12,6 @@ interface FormForgot {
 
 const UserForgotView: FC<{}> = () => {
     const { control, setValue, setError, handleSubmit } = useForm<FormForgot>()
-    const auth = getAuth()
     const [sentEmail, setSentEmail] = useState(false)
     const [loading, setLoading] = useState(false)
     const params = useLocalSearchParams()
@@ -36,10 +35,12 @@ const UserForgotView: FC<{}> = () => {
         else if (!sentEmail) {
             console.log('valid mail')
             setLoading(true)
-            sendPasswordResetEmail(auth, email).then(() => {
-                setSentEmail(true)
-                setLoading(false)
-            })
+            auth()
+                .sendPasswordResetEmail(email)
+                .then(() => {
+                    setSentEmail(true)
+                    setLoading(false)
+                })
         }
     }
 

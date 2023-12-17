@@ -12,8 +12,8 @@ import {
 import { useContext } from '../src/utils/react'
 import { TimeTillFullHealthContext } from '../src/contexts/HealthContextProvider'
 import { useFocusEffect } from 'expo-router'
-import { getAuth, signOut } from 'firebase/auth'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
+import auth from '@react-native-firebase/auth'
 
 type Props = {}
 
@@ -44,18 +44,17 @@ const Home: FC<Props> = ({}) => {
     const refreshHealthbar = useContext(RefreshHealthbarContext)
     const setHealthRegen = useContext(SetHealthRegenContext)
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
-    const auth = getAuth()
     const scheduler = useContext(SchedulerContext)
 
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
+        auth().onAuthStateChanged((user) => {
             if (user?.displayName) {
                 setUserName(user.displayName)
                 scheduler
                     .getBackupData()
                     .then((data) => {
                         if (
-                            data?.touched.getTime() !== serverTouch?.getTime()
+                            data?.touched?.getTime() !== serverTouch?.getTime()
                         ) {
                             setServerTouch(data?.touched)
                         }
@@ -156,12 +155,12 @@ const Home: FC<Props> = ({}) => {
                     KanjiKen v{version}
                 </Text>
                 <Text className="text-md text-ui-light">
-                    {auth.currentUser !== null
+                    {userName !== null
                         ? `Logged in as: ${userName}`
                         : 'Not logged in'}{' '}
                 </Text>
                 <Text className="text-md text-ui-light">
-                    {auth.currentUser !== null
+                    {userName !== null
                         ? `Last synced: ${
                               scheduler.getTouched()?.getTime() ===
                               serverTouch?.getTime()
@@ -173,13 +172,14 @@ const Home: FC<Props> = ({}) => {
             </View>
             <View className="mb-20 px-8">
                 <StyledButton
-                    text={auth.currentUser === null ? 'Sign in' : 'Sign out'}
-                    styleName={auth.currentUser === null ? 'normal' : 'danger'}
+                    text={!userName ? 'Sign in' : 'Sign out'}
+                    styleName={!userName ? 'normal' : 'danger'}
                     onPress={() => {
-                        if (auth.currentUser === null) {
+                        if (!userName) {
                             router.push('/auth/login')
                         } else {
-                            signOut(auth)
+                            auth().signOut()
+                            setUserName(undefined)
                         }
                     }}
                 />
