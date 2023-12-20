@@ -6,38 +6,42 @@
 
 #### Issues
 
-| #id | Prio | Description                                     |
-| --- | ---- | ----------------------------------------------- |
-| #?? | -    | 天 (Heaven) missing composition                 |
-| #?? | -    | 井 (Well) ambigous                              |
-| #?? | -    | 八 (Eigth) is suspiciously high in learn order  |
-| #?? | -    | ㇀ is a stroke and should not be in learn order |
-
-#### Changes that would simplify front-end
-
-- [ ] Remove /" from json before saving to file (might actually just be the issue of me pasting it as a string.)
-- [ ] No question marks (prefer warnings)
-- [ ] Order does not work if the same character appears twice (need to know which one is which in position)
-- [ ] Stand up could be decomposed
-
-#### Database mistakes to fix
-
-- [ ] lose is ambiguous. can mean "to fail" and "to lose" and is sometimes confused with loose, avoid these types of words?
-- [ ] 愛 has 4 vertical components. Invent new radical?
-  - 𤔠, 𩰣, 爱, 受 all also have the first 2 components, but none of them are joyo kanji. Merge them?
+| #id | Prio | Description                                                                                                                             |
+| --- | ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| #?? | ↑    | 30 Keywords missing are missing                                                                                                         |
+| #?? | ↑    | Unique keywords for all characters                                                                                                      |
+| #?? | ↑    | Full-width glyphs for all characters (Commission a font person?)                                                                        |
+| #?? | -    | Programically Filter out radicals (non joyo) that have few occurrences (like <3) like 开  (only used in 形)                             |
+| #?? | -    | 天 (Heaven) missing composition                                                                                                         |
+| #?? | -    | 井 (Well) ambigous                                                                                                                      |
+| #?? | -    | Remove /" from json before saving to file (might actually just be the issue of me pasting it as a string.)                              |
+| #?? | -    | No question marks (prefer warnings)                                                                                                     |
+| #?? | -    | Order does not work if the same character appears twice (need to know which one is which in position)                                   |
+| #?? | -    | Stand up could be decomposed                                                                                                            |
+| #?? | -    | lose is ambiguous. can mean "to fail" and "to lose" and is sometimes confused with loose, avoid these types of words?                   |
+| #?? | -    | 可 bryts inte ner ordenligt, because stroke order is wierd. 口 exists but stroke order says "one" "mouth" "hook".                       |
+| #?? | ↓    | 愛 has 4 vertical components. Invent new radical? (𤔠, 𩰣, 爱, 受 all also have the first 2 components, but none of them are joyo kanji.) |
+| #?? | ↓    | 皮 should probably have composition - Bottom part exists 又 but top part does not. Ignore for now.                                      |
 
 #### Ignore for now
-
-- [ ] 皮 should probably have composition - Bottom part exists 又 but top part does not. Ignore for now.
-- [ ] 可 bryts inte ner ordenligt, because stroke order is wierd. 口 exists but stroke order says "one" "mouth" "hook".
 
 ## Changelog
 
 ### v0.3.0
 
-| #id | Prio | Description        |
-| --- | ---- | ------------------ |
-| #?? | -    | 冖 ("" -> "crown") |
+| #id | Prio | Description                                              |
+| --- | ---- | -------------------------------------------------------- |
+| #?? | -    | Fixed 冖 ("" -> "crown")  and 36 other missing keywords  |
+| #?? | -    | ⨅ and ⿙ are now considered homoglyphs                    |
+| #?? | -    | ク and 𠂊 are now considered homoglyphs                   |
+| #?? | -    | 亠 and 丄 are now considered homoglyphs                  |
+| #?? | -    | 艹 and 卄 are now considered homoglyphs                  |
+| #?? | -    | 𠆢 and 人are now considered homoglyphs                    |
+| #?? | -    | 才 and ⺘are now considered homoglyphs                    |
+| #?? | -    | 皿 and ⺲ are now considered homoglyphs                   |
+| #?? | -    | ㇀ is a stroke and should not be in learn order          |
+| #?? | -    | Updated 口, 日, 目 to use ⿙ in composition               |
+| #?? | -    | Bad data made 八 (eight) show up to early in learn order |
 
 ### v0.2.0
 
