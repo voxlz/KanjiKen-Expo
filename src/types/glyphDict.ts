@@ -28,7 +28,7 @@ export type GlyphDictType = {
         code: string
         comps: {
             order: Learnable[]
-            position?: Position
+            position: Position | null 
             warnings: string[]
             occur: number
             derived: string[]

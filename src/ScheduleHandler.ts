@@ -12,17 +12,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { glyphDict } from './data/glyphDict'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
-import { learnOrder } from '../dict/output/learnOrder'
+import { learnOrder } from '../dict/output/learnOrder';
+import { createExercise } from './queue/exercise'
+
+export type Progress = Partial<{
+    [glyph in Learnable]: {
+        skills: Partial<{
+            [skill in Skills]: LvL
+        }>
+    }
+}>
 
 type userData = {
     schedule: Exercise[]
-    progress: Partial<{
-        [glyph in Learnable]: {
-            skills: Partial<{
-                [skill in Skills]: LvL
-            }>
-        }
-    }>
+    progress: Progress
     touched?: Date // When was this last updated
 }
 
@@ -34,6 +37,10 @@ export class ScheduleHandler {
     }
     #userData: userData = this.emptyUserData
     hasSchedule = () => this.#userData.schedule === this.emptyUserData.schedule
+
+    constructor(progress?: Progress) {
+        this.#userData.progress = progress ?? {}
+    }
 
     // Firestore backup / sync
     userDataCollection = firestore().collection('userData')
@@ -53,6 +60,31 @@ export class ScheduleHandler {
     /** Clear user data */
     clear = () => {
         this.#userData = this.emptyUserData
+    }
+
+    /** Validate the queue after an update to the database.
+     * Ensure learnOrder is correct + new exercises added + old exercises removed */
+    validate = (customLearnOrder?: Learnable[]): Exercise[] => {
+        
+        const order = customLearnOrder ?? learnOrder
+        // Remove exercises for glyphs no longer in learnOrder
+        this.#userData.schedule = this.#userData.schedule.filter(exe => order.includes(exe.glyph))
+
+        // Ensure order is correct by replacing present intro skills
+        const learnedGlyphs = Object.keys(this.#userData.progress) as Learnable[]
+        const sortedUnlearnedGlyphs = order.filter(glyph => !learnedGlyphs.includes(glyph))
+        this.#userData.schedule = this.#userData.schedule.map(exe => {
+            if (exe.skill !== "intro") return exe
+            if (learnedGlyphs.includes(exe.glyph)) return exe
+            return {...exe, "glyph": sortedUnlearnedGlyphs.shift()!} 
+        })
+
+        // If glyphs where added in the update, there might be glyphs left in sortedUnlearned
+        while (sortedUnlearnedGlyphs.length > 0) {
+            this.#userData.schedule.push(createExercise(sortedUnlearnedGlyphs.shift()!, "intro"))
+        }
+
+        return this.#userData.schedule
     }
 
     /** Load from disk. Ensure persistence between sessions. */
@@ -88,7 +120,7 @@ export class ScheduleHandler {
                 } milliseconds.`
             )
         } catch (error) {
-            console.warn('Failed to load schedule from disk')
+            console.warn('Failed to load schedule from disk', error)
         }
     }
 
@@ -130,15 +162,23 @@ export class ScheduleHandler {
         }
     }
 
-    initSchedule() {
-        // Load default learn order
-        const glyphs = learnOrder.map((glyph) => glyphDict[glyph])
-        glyphs.forEach((glyph) => {
-            this.#userData.schedule.push({
-                ...this.generalInfo(glyph.glyph),
-                skill: 'intro',
+    initSchedule(exercises?: Exercise[]) {
+
+        console.log('glyph', glyphDict["⺋"])
+        if (exercises) {
+            this.#userData.schedule = exercises
+        } else {
+            const glyphs = learnOrder.map((glyph) => glyphDict[glyph])
+            glyphs.forEach((glyph) => {
+                this.#userData.schedule.push({
+                    ...this.generalInfo(glyph.glyph),
+                    skill: 'intro',
+                })
             })
-        })
+        }
+
+        console.log("finished init")
+
         this.#userData.touched = new Date()
     }
 

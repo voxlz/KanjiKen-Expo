@@ -1,4 +1,4 @@
-import { learnOrder } from '../data/learnOrder'
+import { learnOrder } from "../../dict/output/learnOrder"
 
 // Keep track of your progress on different memerables: glyphs, vocabulary, grammar?, sentences?
 export type ProgressDict = {

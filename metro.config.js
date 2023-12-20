@@ -33,6 +33,6 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
     (ext) => ext !== 'svg'
 )
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg', 'cjs']
-config.resolver.assetExts = [...config.resolver.assetExts, 'md', 'txt', 'json'] // bundle md and txt files
+config.resolver.assetExts = [...config.resolver.assetExts, 'md', 'txt'] // bundle md and txt files
 
 module.exports = config

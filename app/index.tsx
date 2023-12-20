@@ -14,6 +14,7 @@ import { TimeTillFullHealthContext } from '../src/contexts/HealthContextProvider
 import { useFocusEffect } from 'expo-router'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import auth from '@react-native-firebase/auth'
+import { glyphDict } from '../src/data/glyphDict'
 
 type Props = {}
 
@@ -41,10 +42,16 @@ export function useInterval(callback: () => unknown, delay: number) {
 const Home: FC<Props> = ({}) => {
     const [userName, setUserName] = useState<string>()
     const [serverTouch, setServerTouch] = useState<Date>()
-    const refreshHealthbar = useContext(RefreshHealthbarContext)
+    // const refreshHealthbar = useContext(RefreshHealthbarContext)
     const setHealthRegen = useContext(SetHealthRegenContext)
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
     const scheduler = useContext(SchedulerContext)
+
+    // useEffect(() => {
+    //     console.log('HEJ')
+    //     console.log(scheduler.getProgress())
+    //     console.log(scheduler.initSchedule())
+    // }, [])
 
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
@@ -161,13 +168,15 @@ const Home: FC<Props> = ({}) => {
                 </Text>
                 <Text className="text-md text-ui-light">
                     {userName !== null
-                        ? `Last synced: ${
-                              scheduler.getTouched()?.getTime() ===
-                              serverTouch?.getTime()
-                                  ? 'Synced'
-                                  : serverTouch?.toString().slice(4, -8)
-                          }`
-                        : 'Never synced'}
+                        ? `Last synced: `
+                        : // ${
+                          //       scheduler.getTouched()?.getTime() ===
+                          //       serverTouch?.getTime()
+                          //           ? 'Synced'
+                          //           : serverTouch?.toString().slice(4, -8)
+                          // }
+                          //   `
+                          'Never synced'}
                 </Text>
             </View>
             <View className="mb-20 px-8">
