@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import todo from '../../TODO.md'
-import dictChanges from '../../TODO_DICT.md'
+import dictChanges from '../../dict/TODO_DICT.md'
 import { ScrollView } from 'react-native-gesture-handler'
 import StyledButton from '../components/StyledButton'
 

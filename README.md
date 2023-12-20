@@ -1,55 +1,57 @@
-# Kanjiken
+# KanjiKen
 
 The kanji app to end all other kanji apps. Hopefully.
 
 ## Installation
 
-```
+```bash
 yarn install
 ```
 
-## Start Expo:
+## Start Expo
 
-```
+```bash
 yarn start
 ```
 
-## Add new secrets to EXPO
+## Add new secrets to Expo
 
-```
-(eas secret:delete) if you are replacing it
+```bash
+eas secret:delete (optionally delete it)
 eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json
 ```
 
-## Google sign-in on android
-To get this to work i had to copy the SHA1 key into firebase configuration and download and update ./google-services.json:
+## Google sign-in on Android
 
-```
+To get this to work I had to copy the SHA1 key into the Firebase configuration and download and update ./google-services.json:
+
+```bash
 keytool -list -v -keystore ./android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
 
-## Adding native code.
-Expo does support certain native code through it's "plugin" list in "app.json". After having "yarn add"'ed the packacke, run this to rebuild the app.
+## Adding native code
 
-```
-npx expo prebuild --clean 
+Expo does support certain native code through its "plugin" list in "app.json". After having run "yarn add" on the package, run this to rebuild the app.
+
+```bash
+npx expo prebuild --clean
 ```
 
 ## Android Emulator
 
-Certain code like the google admob scripts can't be run on Expo Go. Follow this guide to set up the emulator: https://docs.expo.dev/workflow/android-studio-emulator/
+Certain code like the Google Admob scripts can't be run on Expo Go. Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
 
 ### Error: No connection could be made
 
 Run this command in the terminal and try again.
 
-```
+```bash
 adb kill-server
 ```
 
 ## Implementation Details
 
-### z-Index:
+### z-Index
 
 Always apply zIndex and elevation together. What follows are some default height values in the app
 
@@ -60,18 +62,18 @@ Always apply zIndex and elevation together. What follows are some default height
 
 ## How to save user progress
 
-### Initial thoughs
+### Initial thoughts
 
-I need to be able to track user progress on 2000+ individual characters. Each one of these characters have different skills associated with them, and those skills can have different levels. I will need to quickly calculate what the user should study next, with some sort of prioritazation function.
+I need to be able to track user progress on 2000+ individual characters. Each one of these characters has different skills associated with them, and those skills can have different levels. I will need to quickly calculate what the user should study next, with some sort of prioritization function.
 
-This data should be local first, no need for the app to be connected to the internet at all times, offline should work. Ideally this data should be synced to a server, so that we can do data processing on user data and provide databackup / migration / device sync.
+This data should be local first, no need for the app to be connected to the internet at all times, offline should work. Ideally, this data should be synced to a server so that we can do data processing on user data and provide data backup, migration, and device sync.
 
-For now: Just save to file. /shrug/
+For now: Just save it to a file. /shrug/
 
-### Local / Synced Storage Requirements:
+### Local / Synced Storage Requirements
 
-1. First hand React Native / Expo Support
-1. Maintained / Not depricated
+1. First-hand React Native / Expo Support
+1. Maintained / Not deprecated
 1. Automatic data syncing (Do not want to maintain syncing code)
 1. Typed data (Typescript)
 1. (Optional) Persistent data on Mobile
@@ -82,7 +84,7 @@ For now: Just save to file. /shrug/
 Databases to consider:
 
 -   CR-SQLite
-    -   Proof of concept / beta by the expo team
+    -   Proof of concept by the expo team
 -   PouchDB (Offline first / sync)
     -   Not maintained
 -   SurrealDB (Looks dope)
@@ -94,8 +96,8 @@ Databases to consider:
     -   Maintained
     -   Automatic syncing
     -   Typescript support
-    -   Persistance, customizable cache limit
-    -   (EXTRA) Gives access to google analytics / crashalytics
+    -   Persistence, customizable cache limit
+    -   (EXTRA) Gives access to Google Analytics and crashlytics
 -   Watermelon DB
     -   Made for React Native SDK
     -   Local Only - Needs backend

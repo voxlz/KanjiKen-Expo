@@ -41,7 +41,7 @@ export class ScheduleHandler {
         const currentUser = auth().currentUser
         if (currentUser) {
             return this.userDataCollection.doc(currentUser.uid)
-        } else console.log('DocRef Error: Not authenticatied')
+        } else console.log('DocRef Error: Not authenticated')
     }
 
     generalInfo = (glyph: Learnable) => ({
@@ -50,12 +50,12 @@ export class ScheduleHandler {
         reviewed_at: [],
     })
 
-    /** Clear userdata */
+    /** Clear user data */
     clear = () => {
         this.#userData = this.emptyUserData
     }
 
-    /** Load from disk. Ensure presistance between sessions. */
+    /** Load from disk. Ensure persistence between sessions. */
     loadFromDisk = async () => {
         try {
             const startTime = performance.now()
@@ -65,7 +65,7 @@ export class ScheduleHandler {
             if (userData) {
                 this.#userData = JSON.parse(userData)
             } else {
-                // DEPRICATED - REMOVE NEXT UPDATE
+                // DEPRECATED - REMOVE NEXT UPDATE
                 console.log('OLD SAVE USED')
                 const schedule = await AsyncStorage.getItem('schedule')
                 const progress = await AsyncStorage.getItem('progress')
@@ -154,10 +154,10 @@ export class ScheduleHandler {
     // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
     onReview(tries: number, currLvl: number, glyphInfo: GlyphInfo) {
         // Remove reviewed element
-        const excercise = this.#userData.schedule.shift()
+        const exercise = this.#userData.schedule.shift()
 
-        if (excercise) {
-            const maxLvl = lvlsPerSkill[excercise.skill]
+        if (exercise) {
+            const maxLvl = lvlsPerSkill[exercise.skill]
             const newLevel = clamp({
                 min: 0,
                 value:
@@ -170,24 +170,23 @@ export class ScheduleHandler {
             })
 
             // Update exercise
-            excercise.level = newLevel
+            exercise.level = newLevel
 
             // * Update progress
-            if (!this.#userData.progress[excercise.glyph]) {
-                this.#userData.progress[excercise.glyph] = { skills: {} }
+            if (!this.#userData.progress[exercise.glyph]) {
+                this.#userData.progress[exercise.glyph] = { skills: {} }
             }
-            this.#userData.progress[excercise.glyph]!['skills'][
-                excercise.skill
-            ] = newLevel
+            this.#userData.progress[exercise.glyph]!['skills'][exercise.skill] =
+                newLevel
 
             // * Insert first element at index X, remove if max-level
             if (newLevel !== maxLvl) {
                 const newIndex = Math.pow(2, newLevel + 1) - 1
-                this.#userData.schedule.splice(newIndex, 0, excercise)
-            } else if (excercise.skill === 'intro') {
+                this.#userData.schedule.splice(newIndex, 0, exercise)
+            } else if (exercise.skill === 'intro') {
                 const newIndex = 3
                 this.#userData.schedule.splice(newIndex, 0, {
-                    ...this.generalInfo(excercise.glyph),
+                    ...this.generalInfo(exercise.glyph),
                     skill: glyphInfo.comps.position ? 'compose' : 'recognize',
                 })
             }
@@ -204,10 +203,7 @@ export class ScheduleHandler {
 
     /** Get the next valid exercise the user should see. */
     getCurrent() {
-        if (this.#userData.schedule.length === 0)
-            console.warn(
-                'trying to access current exercise before schedule is initialized / loaded'
-            )
+        if (this.#userData.schedule.length === 0) this.initSchedule()
 
         // Find next valid element (With timeout for crash safety)
         let i = 10000
