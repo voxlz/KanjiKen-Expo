@@ -2,11 +2,11 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { FC, useEffect } from 'react'
 import { View, Text, Pressable } from 'react-native'
-import InputText from '../../src/login_pytte/InputText'
-import { LineBreak } from '../../src/login_pytte/LoginHelperComponents'
+import InputText from '../../src/login/InputText'
+import { LineBreak } from '../../src/login/LoginHelperComponents'
 import StyledButton from '../../src/components/StyledButton'
 import auth from '@react-native-firebase/auth'
-import SignInProviders from '../../src/login_pytte/SignInProviders'
+import SignInProviders from '../../src/login/SignInProviders'
 
 interface Form {
     Email: string

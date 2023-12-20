@@ -9,10 +9,10 @@ import {
 import { GlyphInfo } from './contexts/ChallengeContextProvider'
 import { clamp } from './utils/js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { learnOrder } from './data/learnOrder'
 import { glyphDict } from './data/glyphDict'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
+import { learnOrder } from '../dict/output/learnOrder'
 
 type userData = {
     schedule: Exercise[]

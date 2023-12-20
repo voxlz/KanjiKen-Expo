@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { router, useLocalSearchParams } from 'expo-router'
 import { View, Text, Pressable } from 'react-native'
-import InputText from '../../src/login_pytte/InputText'
+import InputText from '../../src/login/InputText'
 import StyledButton from '../../src/components/StyledButton'
 import auth from '@react-native-firebase/auth'
 

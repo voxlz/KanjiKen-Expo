@@ -10,7 +10,7 @@ import Svg, { Circle, ClipPath, Path, Rect } from 'react-native-svg'
 import Button from '../src/components/Button'
 import { GlyphInfo } from '../src/contexts/ChallengeContextProvider'
 import { ExitBtn } from '../src/components/HealthBar'
-import { learnOrder } from '../src/data/learnOrder'
+import { learnOrder } from '../dict/output/learnOrder'
 
 type Props = {}
 

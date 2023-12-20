@@ -3,21 +3,15 @@ import React, { FC, useCallback, useContext, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Button from '../../src/components/Button'
 import { View, Pressable, Text } from 'react-native'
-import InputText from '../../src/login_pytte/InputText'
-import {
-    LineBreak,
-    BorderBoxBtn,
-} from '../../src/login_pytte/LoginHelperComponents'
-import {
-    signInWithGoogle,
-    signInWithApple,
-} from '../../src/login_pytte/LoginLogic'
+import InputText from '../../src/login/InputText'
+import { LineBreak, BorderBoxBtn } from '../../src/login/LoginHelperComponents'
+import { signInWithGoogle, signInWithApple } from '../../src/login/LoginLogic'
 import login from './login'
 import GoogleLogo from '../../assets/logos/google.svg'
 import TwitterLogo from '../../assets/logos/twitter.svg'
 import StyledButton from '../../src/components/StyledButton'
 import auth from '@react-native-firebase/auth'
-import SignInProviders from '../../src/login_pytte/SignInProviders'
+import SignInProviders from '../../src/login/SignInProviders'
 
 interface FormRegister {
     Username: string

@@ -23,5 +23,3 @@ export const getGlyphInfo = (glyph: Learnable) => {
         )
     return info
 }
-
-export const learnOrder = [] as const
