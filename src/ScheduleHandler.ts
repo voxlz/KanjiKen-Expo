@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { glyphDict } from './data/glyphDict'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
-import { learnOrder } from '../dict/output/learnOrder';
+import { learnOrder } from '../output/learnOrder';
 import { createExercise } from './queue/exercise'
 
 export type Progress = Partial<{

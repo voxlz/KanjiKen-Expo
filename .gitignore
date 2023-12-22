@@ -38,3 +38,5 @@ yarn-error.*
 # GoogleService-Info.plist
 android
 ios
+git-repo-access-key
+git-repo-access-key.pub

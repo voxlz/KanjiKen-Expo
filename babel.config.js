@@ -9,7 +9,7 @@ module.exports = function (api) {
             [
                 'babel-plugin-inline-import',
                 {
-                    extensions: ['.md', '.txt', '.json'],
+                    extensions: ['.md', '.txt'],
                 },
             ],
         ],

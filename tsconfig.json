@@ -8,6 +8,5 @@
             "./node_modules/@types"
         ]
     },
-    "include": ["./"],
-    "exclude": ["./dict"]
+    "include": ["src", "app", "output"]
 }
