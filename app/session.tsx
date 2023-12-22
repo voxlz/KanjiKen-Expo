@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react'
-import App from '../App'
 import { SetHealthRegenContext } from '../src/contexts/HealthContextProvider'
 import { useContext } from '../src/utils/react'
+import App from '../src/App'
 
 type Props = {}
 
