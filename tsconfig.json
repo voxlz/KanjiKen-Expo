@@ -1,12 +1,7 @@
 {
     "extends": "expo/tsconfig.base",
     "compilerOptions": {
-        "strict": true,
-        "typeRoots": [
-            "app.d.ts",
-            "./types/nativewind.d.ts",
-            "./node_modules/@types"
-        ]
+        "strict": true
     },
-    "include": ["src", "app", "output"]
+    "include": ["types", "src", "app", "output"]
 }

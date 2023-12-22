@@ -34,5 +34,6 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
 )
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg', 'cjs']
 config.resolver.assetExts = [...config.resolver.assetExts, 'md', 'txt'] // bundle md and txt files
-
+config.watchFolders = [...config.watchFolders, 'todo']
+config.resolver.blockList = [/dict\/.*/]
 module.exports = config

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
-import todo from '../../TODO.md'
-import dictChanges from '../../dict/TODO_DICT.md'
+import todo from '../../todo/TODO.md'
+import todo_dict from '../../todo/TODO_DICT.md'
 import { ScrollView } from 'react-native-gesture-handler'
 import StyledButton from '../components/StyledButton'
 
@@ -51,15 +51,26 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
     const [changeLog, setChangeLog] = useState<ChangeLog>()
 
     useEffect(() => {
+        setChangeLog(undefined)
         const md2json = require('md-2-json')
         const expoTodo = md2json.parse(todo) as TodoType
-        const dictTodo = md2json.parse(dictChanges) as TodoType
+        const dictTodo = md2json.parse(todo_dict) as TodoType
 
         setChangeLog(() => {
             const changelog = Object.entries(expoTodo.TODO.Changelog).map(
                 ([key, value]) => {
                     const test = dictTodo.TODO.Changelog
                     const dictIssueStr = test[key]?.Issues?.raw
+
+                    if (!dictIssueStr) {
+                        console.warn(
+                            'No fixed issues found for the dictionary files for this update. Forgot to add #### Issues? Version: ',
+                            key
+                        )
+                    }
+
+                    console.log(test[key], dictIssueStr, 'update changelog')
+
                     const version = {
                         version: key,
                         description: value.UpdateDesc?.raw,
@@ -79,7 +90,7 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
             ) as ChangeLog
             return changelog
         })
-    }, [])
+    }, [todo_dict, todo])
 
     const BulletList: React.FC<{
         text: string

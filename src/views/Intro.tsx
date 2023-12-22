@@ -15,6 +15,7 @@ import { ContinueAnimInstantResetContext as SkillAnimInstantResetContext } from 
 import { useContext } from '../utils/react'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
+import { font } from '../utils/fonts'
 
 type Props = {
     glyphWidth: number
@@ -77,7 +78,7 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                         className=" bg-ui-very_light border-ui-disabled border-4 flex-grow flex-shrink rounded-xl items-center justify-center leading-none  align-text-bottom	"
                     >
                         <Text
-                            style={{ fontFamily: 'klee-bold' }}
+                            style={{ fontFamily: font(glyph, 'klee-bold') }}
                             className="text-8xl p-2 -mb-6"
                             adjustsFontSizeToFit
                         >

@@ -5,7 +5,7 @@
         "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
         "version": "0.3.0",
         "android": {
-            "googleServicesFile": "./google-services.json",
+            "googleServicesFile": "./keys/google-services.json",
             "versionCode": 4,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
@@ -26,7 +26,7 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.voxlz.KanjiKen",
-            "googleServicesFile": "./GoogleService-Info.plist",
+            "googleServicesFile": "./keys/GoogleService-Info.plist",
             "usesAppleSignIn": true
         },
         "web": {

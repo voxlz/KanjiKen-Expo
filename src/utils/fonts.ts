@@ -1,4 +1,4 @@
-export const font = (text?: string, font?: string) =>
+export const font = (text?: string, defaultFont?: string) =>
     text && ['⿖', '⿗', '⿘', '⿙', '⿚'].includes(text.trim())
         ? 'KanjiKen-Regular'
-        : font ?? 'klee-bold'
+        : defaultFont ?? 'klee-bold'

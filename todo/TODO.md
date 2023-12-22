@@ -48,8 +48,8 @@ Use the the following versioning system: vs.m.b
 
 #### UpdateDesc
 
-A hardlock bug motivated the implementation of user authentication 
-and cloud backup.
+A hard lock bug motivated the implementation of user authentication
+and cloud backup. ass
 
 #### Features
 
@@ -62,6 +62,7 @@ and cloud backup.
 | #id | Prio | Description                                                     |
 | --- | ---- | --------------------------------------------------------------- |
 | #?? | ^    | You can now drag in the recognize skill aswell. (User feedback) |
+| #?? | ^    | Fixed issue with custom radicals not rendering properly         |
 
 ### v0.2.0
 
