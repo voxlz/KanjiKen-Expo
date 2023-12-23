@@ -58,11 +58,11 @@ lead the way for cloud backup in a comming update. Merry Christmas!
 
 #### Issues
 
-| #id | Prio | Description                                                     |
-| --- | ---- | --------------------------------------------------------------- |
-| #?? | ^    | You can now drag in the recognize skill aswell. (User feedback) |
-| #?? | ^    | Fixed issue with custom radicals not rendering properly         |
-| #?? | ^    | Death now triggers between 2 exercises, instead of during one.  |
+| #id | Prio | Description                                                    |
+| --- | ---- | -------------------------------------------------------------- |
+| #?? | ^    | You can now drag in the recognize skill aswell.                |
+| #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
+| #?? | ^    | Fixed issue with custom radicals not rendering properly        |
 
 ### v0.2.0
 

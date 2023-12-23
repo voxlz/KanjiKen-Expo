@@ -1,5 +1,5 @@
-import { router } from 'expo-router'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import { router, useFocusEffect } from 'expo-router'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
 import { version } from './_layout'
@@ -7,8 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useContext } from '../src/utils/react'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import auth from '@react-native-firebase/auth'
-
-
 
 /** Homepage of the application. Where you start the exercises for example. */
 const Home: FC<{}> = ({}) => {
@@ -19,21 +17,28 @@ const Home: FC<{}> = ({}) => {
 
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
+            console.log(user)
             if (user?.displayName) {
                 setUserName(user.displayName)
-                scheduler
-                    .getBackupData()
-                    .then((data) => {
-                        if (
-                            data?.touched?.getTime() !== serverTouch?.getTime()
-                        ) {
-                            setServerTouch(data?.touched)
-                        }
-                    })
-                    .catch((error) => console.log(error))
+                // scheduler
+                //     .getBackupData()
+                //     .then((data) => {
+                //         if (
+                //             data?.touched?.getTime() !== serverTouch?.getTime()
+                //         ) {
+                //             setServerTouch(data?.touched)
+                //         }
+                //     })
+                //     .catch((error) => console.log(error))
             }
         })
     }, [])
+
+    const updateUsername = useCallback(() => {
+        setUserName(auth().currentUser?.displayName ?? 'No username set')
+    }, [])
+
+    useFocusEffect(updateUsername)
 
     // SHOW CHANGELOG IF NEW VERSION
     useEffect(() => {
@@ -114,7 +119,7 @@ const Home: FC<{}> = ({}) => {
                         ? `Logged in as: ${userName}`
                         : 'Not logged in'}{' '}
                 </Text>
-                <Text className="text-md text-ui-light">
+                {/* <Text className="text-md text-ui-light">
                     {userName !== null
                         ? `Last synced: `
                         : // ${
@@ -125,7 +130,7 @@ const Home: FC<{}> = ({}) => {
                           // }
                           //   `
                           'Never synced'}
-                </Text>
+                </Text> */}
             </View>
             <View className="mb-20 px-8">
                 <StyledButton

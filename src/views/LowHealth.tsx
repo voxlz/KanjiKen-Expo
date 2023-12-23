@@ -49,7 +49,7 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
 
     // REGEN
     const startRegen = useCallback(() => {
-        setHealthRegen(60)
+        setHealthRegen(1)
     }, [])
     useFocusEffect(startRegen)
 
