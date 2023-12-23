@@ -1,57 +1,21 @@
 import { router } from 'expo-router'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { View, Text } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
 import { version } from './_layout'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import HealthBar from '../src/components/HealthBar'
-import {
-    RefreshHealthbarContext,
-    SetHealthRegenContext,
-} from '../src/contexts/HealthContextProvider'
 import { useContext } from '../src/utils/react'
-import { TimeTillFullHealthContext } from '../src/contexts/HealthContextProvider'
-import { useFocusEffect } from 'expo-router'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import auth from '@react-native-firebase/auth'
-import { glyphDict } from '../src/data/glyphDict'
 
-type Props = {}
 
-export function useInterval(callback: () => unknown, delay: number) {
-    const savedCallback = useRef<() => unknown>()
-
-    // Remember the latest callback.
-    useEffect(() => {
-        savedCallback.current = callback
-    }, [callback])
-
-    // Set up the interval.
-    useEffect(() => {
-        function tick() {
-            savedCallback.current?.()
-        }
-        if (delay !== null) {
-            let id = setInterval(tick, delay)
-            return () => clearInterval(id)
-        }
-    }, [delay])
-}
 
 /** Homepage of the application. Where you start the exercises for example. */
-const Home: FC<Props> = ({}) => {
+const Home: FC<{}> = ({}) => {
     const [userName, setUserName] = useState<string>()
     const [serverTouch, setServerTouch] = useState<Date>()
-    // const refreshHealthbar = useContext(RefreshHealthbarContext)
-    const setHealthRegen = useContext(SetHealthRegenContext)
-    const timeTillFullHealth = useContext(TimeTillFullHealthContext)
-    const scheduler = useContext(SchedulerContext)
 
-    // useEffect(() => {
-    //     console.log('HEJ')
-    //     console.log(scheduler.getProgress())
-    //     console.log(scheduler.initSchedule())
-    // }, [])
+    const scheduler = useContext(SchedulerContext)
 
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
@@ -70,18 +34,6 @@ const Home: FC<Props> = ({}) => {
             }
         })
     }, [])
-
-    // UPDATE HEALTHBAR
-    // useInterval(() => {
-    //     refreshHealthbar()
-    //     console.log('update')
-    // }, 1000)
-
-    // REGEN
-    const startRegen = useCallback(() => {
-        setHealthRegen(60)
-    }, [])
-    useFocusEffect(startRegen)
 
     // SHOW CHANGELOG IF NEW VERSION
     useEffect(() => {
@@ -120,10 +72,6 @@ const Home: FC<Props> = ({}) => {
                     gap: 12,
                 }}
             >
-                <View style={{ gap: 12 }} className="px-8">
-                    <HealthBar />
-                    <Text>{timeTillFullHealth()}</Text>
-                </View>
                 <View style={{ gap: 12 }} className="px-8">
                     <StyledButton
                         text="Start Session"

@@ -20,7 +20,6 @@ type Props = {
 /** The 'continue to next challenge' bar. */
 const BottomBar: FC<Props> = ({
     onContinue,
-    glyphWidth: altWidth,
     continueBtnText,
     continueBtnStyle,
 }) => {
@@ -43,7 +42,7 @@ const BottomBar: FC<Props> = ({
     return (
         <Animated.View
             style={[animatedStyles]}
-            className="w-full py-6   mb-4 justify-end"
+            className="w-full py-6 mb-4 justify-end "
         >
             <View className="px-8">
                 <StyledButton

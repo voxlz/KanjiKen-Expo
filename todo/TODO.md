@@ -13,27 +13,25 @@ Use the the following versioning system: vs.m.b
 | #id | Prio | Description                                                                                                             |
 | --- | ---- | ----------------------------------------------------------------------------------------------------------------------- |
 | #28 | ↑    | Cloud backup / Device Sync (Let's me test features without loosing progress. Nice if you have 2 phones for some reason) |
-| #32 | ↑    | Health Regen                                                                                                            |
-| #?? | ↑    | Game Over / Low Health Screen (Time till full health)                                                                   |
 | #23 | -    | XP level system to track progress                                                                                       |
 | #22 | -    | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                                           |
+| #22 | -    | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                                  |
 | #10 | -    | Show similar kanji as alternatives                                                                                      |
 | #26 | -    | Progress overview view                                                                                                  |
-| #27 | -    | Placement test                                                                                                          |
+| #27 | -    | Kanji level Placement / Fluency test                                                                                    |
 | #28 | -    | Hint system on mistake                                                                                                  |
 | #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition)                |
-| #25 | -    | Game over view / popup                                                                                                  |
 | #31 | -    | Dictionary skill filter                                                                                                 |
 | #24 | -    | Daily Streak Counter system                                                                                             |
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                                 |
 | #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)                            |
+| #25 | ↓    | Game over view / popup                                                                                                  |
 
 ### Issues
 
 | #id | Prio | Description                                                                                                |
 | --- | ---- | ---------------------------------------------------------------------------------------------------------- |
 | #?? | ↑    | Hardlock crash about 8 lessons in on new save                                                              |
-| #?? | ↑    | You can see the answer briefly during exercise transition                                                  |
 | #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                                       |
 | #13 | -    | Show resonable choices for the first few kanji. Currently random.                                          |
@@ -48,14 +46,15 @@ Use the the following versioning system: vs.m.b
 
 #### UpdateDesc
 
-A hard lock bug motivated the implementation of user authentication
-and cloud backup. ass
+This update sees improvments to the health system. User authentication has also been added to
+lead the way for cloud backup in a comming update. Merry Christmas!
 
 #### Features
 
-| #id | Prio | Description                         |
-| --- | ---- | ----------------------------------- |
-| #?? | ↑    | User authentication (Email, Google) |
+| #id | Prio | Description                                                         |
+| --- | ---- | ------------------------------------------------------------------- |
+| #32 | ↑    | Persistent Health + Passive Health Regeneration + Low Health Screen |
+| #?? | ↑    | User authentication (Email, Google)                                 |
 
 #### Issues
 
@@ -63,6 +62,7 @@ and cloud backup. ass
 | --- | ---- | --------------------------------------------------------------- |
 | #?? | ^    | You can now drag in the recognize skill aswell. (User feedback) |
 | #?? | ^    | Fixed issue with custom radicals not rendering properly         |
+| #?? | ^    | Death now triggers between 2 exercises, instead of during one.  |
 
 ### v0.2.0
 

@@ -2,8 +2,9 @@ import React, { FC, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import todo from '../../todo/TODO.md'
 import todo_dict from '../../todo/TODO_DICT.md'
-import { ScrollView } from 'react-native-gesture-handler'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import StyledButton from '../components/StyledButton'
+import { ExitBtn } from '../components/HealthBar'
 
 type Props = { onDismiss: () => void }
 
@@ -47,7 +48,7 @@ const getTable = (strTable: string) =>
 
 /** Display the changelog */
 const ChangeLog: FC<Props> = ({ onDismiss }) => {
-    const [showChangelog, setShowChangelog] = useState(true)
+    // const [showChangelog, setShowChangelog] = useState(true)
     const [changeLog, setChangeLog] = useState<ChangeLog>()
 
     useEffect(() => {
@@ -103,8 +104,8 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                 </Text>
                 {entries.map(({ Description }, i) => (
                     <View className="flex-row" key={i}>
-                        <Text className="mb-2 mr-2">{`\u2022`}</Text>
-                        <Text className="mb-2">{`${
+                        <Text className="mb-2 mr-2 ">{`\u2022`}</Text>
+                        <Text className="mb-2 flex-shrink">{`${
                             Description
                                 ? Description.replaceAll('\\n', '\n')
                                 : ''
@@ -126,77 +127,69 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
             className="mt-4"
         />
     )
+
     return (
-        <>
-            {showChangelog && (
-                <>
-                    <View className="absolute top-0 bottom-0 left-0 right-0 z-10 bg-black opacity-25" />
-                    <View
-                        style={{ borderWidth: 0 }}
-                        className="absolute bg-slate-100 top-16 bottom-12 left-5 right-5 z-20 rounded-xl justify-between border-forest-900"
-                    >
-                        <ScrollView className="p-6">
+        <View
+            style={{ borderWidth: 0 }}
+            className=" z-20 rounded-xl justify-between border-forest-900"
+        >
+            <FlatList
+                data={changeLog}
+                ListHeaderComponent={
+                    <View className="bg-white pt-4">
+                        <View className="pt-10 flex-row justify-between bg-white w-full   px-8">
                             <Text className="text-xl font-noto-md">
                                 Changelog
                             </Text>
-                            <HorRule opacity={0.2} />
-                            {changeLog?.map(
-                                (
-                                    {
-                                        version,
-                                        issues,
-                                        features,
-                                        dictionary,
-                                        description,
-                                    },
-                                    i
-                                ) => (
-                                    <View key={i}>
-                                        <Text className="font-noto-black mt-4 text-lg">
-                                            {version}
-                                        </Text>
-                                        {description && (
-                                            <>
-                                                <Text className="uppercase font-noto-black mb-2 mt-4 text-xs">
-                                                    Description
-                                                </Text>
-                                                <Text className="mb-2">{`${description
-                                                    .replaceAll(/\n/g, '')
-                                                    .trim()}`}</Text>
-                                            </>
-                                        )}
-                                        <BulletList
-                                            text="Features"
-                                            entries={features ?? []}
-                                        />
-                                        <BulletList
-                                            text="Bug Fixes"
-                                            entries={issues ?? []}
-                                        />
-                                        <BulletList
-                                            text="Dictionary"
-                                            entries={dictionary ?? []}
-                                        />
-                                        <HorRule opacity={0.1} />
-                                    </View>
-                                )
-                            )}
-                            <HorRule opacity={0.1} />
-                        </ScrollView>
-                        <View className="p-6 pt-2">
-                            <StyledButton
-                                text="Dissmiss"
-                                onPress={() =>
-                                    onDismiss
-                                        ? onDismiss()
-                                        : setShowChangelog(false)
-                                }
-                            />
+                            <ExitBtn height={20} />
                         </View>
+                        <HorRule opacity={0.2} />
                     </View>
-                </>
-            )}
-        </>
+                }
+                stickyHeaderIndices={[0]}
+                renderItem={(item) => {
+                    const {
+                        version,
+                        issues,
+                        features,
+                        dictionary,
+                        description,
+                    } = item.item
+                    return (
+                        <>
+                            <View className="px-8">
+                                <Text className="font-noto-black mt-4 text-lg">
+                                    {version}
+                                </Text>
+                                {description && (
+                                    <>
+                                        <Text className="uppercase font-noto-black mb-2 mt-4 text-xs">
+                                            Description
+                                        </Text>
+                                        <Text className="mb-2">{`${description
+                                            .replaceAll(/\n/g, '')
+                                            .trim()}`}</Text>
+                                    </>
+                                )}
+                                <BulletList
+                                    text="Features"
+                                    entries={features ?? []}
+                                />
+                                <BulletList
+                                    text="Bug Fixes"
+                                    entries={issues ?? []}
+                                />
+                                <BulletList
+                                    text="Dictionary"
+                                    entries={dictionary ?? []}
+                                />
+                            </View>
+                            <HorRule opacity={0.1} />
+                        </>
+                    )
+                }}
+            />
+        </View>
     )
 }
 

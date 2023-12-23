@@ -18,6 +18,12 @@ import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import UpperBar from '../components/UpperBar'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { glyphDict } from '../data/glyphDict'
+import {
+    TimeTillFullHealthContext,
+    RelativeHealthContext,
+    QuitContext,
+} from '../contexts/HealthContextProvider'
+import LowHealth from './LowHealth'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC<{}> = ({}) => {
@@ -31,10 +37,13 @@ const Session: FC<{}> = ({}) => {
     const expectedChoice = useContext(ExpectedChoiceContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
     const glyphWidth = useContext(GlyphWidthContext)
+    const quit = useContext(QuitContext)
+
+    const relativeHealth = useContext(RelativeHealthContext)
 
     // When session starts
     useEffect(() => {
-        console.log('session start')
+        console.log('session start', relativeHealth.value)
         nextExercise()
         resetSkillAnim(true) // In case they exited during an exercise.
     }, [])
@@ -52,6 +61,15 @@ const Session: FC<{}> = ({}) => {
             resetSkillAnim()
             scheduler.onReview(1, exercise.level, glyphDict[exercise.glyph])
         }
+
+        console.log('Trig', relativeHealth.value)
+        // Check so that we have not died.
+        if (relativeHealth.value === 0) {
+            console.log('trag')
+
+            quit(true)
+        }
+
         // Regardless, let's load the current challenge
         const next = scheduler.getCurrent()
         setExercise(next)
@@ -88,25 +106,27 @@ const Session: FC<{}> = ({}) => {
     if (!exercise) return <Text>ERRORRRR</Text>
 
     return (
-        <Animated.View className="items-center w-full h-full flex-grow ">
+        <Animated.View className="items-center w-full h-full flex-grow">
             <UpperBar skillTitle={skillTitle} glyphWidth={glyphWidth} />
-            <View className="flex-grow flex-shrink items-center">
-                {exercise.skill === 'compose' ? (
-                    <Compose
-                        key={seenCount}
-                        glyphWidth={glyphWidth}
-                        showPositionHints={exercise.level === 0}
-                    />
-                ) : exercise.skill === 'recognize' ? (
-                    <Recognize key={seenCount} />
-                ) : (
-                    <Intro
-                        key={seenCount}
-                        glyphWidth={glyphWidth}
-                        onContinue={nextExercise}
-                    />
-                )}
-            </View>
+            <LowHealth>
+                <View className="flex-grow flex-shrink items-center">
+                    {exercise.skill === 'compose' ? (
+                        <Compose
+                            key={seenCount}
+                            glyphWidth={glyphWidth}
+                            showPositionHints={exercise.level === 0}
+                        />
+                    ) : exercise.skill === 'recognize' ? (
+                        <Recognize key={seenCount} />
+                    ) : (
+                        <Intro
+                            key={seenCount}
+                            glyphWidth={glyphWidth}
+                            onContinue={nextExercise}
+                        />
+                    )}
+                </View>
+            </LowHealth>
             <BottomBar
                 onContinue={() => {
                     if (expectedChoice === 'FINISH') return nextExercise()

@@ -17,9 +17,20 @@ type Props = {}
 
 /** Keeps track of current health */
 
-export function ExitBtn({ height }: { height: number }) {
+export function ExitBtn({
+    height,
+    onPress,
+}: {
+    height: number
+    onPress?: () => void
+}) {
     return (
-        <Pressable onPress={() => router.back()}>
+        <Pressable
+            onPress={() => {
+                onPress?.()
+                router.back()
+            }}
+        >
             <SVGImg width={height * 1.6} height={height * 1.6} />
         </Pressable>
     )

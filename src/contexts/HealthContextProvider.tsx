@@ -15,8 +15,12 @@ import { clamp } from '../utils/js'
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
 export const AddHealthContext = createContext<(health: number) => void>()
-export const RefreshHealthbarContext = createContext<() => Promise<void>>()
-export const TimeTillFullHealthContext = createContext<() => string>()
+export const RefreshHealthbarContext = createContext<() => Promise<number>>()
+export const TimeTillFullHealthContext =
+    createContext<() => string | undefined>()
+export const DeathContext = createContext<boolean>()
+export const QuitContext = createContext<(death: boolean) => void>()
+
 export const SetHealthRegenContext =
     createContext<(regenPerMin: number) => void>()
 
@@ -28,8 +32,14 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [health, _setHealth] = useState(30)
     const [maxHealth] = useState(30)
     const [regenCashe, setRegenCashe] = useState<RegenObj>()
+    const [isDead, _setIsDead] = useState(false)
 
-    // console.log('health', health)
+    const quit = (newDead: boolean) => {
+        _setIsDead((oldDead) => {
+            if (newDead === true && oldDead !== newDead) onDeath()
+            return newDead
+        })
+    }
 
     // Animation variables
     const healthProcent = useSharedValue((health / maxHealth) * 100)
@@ -52,21 +62,32 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
         _setHealth(newHealth)
     }
 
-    const getRegenObj = async () => {
+    // Get regen object from storage
+    const getRegenObj = async (): Promise<RegenObj> => {
         const regenStr = await AsyncStorage.getItem('regen')
-        if (!regenStr) return { start: Date.now(), healthPerMin: 0 }
-        return JSON.parse(regenStr) as RegenObj
+        if (!regenStr)
+            return { timeOfQuit: 0, healthPerMin: 0, healthLeftAtQuit: 0 }
+        return JSON.parse(regenStr)
     }
 
-    /** Calculate how much health has been gained since regen started */
+    // Set regen obj to storage
+    const setRegenObj = (regenObj: RegenObj) => {
+        AsyncStorage.setItem('regen', JSON.stringify(regenObj)).then(() =>
+            setRegenCashe(regenObj)
+        )
+    }
+
+    /** Calculate how much health has been gained since timeOfDeath given current regen rate */
     const getRegenHealth = async () => {
         const regen = await getRegenObj()
         const healthPerSec = regen.healthPerMin / 60
-        const secondsPassed = (Date.now() - regen.start) / 1000
+        const secondsPassed = (Date.now() - regen.timeOfQuit) / 1000
 
-        const value = healthPerSec * secondsPassed
-        const max = maxHealth - health
-        const min = 0 - health
+        console.log('seconds passed', secondsPassed, regen.timeOfQuit)
+
+        const value = regen.healthLeftAtQuit + healthPerSec * secondsPassed
+        const max = maxHealth
+        const min = 0
         // console.log('value', value, max, maxHealth, health)
 
         // Make sure this does not push health beyond max.
@@ -80,29 +101,27 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     /** Call this to get an accurate readout on health */
     const refreshHealthbar = async () => {
         const regen = await getRegenHealth()
-        // console.log('regen', regen)
-        setHealth((health) => {
-            const newHealth = health + regen
-            if (newHealth <= 0) onDamage(true)
-            if (newHealth >= 0.33 * maxHealth)
-                healthColor.value = withSpring(1, {
-                    duration: 500,
-                })
+        console.log('regen', regen)
+        let newHealth: number = regen
+        if (newHealth <= 0) onDamage(true)
+        if (newHealth >= 0.33 * maxHealth)
+            healthColor.value = withSpring(1, {
+                duration: 500,
+            })
 
-            return newHealth
-        })
-
-        // Reset regen
-        getRegenObj().then((regenObj) => {
-            setHealthRegen(regenObj.healthPerMin)
-        })
+        setHealth(() => newHealth)
+        return (newHealth / maxHealth) * 100
     }
 
     /** Change health */
     const addHealth = async (diff: number) => {
         // console.log('added health', diff)
         setHealth((health) => {
-            const newHealth = health + diff
+            const newHealth = clamp({
+                min: 0,
+                value: health + diff,
+                max: maxHealth,
+            })
 
             // You took damage
             if (diff < 0) {
@@ -119,14 +138,23 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     }
 
     const setHealthRegen = (regenPerMin: number) => {
-        const regenObj: RegenObj = {
-            start: Date.now(),
-            healthPerMin: regenPerMin,
-        }
-        setRegenCashe(regenObj)
-        AsyncStorage.setItem('regen', JSON.stringify(regenObj))
+        getRegenObj().then((regenObj): void => {
+            regenObj.healthPerMin = regenPerMin
+            setRegenObj(regenObj)
+        })
     }
 
+    // What should happen on death
+    const onDeath = () => {
+        getRegenObj().then((regenObj): void => {
+            regenObj.timeOfQuit = Date.now()
+            regenObj.healthLeftAtQuit = health
+            setRegenObj(regenObj)
+            quit(true)
+        })
+    }
+
+    // What should happen on damage
     const onDamage = (isDead: boolean) => {
         if (healthColor.value !== 0) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
@@ -138,41 +166,49 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
                         duration: 500,
                     })
                 )
-            } else {
-                setTimeout(() => router.back(), 500)
             }
         }
     }
 
     const timeTillFullHealth = () => {
         if (!regenCashe) return 'error'
-        if (maxHealth - health === 0) return ''
-        const aa = (maxHealth - health) / regenCashe?.healthPerMin
-        if (aa > 0 && aa < 1) return '>1 min till full health'
-        return `~${aa.toFixed(0)} min till full health`
+        if (maxHealth - health === 0) return undefined
+        const minLeft = (maxHealth - health) / regenCashe?.healthPerMin
+        if (minLeft > 0 && minLeft < 1)
+            return `${(minLeft * 60).toFixed(0)} seconds`
+        return `~${minLeft.toFixed(0)} min`
     }
 
     return (
-        <AddHealthContext.Provider value={addHealth}>
-            <HealthColorContext.Provider value={healthColor}>
-                <RelativeHealthContext.Provider value={healthProcent}>
-                    <RefreshHealthbarContext.Provider value={refreshHealthbar}>
-                        <SetHealthRegenContext.Provider value={setHealthRegen}>
-                            <TimeTillFullHealthContext.Provider
-                                value={timeTillFullHealth}
+        <DeathContext.Provider value={isDead}>
+            <QuitContext.Provider value={quit}>
+                <AddHealthContext.Provider value={addHealth}>
+                    <HealthColorContext.Provider value={healthColor}>
+                        <RelativeHealthContext.Provider value={healthProcent}>
+                            <RefreshHealthbarContext.Provider
+                                value={refreshHealthbar}
                             >
-                                {children}
-                            </TimeTillFullHealthContext.Provider>
-                        </SetHealthRegenContext.Provider>
-                    </RefreshHealthbarContext.Provider>
-                </RelativeHealthContext.Provider>
-            </HealthColorContext.Provider>
-        </AddHealthContext.Provider>
+                                <SetHealthRegenContext.Provider
+                                    value={setHealthRegen}
+                                >
+                                    <TimeTillFullHealthContext.Provider
+                                        value={timeTillFullHealth}
+                                    >
+                                        {children}
+                                    </TimeTillFullHealthContext.Provider>
+                                </SetHealthRegenContext.Provider>
+                            </RefreshHealthbarContext.Provider>
+                        </RelativeHealthContext.Provider>
+                    </HealthColorContext.Provider>
+                </AddHealthContext.Provider>
+            </QuitContext.Provider>
+        </DeathContext.Provider>
     )
 }
 
 export type RegenObj = {
-    start: number
+    timeOfQuit: number
+    healthLeftAtQuit: number
     healthPerMin: number
 }
 

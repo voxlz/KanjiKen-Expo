@@ -17,17 +17,19 @@ const SignInProviders: FC<Props> = ({}) => (
                 text="Sign in with Google"
                 logo={<GoogleLogo height={42} />}
             />
-            <AppleButton
-                cornerRadius={10}
-                style={{ height: 50 }}
-                buttonStyle={AppleButton.Style.WHITE_OUTLINE}
-                buttonType={AppleButton.Type.SIGN_IN}
-                onPress={() =>
-                    signInWithApple().catch((err) =>
-                        console.log('Sign in with apple failed', err)
-                    )
-                }
-            />
+            {false && (
+                <AppleButton
+                    cornerRadius={10}
+                    style={{ height: 50 }}
+                    buttonStyle={AppleButton.Style.WHITE_OUTLINE}
+                    buttonType={AppleButton.Type.SIGN_IN}
+                    onPress={() =>
+                        signInWithApple().catch((err) =>
+                            console.log('Sign in with apple failed', err)
+                        )
+                    }
+                />
+            )}
         </View>
     </>
 )

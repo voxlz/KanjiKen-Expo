@@ -42,10 +42,10 @@
 | #?? | -    | Updated 口, 日, 目 to use ⿙ in composition               |
 | #?? | -    | ク and 𠂊 are now considered homoglyphs                   |
 | #?? | -    | 亠 and 丄 are now considered homoglyphs                  |
-| #?? | -    | 才 and ⺘are now considered homoglyphs                    |
-| #?? | -    | 皿 and ⺲ are now considered homoglyphs                   |
+| #?? | -    | ⺘ and 才 are now considered homoglyphs                   |
+| #?? | -    | ⺲ and 皿 are now considered homoglyphs                   |
 | #?? | -    | 艹 and 卄 are now considered homoglyphs                  |
-| #?? | -    | 𠆢 and 人are now considered homoglyphs                    |
+| #?? | -    | 𠆢 and 人 are now considered homoglyphs                   |
 
 ### v0.2.0
 

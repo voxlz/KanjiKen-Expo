@@ -3,5 +3,6 @@
     "compilerOptions": {
         "strict": true
     },
-    "include": ["types", "src", "app", "output"]
+    "include": ["./"],
+    "exclude": ["dict"]
 }
