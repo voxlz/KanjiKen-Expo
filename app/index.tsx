@@ -1,44 +1,45 @@
 import { router, useFocusEffect } from 'expo-router'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
 import { version } from './_layout'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useContext } from '../src/utils/react'
-import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import auth from '@react-native-firebase/auth'
 
 /** Homepage of the application. Where you start the exercises for example. */
 const Home: FC<{}> = ({}) => {
     const [userName, setUserName] = useState<string>()
-    const [serverTouch, setServerTouch] = useState<Date>()
+    const [userEmail, setUserEmail] = useState<string>()
+    // const [serverTouch, setServerTouch] = useState<Date>()
 
-    const scheduler = useContext(SchedulerContext)
+    // const scheduler = useContext(SchedulerContext)
 
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
-            console.log(user)
-            if (user?.displayName) {
-                setUserName(user.displayName)
-                // scheduler
-                //     .getBackupData()
-                //     .then((data) => {
-                //         if (
-                //             data?.touched?.getTime() !== serverTouch?.getTime()
-                //         ) {
-                //             setServerTouch(data?.touched)
-                //         }
-                //     })
-                //     .catch((error) => console.log(error))
-            }
+            updateUserInfo()
+            // console.log(user)
+            // if (user?.displayName) {
+            //     setUserName(user.displayName)
+            // scheduler
+            //     .getBackupData()
+            //     .then((data) => {
+            //         if (
+            //             data?.touched?.getTime() !== serverTouch?.getTime()
+            //         ) {
+            //             setServerTouch(data?.touched)
+            //         }
+            //     })
+            //     .catch((error) => console.log(error))
+            // }
         })
     }, [])
 
-    const updateUsername = useCallback(() => {
-        setUserName(auth().currentUser?.displayName ?? 'No username set')
+    const updateUserInfo = useCallback(() => {
+        setUserName(auth().currentUser?.displayName ?? undefined)
+        setUserEmail(auth().currentUser?.email ?? undefined)
     }, [])
 
-    useFocusEffect(updateUsername)
+    useFocusEffect(updateUserInfo)
 
     // SHOW CHANGELOG IF NEW VERSION
     useEffect(() => {
@@ -92,6 +93,13 @@ const Home: FC<{}> = ({}) => {
                         styleName="normal"
                         onPress={() => router.push('/changelog')}
                     />
+                    {userEmail === 'torben.media@gmail.com' && (
+                        <StyledButton
+                            text="Developer"
+                            styleName="disabled"
+                            onPress={() => router.push('/developer')}
+                        />
+                    )}
                 </View>
                 {/* <View>
                     <StyledButton
@@ -141,7 +149,7 @@ const Home: FC<{}> = ({}) => {
                             router.push('/auth/login')
                         } else {
                             auth().signOut()
-                            setUserName(undefined)
+                            updateUserInfo()
                         }
                     }}
                 />

@@ -56,8 +56,8 @@ npx expo prebuild --clean
 
 ## Native code
 
-Certain code like the Google Admob and firebase scripts can't be run on Expo Go. 
-For these you have to build a development build (A personalized expo go app) and install it to your device. 
+Certain code like the Google Admob and firebase scripts can't be run on Expo Go.
+For these you have to build a development build (A personalized expo go app) and install it to your device.
 Then it works as expo go would.
 
 Alternativly: Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
