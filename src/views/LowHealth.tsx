@@ -9,7 +9,7 @@ import { View } from 'react-native'
 import StyledButton from '../components/StyledButton'
 import Text from '../../src/components/Text'
 import {
-    RefreshHealthbarContext,
+    RefreshHealthBarContext,
     RelativeHealthContext,
     SetHealthRegenContext,
     TimeTillFullHealthContext,
@@ -19,14 +19,17 @@ import { useFocusEffect } from 'expo-router'
 import { useInterval } from '../hooks/useInterval'
 import ClockIcon from '../../assets/icons/ph_clock-duotone.svg'
 import SwordIcon from '../../assets/icons/ph_kanjiken-sword.svg'
-import { QuitContext, DeathContext } from '../contexts/HealthContextProvider'
+import {
+    setIsDeadContext,
+    DeathContext,
+} from '../contexts/HealthContextProvider'
 
 /** View before start of session, if not full health */
 const LowHealth: FC<PropsWithChildren> = ({ children }) => {
     const timeTillFullHealth = useContext(TimeTillFullHealthContext)
-    const refreshHealthbar = useContext(RefreshHealthbarContext)
+    const refreshHealthbar = useContext(RefreshHealthBarContext)
     const setHealthRegen = useContext(SetHealthRegenContext)
-    const setDeath = useContext(QuitContext)
+    const setDeath = useContext(setIsDeadContext)
     const death = useContext(DeathContext)
 
     const [enoughHealth, setEnoughHealth] = useState(true)

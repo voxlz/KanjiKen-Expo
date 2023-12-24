@@ -5,7 +5,7 @@ import { useContext } from '../utils/react'
 import { SeenCountContext } from '../contexts/ChallengeContextProvider'
 import { View } from 'react-native'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
-import { QuitContext as SetQuitContext } from '../contexts/HealthContextProvider'
+import { setIsDeadContext as SetQuitContext } from '../contexts/HealthContextProvider'
 
 type Props = { skillTitle: string; glyphWidth: number }
 

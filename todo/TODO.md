@@ -42,12 +42,31 @@ Use the the following versioning system: vs.m.b
 
 ## Changelog
 
+### v0.4.0
+
+#### UpdateDesc
+
+Sync update.
+
+#### Features
+
+| #id | Prio | Description                                                         |
+| --- | ---- | ------------------------------------------------------------------- |
+
+
+#### Issues
+
+| #id | Prio | Description                                                    |
+| --- | ---- | -------------------------------------------------------------- |
+| #?? | ^    | Wrong font on kanji success box                |
+
+
 ### v0.3.0
 
 #### UpdateDesc
 
-This update sees improvments to the health system. User authentication has also been added to
-lead the way for cloud backup in a comming update. Merry Christmas!
+This update sees improvements to the health system. User authentication has also been added to
+lead the way for cloud backup in a coming update. Merry Christmas!
 
 #### Features
 
@@ -60,7 +79,7 @@ lead the way for cloud backup in a comming update. Merry Christmas!
 
 | #id | Prio | Description                                                    |
 | --- | ---- | -------------------------------------------------------------- |
-| #?? | ^    | You can now drag in the recognize skill aswell.                |
+| #?? | ^    | You can now drag in the recognize skill as well.                |
 | #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
 | #?? | ^    | Fixed issue with custom radicals not rendering properly        |
 

@@ -21,7 +21,7 @@ import { glyphDict } from '../data/glyphDict'
 import {
     TimeTillFullHealthContext,
     RelativeHealthContext,
-    QuitContext,
+    setIsDeadContext,
 } from '../contexts/HealthContextProvider'
 import LowHealth from './LowHealth'
 
@@ -37,7 +37,7 @@ const Session: FC<{}> = ({}) => {
     const expectedChoice = useContext(ExpectedChoiceContext)
     const resetSkillAnim = useContext(ResetSkillAnimContext)
     const glyphWidth = useContext(GlyphWidthContext)
-    const quit = useContext(QuitContext)
+    const quit = useContext(setIsDeadContext)
 
     const relativeHealth = useContext(RelativeHealthContext)
 

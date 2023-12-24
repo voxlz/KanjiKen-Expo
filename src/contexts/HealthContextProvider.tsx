@@ -15,11 +15,11 @@ import { clamp } from '../utils/js'
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
 export const AddHealthContext = createContext<(health: number) => void>()
-export const RefreshHealthbarContext = createContext<() => Promise<number>>()
+export const RefreshHealthBarContext = createContext<() => Promise<number>>()
 export const TimeTillFullHealthContext =
     createContext<() => string | undefined>()
 export const DeathContext = createContext<boolean>()
-export const QuitContext = createContext<(death: boolean) => void>()
+export const setIsDeadContext = createContext<(death: boolean) => void>()
 
 export const SetHealthRegenContext =
     createContext<(regenPerMin: number) => void>()
@@ -31,10 +31,10 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     // Keep track of stats
     const [health, _setHealth] = useState(30)
     const [maxHealth] = useState(30)
-    const [regenCashe, setRegenCashe] = useState<RegenObj>()
+    const [regenCache, setRegenCache] = useState<RegenObj>()
     const [isDead, _setIsDead] = useState(false)
 
-    const quit = (newDead: boolean) => {
+    const setIsDead = (newDead: boolean) => {
         _setIsDead((oldDead) => {
             if (newDead === true && oldDead !== newDead) onDeath()
             return newDead
@@ -73,7 +73,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     // Set regen obj to storage
     const setRegenObj = (regenObj: RegenObj) => {
         AsyncStorage.setItem('regen', JSON.stringify(regenObj)).then(() =>
-            setRegenCashe(regenObj)
+            setRegenCache(regenObj)
         )
     }
 
@@ -99,7 +99,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     }
 
     /** Call this to get an accurate readout on health */
-    const refreshHealthbar = async () => {
+    const refreshHealthBar = async () => {
         const regen = await getRegenHealth()
         console.log('regen', regen)
         let newHealth: number = regen
@@ -146,18 +146,20 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
     // What should happen on death
     const onDeath = () => {
+        console.log('onSessionEnd')
         getRegenObj().then((regenObj): void => {
             regenObj.timeOfQuit = Date.now()
             regenObj.healthLeftAtQuit = health
             setRegenObj(regenObj)
-            quit(true)
+            setIsDead(true)
         })
     }
 
     // What should happen on damage
     const onDamage = (isDead: boolean) => {
+        console.log('onDamage')
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         if (healthColor.value !== 0) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
             healthColor.value = 0
             if (!isDead) {
                 healthColor.value = withDelay(
@@ -171,9 +173,9 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     }
 
     const timeTillFullHealth = () => {
-        if (!regenCashe) return 'error'
+        if (!regenCache) return 'error'
         if (maxHealth - health === 0) return undefined
-        const minLeft = (maxHealth - health) / regenCashe?.healthPerMin
+        const minLeft = (maxHealth - health) / regenCache?.healthPerMin
         if (minLeft > 0 && minLeft < 1)
             return `${(minLeft * 60).toFixed(0)} seconds`
         return `~${minLeft.toFixed(0)} min`
@@ -181,12 +183,12 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
     return (
         <DeathContext.Provider value={isDead}>
-            <QuitContext.Provider value={quit}>
+            <setIsDeadContext.Provider value={setIsDead}>
                 <AddHealthContext.Provider value={addHealth}>
                     <HealthColorContext.Provider value={healthColor}>
                         <RelativeHealthContext.Provider value={healthProcent}>
-                            <RefreshHealthbarContext.Provider
-                                value={refreshHealthbar}
+                            <RefreshHealthBarContext.Provider
+                                value={refreshHealthBar}
                             >
                                 <SetHealthRegenContext.Provider
                                     value={setHealthRegen}
@@ -197,11 +199,11 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
                                         {children}
                                     </TimeTillFullHealthContext.Provider>
                                 </SetHealthRegenContext.Provider>
-                            </RefreshHealthbarContext.Provider>
+                            </RefreshHealthBarContext.Provider>
                         </RelativeHealthContext.Provider>
                     </HealthColorContext.Provider>
                 </AddHealthContext.Provider>
-            </QuitContext.Provider>
+            </setIsDeadContext.Provider>
         </DeathContext.Provider>
     )
 }

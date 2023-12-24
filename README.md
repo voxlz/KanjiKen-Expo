@@ -4,22 +4,22 @@ The kanji app to end all other kanji apps. Hopefully.
 
 ## Installation
 
-1. Node version manager (Windows): <https://github.com/coreybutler/nvm-windows/releases>
+1. Install Node version manager (Windows): <https://github.com/coreybutler/nvm-windows/releases>
 2. Restart VSCode
 3. Install node and yarn:
 
-```bash
-nvm install latest
-nvm use latest
-corepack enable
-yarn install
-```
+    ```bash
+    nvm install latest
+    nvm use latest
+    corepack enable
+    yarn install
+    ```
 
 4. Init submodules
 
-```bash
-git submodule update --init --recursive
-```
+    ```bash
+    git submodule update --init --recursive
+    ```
 
 ## Developing
 
@@ -60,7 +60,7 @@ Certain code like the Google Admob and firebase scripts can't be run on Expo Go.
 For these you have to build a development build (A personalized expo go app) and install it to your device.
 Then it works as expo go would.
 
-Alternativly: Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
+Alternatively: Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
 
 ### Error: No connection could be made
 
