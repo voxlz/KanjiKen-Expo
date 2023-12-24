@@ -4,15 +4,32 @@ The kanji app to end all other kanji apps. Hopefully.
 
 ## Installation
 
+1. Node version manager (Windows): <https://github.com/coreybutler/nvm-windows/releases>
+2. Restart VSCode
+3. Install node and yarn:
+
 ```bash
+nvm install latest
+nvm use latest
+corepack enable
 yarn install
 ```
 
-## Start Expo
+4. Init submodules
+
+```bash
+git submodule update --init --recursive
+```
+
+## Developing
+
+For starting the expo client, run:
 
 ```bash
 yarn start
 ```
+
+When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
 
 ## Add new secrets to Expo
 
@@ -37,9 +54,13 @@ Expo does support certain native code through its "plugin" list in "app.json". A
 npx expo prebuild --clean
 ```
 
-## Android Emulator
+## Native code
 
-Certain code like the Google Admob scripts can't be run on Expo Go. Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
+Certain code like the Google Admob and firebase scripts can't be run on Expo Go. 
+For these you have to build a development build (A personalized expo go app) and install it to your device. 
+Then it works as expo go would.
+
+Alternativly: Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
 
 ### Error: No connection could be made
 
