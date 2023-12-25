@@ -5,6 +5,8 @@ import StyledButton from '../src/components/StyledButton'
 import { version } from './_layout'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import auth from '@react-native-firebase/auth'
+import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
+import { useContext } from '../src/utils/react'
 
 /** Homepage of the application. Where you start the exercises for example. */
 const Home: FC<{}> = ({}) => {
@@ -12,7 +14,7 @@ const Home: FC<{}> = ({}) => {
     const [userEmail, setUserEmail] = useState<string>()
     // const [serverTouch, setServerTouch] = useState<Date>()
 
-    // const scheduler = useContext(SchedulerContext)
+    const scheduler = useContext(SchedulerContext)
 
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
@@ -47,7 +49,7 @@ const Home: FC<{}> = ({}) => {
         AsyncStorage.getItem('version', (err, result) => {
             if (err) return console.log('err.cause', err.cause)
 
-            console.log('result', result)
+            console.log('result', result, version)
 
             // First time opening the app
             if (result === null || result === '') {
@@ -58,6 +60,7 @@ const Home: FC<{}> = ({}) => {
             } else {
                 console.log('new version')
                 router.push('changelog')
+                scheduler.validate()
             }
 
             if (version) {

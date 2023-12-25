@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { createContext } from '../utils/react'
-import { ScheduleHandler } from '../ScheduleHandler'
+import { ScheduleHandler } from '../scheduler/scheduleHandler'
 import { View, Text } from 'react-native'
 import auth from '@react-native-firebase/auth'
 
