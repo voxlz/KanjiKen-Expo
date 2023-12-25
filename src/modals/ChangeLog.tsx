@@ -70,8 +70,6 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
                         )
                     }
 
-                    console.log(test[key], dictIssueStr, 'update changelog')
-
                     const version = {
                         version: key,
                         description: value.UpdateDesc?.raw,
@@ -97,7 +95,7 @@ const ChangeLog: FC<Props> = ({ onDismiss }) => {
         text: string
         entries: ChangeTableEntry[]
     }> = ({ text, entries }): React.ReactNode =>
-        entries.length > 0 ? (
+        entries.length > 0 && Object.keys(entries[0]).length > 0 ? (
             <>
                 <Text className="uppercase font-noto-black mb-2 mt-4 text-xs">
                     {text}

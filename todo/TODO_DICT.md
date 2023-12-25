@@ -28,9 +28,9 @@
 
 #### Issues
 
-| #id | Prio | Description                                              |
-| --- | ---- | -------------------------------------------------------- |
-| #?? | -    | Improved composition data of: 事 (Matter), 立 (Stand up) |
+| #id | Prio | Description                                                |
+| --- | ---- | ---------------------------------------------------------- |
+| #?? | -    | Improved composition data of: \n事 (Matter), 立 (Stand up) |
 
 ### v0.3.0
 
