@@ -2,7 +2,6 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { createContext } from '../utils/react'
 import { ScheduleHandler } from '../scheduler/scheduleHandler'
 import { View, Text } from 'react-native'
-import auth from '@react-native-firebase/auth'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
 
@@ -15,27 +14,28 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
 
     console.log('once')
     useEffect(() => {
-        scheduler.loadFromDisk().then(() => {
-            console.log('load from disk successful')
+        scheduler.syncLocal().then(() => {
+            console.log('Local data loaded')
             setLoaded(true)
+            scheduler.syncCloud().then(() => console.log('Cloud data synced'))
         })
     }, [])
 
-    // Backup to server on startup
-    useEffect(() => {
-        if (loaded)
-            if (!auth().currentUser) {
-                console.log('sub to auth change')
-                return auth().onAuthStateChanged((user) => {
-                    console.log('auth state changed', user?.displayName)
-                    if (user) {
-                        scheduler.backupData()
-                    }
-                })
-            } else {
-                scheduler.backupData()
-            }
-    }, [loaded])
+    // // Backup to server on startup
+    // useEffect(() => {
+    //     if (loaded)
+    //         if (!auth().currentUser) {
+    //             console.log('sub to auth change')
+    //             return auth().onAuthStateChanged((user) => {
+    //                 console.log('auth state changed', user?.displayName)
+    //                 if (user) {
+    //                     scheduler.saveToCloud()
+    //                 }
+    //             })
+    //         } else {
+    //             scheduler.saveToCloud()
+    //         }
+    // }, [loaded])
 
     if (!loaded)
         return (

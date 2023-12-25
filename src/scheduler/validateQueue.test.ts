@@ -1,6 +1,6 @@
 import { Progress, ScheduleHandler } from "./scheduleHandler"
-import { Exercise, Learnable } from "../types/progress"
 import { createExercise } from "./exercise"
+import { Learnable, Exercise } from '../types/progress';
 
 describe('Validate queue after dictionary update', () => {
     

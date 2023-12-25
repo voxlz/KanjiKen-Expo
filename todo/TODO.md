@@ -10,35 +10,33 @@ Use the the following versioning system: vs.m.b
 
 ### Features
 
-| #id | Prio | Description                                                                                                             |
-| --- | ---- | ----------------------------------------------------------------------------------------------------------------------- |
-| #28 | ↑    | Cloud backup / Device Sync (Let's me test features without loosing progress. Nice if you have 2 phones for some reason) |
-| #23 | -    | XP level system to track progress                                                                                       |
-| #22 | -    | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                                           |
-| #22 | -    | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                                  |
-| #10 | -    | Show similar kanji as alternatives                                                                                      |
-| #26 | -    | Progress overview view                                                                                                  |
-| #27 | -    | Kanji level Placement / Fluency test                                                                                    |
-| #28 | -    | Hint system on mistake                                                                                                  |
-| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition)                |
-| #31 | -    | Dictionary skill filter                                                                                                 |
-| #24 | -    | Daily Streak Counter system                                                                                             |
-| #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                                 |
-| #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)                            |
-| #25 | ↓    | Game over view / popup                                                                                                  |
+| #id | Prio | Description                                                                                              |
+| --- | ---- | -------------------------------------------------------------------------------------------------------- |
+| #23 | -    | XP level system to track progress                                                                        |
+| #22 | -    | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                            |
+| #22 | -    | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                   |
+| #10 | -    | Show similar kanji as alternatives                                                                       |
+| #26 | -    | Progress overview view                                                                                   |
+| #27 | -    | Kanji level Placement / Fluency test                                                                     |
+| #28 | -    | Hint system on mistake                                                                                   |
+| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition) |
+| #31 | -    | Dictionary skill filter                                                                                  |
+| #24 | -    | Daily Streak Counter system                                                                              |
+| #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
+| #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
+| #25 | ↓    | Game over view / popup                                                                                   |
 
 ### Issues
 
-| #id | Prio | Description                                                                                                |
-| --- | ---- | ---------------------------------------------------------------------------------------------------------- |
-| #?? | ↑    | Hardlock crash about 8 lessons in on new save                                                              |
-| #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
-| #18 | -    | Click char -> click goal drag or click on single component exercises                                       |
-| #13 | -    | Show resonable choices for the first few kanji. Currently random.                                          |
-| #7  | -    | Don't introduce character before certain proficiency has been reached on it's components.                  |
-| #6  | -    | Duplicate characters all fade out in composition, even if only one was used.                               |
-| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                                   |
-| #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                                    |
+| #id | Prio | Description                                                                               |
+| --- | ---- | ----------------------------------------------------------------------------------------- |
+| #?? | ↑    | Hardlock crash about 8 lessons in on new save                                             |
+| #18 | -    | Click char -> click goal drag or click on single component exercises                      |
+| #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
+| #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
+| #6  | -    | Duplicate characters all fade out in composition, even if only one was used.              |
+| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                  |
+| #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                   |
 
 ## Changelog
 
@@ -50,15 +48,16 @@ Sync update.
 
 #### Features
 
-| #id | Prio | Description                                                         |
-| --- | ---- | ------------------------------------------------------------------- |
-
+| #id | Prio | Description                                                                                                |
+| --- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| #28 | ↑    | Cloud backup / Device Sync (For logged in users)                                                           |
+| #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
 
 #### Issues
 
-| #id | Prio | Description                                                    |
-| --- | ---- | -------------------------------------------------------------- |
-| #?? | ^    | Wrong font on kanji success box                |
+| #id | Prio | Description                     |
+| --- | ---- | ------------------------------- |
+| #?? | ^    | Wrong font on kanji success box |
 
 
 ### v0.3.0
@@ -79,7 +78,7 @@ lead the way for cloud backup in a coming update. Merry Christmas!
 
 | #id | Prio | Description                                                    |
 | --- | ---- | -------------------------------------------------------------- |
-| #?? | ^    | You can now drag in the recognize skill as well.                |
+| #?? | ^    | You can now drag in the recognize skill as well.               |
 | #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
 | #?? | ^    | Fixed issue with custom radicals not rendering properly        |
 

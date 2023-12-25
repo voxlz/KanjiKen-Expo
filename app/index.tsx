@@ -12,6 +12,7 @@ import { useContext } from '../src/utils/react'
 const Home: FC<{}> = ({}) => {
     const [userName, setUserName] = useState<string>()
     const [userEmail, setUserEmail] = useState<string>()
+    const [lastSynced, setLastSynced] = useState<string>('Not synced')
     // const [serverTouch, setServerTouch] = useState<Date>()
 
     const scheduler = useContext(SchedulerContext)
@@ -19,20 +20,6 @@ const Home: FC<{}> = ({}) => {
     useEffect(() => {
         auth().onAuthStateChanged((user) => {
             updateUserInfo()
-            // console.log(user)
-            // if (user?.displayName) {
-            //     setUserName(user.displayName)
-            // scheduler
-            //     .getBackupData()
-            //     .then((data) => {
-            //         if (
-            //             data?.touched?.getTime() !== serverTouch?.getTime()
-            //         ) {
-            //             setServerTouch(data?.touched)
-            //         }
-            //     })
-            //     .catch((error) => console.log(error))
-            // }
         })
     }, [])
 
@@ -69,6 +56,16 @@ const Home: FC<{}> = ({}) => {
                 console.error('no version found')
             }
         })
+    }, [])
+
+    useEffect(() => {
+        AsyncStorage.getItem('lastBackup').then((getTimeNum) =>
+            setLastSynced(
+                getTimeNum
+                    ? new Date(Number(getTimeNum)).toString().slice(4, -8)
+                    : 'Never synced'
+            )
+        )
     }, [])
 
     return (
@@ -130,18 +127,11 @@ const Home: FC<{}> = ({}) => {
                         ? `Logged in as: ${userName}`
                         : 'Not logged in'}{' '}
                 </Text>
-                {/* <Text className="text-md text-ui-light">
-                    {userName !== null
-                        ? `Last synced: `
-                        : // ${
-                          //       scheduler.getTouched()?.getTime() ===
-                          //       serverTouch?.getTime()
-                          //           ? 'Synced'
-                          //           : serverTouch?.toString().slice(4, -8)
-                          // }
-                          //   `
-                          'Never synced'}
-                </Text> */}
+                <Text className="text-md text-ui-light">
+                    {`Last synced: ${
+                        userName !== null ? lastSynced : 'Not logged in'
+                    }`}
+                </Text>
             </View>
             <View className="mb-20 px-8">
                 <StyledButton

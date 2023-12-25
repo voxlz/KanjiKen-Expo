@@ -7,10 +7,10 @@ import {
     withSpring,
     withTiming,
 } from 'react-native-reanimated'
-import { createContext } from '../utils/react'
-import { router } from 'expo-router'
+import { createContext, useContext } from '../utils/react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { clamp } from '../utils/js'
+import { SchedulerContext } from './SchedulerContextProvider'
 
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
@@ -33,10 +33,11 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [maxHealth] = useState(30)
     const [regenCache, setRegenCache] = useState<RegenObj>()
     const [isDead, _setIsDead] = useState(false)
+    const scheduler = useContext(SchedulerContext)
 
     const setIsDead = (newDead: boolean) => {
         _setIsDead((oldDead) => {
-            if (newDead === true && oldDead !== newDead) onDeath()
+            if (newDead === true && oldDead !== newDead) onSessionEnd()
             return newDead
         })
     }
@@ -145,8 +146,9 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     }
 
     // What should happen on death
-    const onDeath = () => {
+    const onSessionEnd = () => {
         console.log('onSessionEnd')
+        scheduler.syncLocal()
         getRegenObj().then((regenObj): void => {
             regenObj.timeOfQuit = Date.now()
             regenObj.healthLeftAtQuit = health

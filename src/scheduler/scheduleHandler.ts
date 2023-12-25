@@ -14,6 +14,10 @@ import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { learnOrder } from '../../output/learnOrder'
 import { createExercise } from './exercise'
+import { mostAdvancedUserData, UserData, userDataProgressCount } from './userDataUtils'
+import storage from '@react-native-firebase/storage';
+import { encode, decode } from 'js-base64';
+import { createDownloadResumable, documentDirectory, getInfoAsync, makeDirectoryAsync, readAsStringAsync } from 'expo-file-system'
 
 export type Progress = Partial<{
     [glyph in Learnable]: {
@@ -23,23 +27,73 @@ export type Progress = Partial<{
     }
 }>
 
-type userData = {
-    schedule: Exercise[]
-    progress: Progress
-    touched?: Date // When was this last updated
-}
+
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
 export class ScheduleHandler {
-    private readonly emptyUserData: userData = {
+    #userData: UserData | undefined = undefined
+    emptyUserData = {
         schedule: [],
         progress: {},
     }
-    #userData: userData = this.emptyUserData
-    hasSchedule = () => this.#userData.schedule === this.emptyUserData.schedule
+
+    /** Get user data. If not set, initialize */ 
+    getUserData = () => {
+        if (!this.#userData) {
+            this.#userData = this.emptyUserData
+            this.initSchedule()
+        }
+        return this.#userData
+    }
+
+    setUserData = (userData: UserData) => {
+        this.#userData = userData
+    }
+
+    /** THIS SHOULD HAPPEN BEFORE SYNC CLOUD HAS BEGUN!
+     * Ensure user get's the latest data, even if it's from their last session or different device */
+    async syncLocal(): Promise<UserData> {
+        const currData = this.#userData
+        const localData = await this.getFromDisk()
+
+        let furthest = mostAdvancedUserData([currData, localData])
+
+        if (!furthest) {
+            furthest = this.getUserData()
+        }
+
+        this.setUserData(furthest)
+        this.saveToDisk(furthest)
+        
+        return furthest
+    }
+
+    /** THIS SHOULD HAPPEN AFTER SYNC LOCAL IS FINISHED! 
+     * Ensure user get's the latest data, even if it's from their last session or different device */
+    async syncCloud(): Promise<void> {
+        const currData = this.#userData
+        const cloudData = await this.getFromCloud()
+
+        const currProg = userDataProgressCount(currData)
+        const cloudProg = userDataProgressCount(cloudData)
+
+        // TODO: ProgressCount cannot look at skills since you can lose levels as well.
+        if (currProg === cloudProg) {
+            console.log('Cloud data is up to date')
+        } else if (cloudData && cloudProg > currProg) {
+            console.log('Cloud data futher than local data')
+            await this.setUserData(cloudData)
+            await this.saveToDisk(cloudData)
+        } else {
+            console.log('Local data further than cloud data')
+            await this.saveToCloud(currData)
+        }
+
+        AsyncStorage.setItem("lastBackup", String(new Date().getTime()))
+    }
 
     constructor(progress?: Progress) {
-        this.#userData.progress = progress ?? {}
+        this.setUserData({...this.getUserData(), progress: progress ?? {}})
     }
 
     // Firestore backup / sync
@@ -68,85 +122,80 @@ export class ScheduleHandler {
     /** Validate the queue after an update to the database.
      * Ensure learnOrder is correct + new exercises added + old exercises removed */
     validate = (customLearnOrder?: Learnable[]): Exercise[] => {
-        if (this.#userData === this.emptyUserData) console.warn("Userdata not yet initialized");
-
+        const userData = this.getUserData()
+        const newUserData = userData
         console.log('Validating...')
         
         const order = customLearnOrder ?? learnOrder
 
         // Ensure order is correct by replacing present intro skills
         const learnedGlyphs = Object.keys(
-            this.#userData.progress
+            userData.progress
         ) as Learnable[]
         
         const sortedUnlearnedGlyphs = order.filter(
             (glyph) => !learnedGlyphs.includes(glyph)
         )
-        this.#userData.schedule = this.#userData.schedule.map((exe) => {
+
+        newUserData.schedule = newUserData.schedule.map((exe) => {
             if (exe.skill !== 'intro') return exe
             if (learnedGlyphs.includes(exe.glyph)) return exe
             return { ...exe, glyph: sortedUnlearnedGlyphs.shift()! }
         })
         
         // Remove exercises for glyphs no longer in learnOrder
-        this.#userData.schedule = this.#userData.schedule.filter((exe) =>
+        newUserData.schedule = newUserData.schedule.filter((exe) =>
             order.includes(exe.glyph)
         )
                 
         // If glyphs where added in the update, there might be glyphs left in sortedUnlearned
         while (sortedUnlearnedGlyphs.length > 0) {
-            this.#userData.schedule.push(
+            newUserData.schedule.push(
                 createExercise(sortedUnlearnedGlyphs.shift()!, 'intro')
             )
         }
 
-        return this.#userData.schedule
+        this.setUserData(newUserData)
+
+        return newUserData.schedule
     }
 
-    /** Load from disk. Ensures that schedule is initialized and persistence between sessions. */
-    loadFromDisk = async () => {
-        try {
-            const startTime = performance.now()
-
-            // Load from disk
-            const userData = await AsyncStorage.getItem('userData')
+    getFromDisk = async () => {
+        const userData = await AsyncStorage.getItem('userData')
             if (userData) {
-                this.#userData = JSON.parse(userData)
-            } else {
-                // DEPRECATED - REMOVE NEXT UPDATE
-                console.log('OLD SAVE USED')
-                const schedule = await AsyncStorage.getItem('schedule')
-                const progress = await AsyncStorage.getItem('progress')
-                if (schedule) {
-                    this.#userData.schedule = JSON.parse(schedule)
-                }
-                if (progress) {
-                    this.#userData.progress = JSON.parse(progress)
-                }
+                return JSON.parse(userData) as UserData
             }
-
-            if (!this.hasSchedule()) {
-                this.initSchedule()
-            }
-
-            const endTime = performance.now()
-            console.log(
-                `ScheduleHandler loadFromDisk() took ${
-                    endTime - startTime
-                } milliseconds.`
-            )
-        } catch (error) {
-            console.warn('Failed to load schedule from disk', error)
-        }
     }
 
-    saveToDisk = async () => {
+    // /** Load from disk. Ensures that schedule is initialized and persistence between sessions. */
+    // loadFromDisk = async () => {
+    //     try {
+    //         const startTime = performance.now()
+
+    //         // Load from disk
+    //         const localUserData = this.getFromDisk()
+    //         if (localUserData) {
+    //             this.setUserData(localUserData)
+    //         }
+
+    //         const endTime = performance.now()
+    //         console.log(
+    //             `ScheduleHandler loadFromDisk() took ${
+    //                 endTime - startTime
+    //             } milliseconds.`
+    //         )
+    //     } catch (error) {
+    //         console.warn('Failed to load schedule from disk', error)
+    //     }
+    // }
+
+    saveToDisk = async (userData?: UserData) => {
         try {
             const startTime = performance.now()
 
             await AsyncStorage.setItem(
                 'userData',
-                JSON.stringify(this.#userData)
+                JSON.stringify(userData ?? this.getUserData())
             )
 
             const endTime = performance.now()
@@ -160,61 +209,74 @@ export class ScheduleHandler {
         }
     }
 
-    backupData = () => {
-        if (!this.hasSchedule())
-            return console.log("Can't backup: userData is not initialized")
-
-        this.getDocRef()
-            ?.set({ json: JSON.stringify(this.#userData) })
-            .then(() => console.log('userData set'))
-            .catch((reason) => console.log(`could not set userData: ${reason}`))
+    saveToCloud = (userData?: UserData) => {
+        console.log('SAVE TO CLOUD')
+        const reference = storage().ref(`/userData/${auth().currentUser?.uid}.json.txt`);
+        const jsonStr = encode(JSON.stringify(userData ?? this.getUserData()))
+        reference.putString(jsonStr, "raw", {
+            cacheControl: 'no-store', // disable caching
+        }).then(() => console.log('Save to cloud: Success'), () => console.warn("rejected"))
     }
 
-    getBackupData = async () => {
-        const serverData = await this.getDocRef()?.get()
-        if (serverData && serverData.exists) {
-            const data = serverData.data()
-            if (data) return JSON.parse(data['json']) as userData
+    getFromCloud = async () => {
+        console.log('GET FROM CLOUD')
+
+        const downloadURL = await storage().ref(`/userData/${auth().currentUser?.uid}.json.txt`).getDownloadURL();
+
+        try {
+            const downloadResult = await createDownloadResumable(
+                downloadURL,
+                documentDirectory + `${auth().currentUser?.uid}.json.txt`,
+            ).downloadAsync();
+
+            if (downloadResult) {
+                const { uri } = downloadResult;
+                const str = await readAsStringAsync(uri)
+                const userData = JSON.parse(decode(str)) as UserData
+                return userData
+            }
+        } catch (e) {
+            console.error(e);
         }
     }
 
     initSchedule(exercises?: Exercise[]) {
         // console.log('glyph', glyphDict['⺋'])
+        let newSchedule: Exercise[] = []
         if (exercises) {
-            this.#userData.schedule = exercises
+            newSchedule = exercises
         } else {
             const glyphs = learnOrder.map((glyph) => glyphDict[glyph])
             glyphs.forEach((glyph) => {
-                this.#userData.schedule.push({
+                newSchedule.push({
                     ...this.generalInfo(glyph.glyph),
                     skill: 'intro',
                 })
             })
         }
 
+        this.setUserData({...this.getUserData(), schedule: newSchedule, touched: new Date()})
         console.log('finished init')
-
-        this.#userData.touched = new Date()
     }
 
     /** Get a copy of the progress. Should not be edited. */
     getProgress() {
-        return { ...this.#userData.progress }
+        return { ...this.getUserData().progress }
     }
 
     /** Get a copy of the progress. Should not be edited. */
     getSchedule() {
-        return this.#userData.schedule
+        return this.getUserData().schedule
     }
 
     getTouched() {
-        return this.#userData.touched
+        return this.getUserData().touched
     }
 
     // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
     onReview(tries: number, currLvl: number, glyphInfo: GlyphInfo) {
         // Remove reviewed element
-        const exercise = this.#userData.schedule.shift()
+        const exercise = this.getUserData().schedule.shift()
 
         if (exercise) {
             const maxLvl = lvlsPerSkill[exercise.skill]
@@ -231,39 +293,41 @@ export class ScheduleHandler {
 
             // Update exercise
             exercise.level = newLevel
+            const userData = this.getUserData()
 
             // * Update progress
-            if (!this.#userData.progress[exercise.glyph]) {
-                this.#userData.progress[exercise.glyph] = { skills: {} }
+            if (!this.getUserData().progress[exercise.glyph]) {
+                userData.progress[exercise.glyph] = { skills: {} }
             }
-            this.#userData.progress[exercise.glyph]!['skills'][exercise.skill] =
-                newLevel
+            const glyphProgress = userData.progress[exercise.glyph]
+            if (glyphProgress) {
+                userData.progress[exercise.glyph]!['skills'][exercise.skill] = newLevel
+            } else {
+                console.warn("ERR: Something went wrong here");
+            }
 
             // * Insert first element at index X, remove if max-level
             if (newLevel !== maxLvl) {
                 const newIndex = Math.pow(2, newLevel + 1) - 1
-                this.#userData.schedule.splice(newIndex, 0, exercise)
+                userData.schedule.splice(newIndex, 0, exercise)
             } else if (exercise.skill === 'intro') {
                 const newIndex = 3
-                this.#userData.schedule.splice(newIndex, 0, {
+                userData.schedule.splice(newIndex, 0, {
                     ...this.generalInfo(exercise.glyph),
                     skill: glyphInfo.comps.position ? 'compose' : 'recognize',
                 })
             }
 
-            this.#userData.touched = new Date()
+            userData.touched = new Date()
 
-            // console.log('newLevel', newLevel)
-            // console.log('updated progress', this.#save.progress[excercise.glyph])
-            // console.log('schedule', this.#save.schedule.slice(0, 10))
-
-            this.saveToDisk()
+            this.setUserData(userData)
+            this.saveToDisk(userData)
         }
     }
 
     /** Get the next valid exercise the user should see. */
     getCurrent() {
-        if (this.#userData.schedule.length === 0) this.initSchedule()
+        if (this.getUserData().schedule.length === 0) this.initSchedule()
 
         // Find next valid element (With timeout for crash safety)
         let i = 10000
@@ -271,25 +335,25 @@ export class ScheduleHandler {
             i -= 1
 
             // Ensure skill requirements are met
-            const next = this.#userData.schedule[0]
+            const next = this.getUserData().schedule[0]
             const reqs = requirePerSkill[next.skill]
 
             const missingReq = reqs.find(
                 (req) =>
                     req.lvl >
-                    (this.#userData.progress[next.glyph]?.['skills'][
+                    (this.getUserData().progress[next.glyph]?.['skills'][
                         req.skill
                     ] ?? 0)
             )
 
             if (missingReq) {
-                const nextPossibleUnlockIdx = this.#userData.schedule.findIndex(
+                const nextPossibleUnlockIdx = this.getUserData().schedule.findIndex(
                     (exe) =>
                         exe.glyph === next.glyph && exe.skill === next.skill
                 )
-                const doesNotFullfillReqs = this.#userData.schedule.shift()
+                const doesNotFullfillReqs = this.getUserData().schedule.shift()
                 if (doesNotFullfillReqs)
-                    this.#userData.schedule.splice(
+                    this.getUserData().schedule.splice(
                         nextPossibleUnlockIdx,
                         0,
                         doesNotFullfillReqs
@@ -299,6 +363,6 @@ export class ScheduleHandler {
             }
         }
 
-        return this.#userData.schedule[0]
+        return this.getUserData().schedule[0]
     }
 }

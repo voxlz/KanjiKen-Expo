@@ -29,6 +29,14 @@ For starting the expo client, run:
 yarn start
 ```
 
+To create a development client for ios, do the following:
+
+```bash
+eas login
+eas device:create
+eas build --profile development --platform ios
+```
+
 When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
 
 ## Add new secrets to Expo
