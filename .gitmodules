@@ -1,3 +1,4 @@
 [submodule "dict"]
 	path = dict
 	url = https://github.com/voxlz/KanjiKen-Dict
+	branch = main
