@@ -1,14 +1,17 @@
-import { UserData, userDataProgressCount } from "./userDataUtils"
+import { UserData, userDataProgressCount } from './userDataUtils'
+import { defaultUserData } from './scheduleHandler'
 
-describe("User data utils function", () => {
-    test("Check userDataProgressCount", () => {
+describe('User data utils function', () => {
+    test('Check userDataProgressCount', () => {
         const userData: UserData = {
+            ...defaultUserData,
             progress: {
-                "十": { skills: { "recognize": 4 } },
-                "四": { skills: { "compose": 3 } }
+                十: { skills: { recognize: 4 } },
+                四: { skills: { compose: 3 } },
             },
-            schedule: []
+            schedule: [],
+            stats: {reviewCount: 12}
         }
-        expect(userDataProgressCount(userData)).toBe(7)
+        expect(userDataProgressCount(userData)).toBe(12)
     })
 })

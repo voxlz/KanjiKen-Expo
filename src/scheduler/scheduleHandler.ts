@@ -14,86 +14,131 @@ import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { learnOrder } from '../../output/learnOrder'
 import { createExercise } from './exercise'
-import { mostAdvancedUserData, UserData, userDataProgressCount } from './userDataUtils'
-import storage from '@react-native-firebase/storage';
-import { encode, decode } from 'js-base64';
-import { createDownloadResumable, documentDirectory, getInfoAsync, makeDirectoryAsync, readAsStringAsync } from 'expo-file-system'
+import { UserData, userDataProgressCount } from './userDataUtils'
+import { getFromDisk, saveToDisk } from './localSync'
+import { deepmerge } from 'deepmerge-ts'
+import { getFromCloud, saveToCloud } from './cloudSync'
 
-export type Progress = Partial<{
-    [glyph in Learnable]: {
+export type Progress = {
+    [glyph in Learnable]?: {
         skills: Partial<{
             [skill in Skills]: LvL
         }>
     }
-}>
+}
 
+export const generalInfo = (glyph: Learnable) => ({
+    glyph: glyph,
+    level: 0,
+    reviewed_at: [],
+})
 
+export const defaultSchedule = () => {
+    let newSchedule: Exercise[] = []
+
+    const glyphs = learnOrder.map((glyph) => glyphDict[glyph])
+    glyphs.forEach((glyph) => {
+        newSchedule.push({
+            ...generalInfo(glyph.glyph),
+            skill: 'intro',
+        })
+    })
+
+    return newSchedule
+}
+
+export const defaultUserData: UserData = {
+    schedule: defaultSchedule(),
+    progress: {},
+    stats: { reviewCount: 0 },
+    touched: new Date().getTime(),
+}
 
 /** Deals with the order of task, ensure that requirements are met, etc. */
-export class ScheduleHandler {
+export default class ScheduleHandler {
+    /** Cashed userdata. Don't access this directly */
     #userData: UserData | undefined = undefined
-    emptyUserData = {
-        schedule: [],
-        progress: {},
+
+    /** Get user data. */
+    getUserData = (): UserData => {
+        // Even if you haven't used app in a while or are missing stats or userdata here, this should ensure that you always have default values.
+        const userData = !this.#userData
+            ? defaultUserData
+            : deepmerge(defaultUserData, this.#userData)
+
+        // Schedule should not be merged.
+        userData.schedule = this.#userData?.schedule ?? defaultUserData.schedule
+
+        return userData
     }
 
-    /** Get user data. If not set, initialize */ 
-    getUserData = () => {
-        if (!this.#userData) {
-            this.#userData = this.emptyUserData
-            this.initSchedule()
-        }
-        return this.#userData
-    }
+    setUserData = (newUserData: Partial<UserData>) => {
+        // By using this setUserData, we ensure that even if cloud or disk data is missing things we expect, the program still runs prefectly fine.
+        const userData = !newUserData
+            ? defaultUserData
+            : deepmerge(defaultUserData, newUserData as UserData)
 
-    setUserData = (userData: UserData) => {
+        // Schedule should not be merged.
+        userData.schedule = newUserData.schedule ?? defaultUserData.schedule
+
         this.#userData = userData
+    }
+
+    /** Clear user data */
+    clearUserData = () => {
+        console.log('cleared userData, reinitialized the schedule')
+        this.#userData = defaultUserData
+        AsyncStorage.multiRemove(['progress', 'schedule', 'userData'])
     }
 
     /** THIS SHOULD HAPPEN BEFORE SYNC CLOUD HAS BEGUN!
      * Ensure user get's the latest data, even if it's from their last session or different device */
-    async syncLocal(): Promise<UserData> {
-        const currData = this.#userData
-        const localData = await this.getFromDisk()
+    async syncLocal(): Promise<void> {
+        const currData = this.getUserData()
+        const localData = await getFromDisk()
 
-        let furthest = mostAdvancedUserData([currData, localData])
+        const currProg = userDataProgressCount(currData)
+        const localProg = userDataProgressCount(localData)
 
-        if (!furthest) {
-            furthest = this.getUserData()
+        if (!localData) {
+            console.log('No local save found. Saving to disk...')
+            saveToDisk(currData)
+        } else if (currProg === localProg) {
+            console.log('Local save is up to date')
+        } else if (currProg > localProg) {
+            console.log('Local save is outdated. Saving to disk...')
+            saveToDisk(currData)
+        } else if (currProg < localProg) {
+            console.log('Current cashe is outdated. Loading from disk...')
+            this.setUserData(localData)
         }
-
-        this.setUserData(furthest)
-        this.saveToDisk(furthest)
-        
-        return furthest
     }
 
-    /** THIS SHOULD HAPPEN AFTER SYNC LOCAL IS FINISHED! 
+    /** THIS SHOULD HAPPEN AFTER SYNC LOCAL IS FINISHED!
      * Ensure user get's the latest data, even if it's from their last session or different device */
     async syncCloud(): Promise<void> {
-        const currData = this.#userData
-        const cloudData = await this.getFromCloud()
+        const currData = this.getUserData()
+        const cloudData = await getFromCloud()
 
         const currProg = userDataProgressCount(currData)
         const cloudProg = userDataProgressCount(cloudData)
 
-        // TODO: ProgressCount cannot look at skills since you can lose levels as well.
         if (currProg === cloudProg) {
             console.log('Cloud data is up to date')
         } else if (cloudData && cloudProg > currProg) {
             console.log('Cloud data futher than local data')
             await this.setUserData(cloudData)
-            await this.saveToDisk(cloudData)
+            await saveToDisk(cloudData)
         } else {
             console.log('Local data further than cloud data')
-            await this.saveToCloud(currData)
+            await saveToCloud(currData)
         }
 
-        AsyncStorage.setItem("lastBackup", String(new Date().getTime()))
+        AsyncStorage.setItem('lastBackup', String(new Date().getTime()))
     }
 
-    constructor(progress?: Progress) {
-        this.setUserData({...this.getUserData(), progress: progress ?? {}})
+    constructor(userData: Partial<UserData>) {
+        this.setUserData(userData)
     }
 
     // Firestore backup / sync
@@ -105,34 +150,18 @@ export class ScheduleHandler {
         } else console.log('DocRef Error: Not authenticated')
     }
 
-    generalInfo = (glyph: Learnable) => ({
-        glyph: glyph,
-        level: 0,
-        reviewed_at: [],
-    })
-
-    /** Clear user data */
-    clear = () => {
-        console.log('cleared userData, reinitialized the schedule')
-        this.#userData = this.emptyUserData
-        AsyncStorage.multiRemove(['progress', 'schedule', 'userData'])
-        this.initSchedule()
-    }
-
     /** Validate the queue after an update to the database.
      * Ensure learnOrder is correct + new exercises added + old exercises removed */
     validate = (customLearnOrder?: Learnable[]): Exercise[] => {
         const userData = this.getUserData()
         const newUserData = userData
         console.log('Validating...')
-        
+
         const order = customLearnOrder ?? learnOrder
 
         // Ensure order is correct by replacing present intro skills
-        const learnedGlyphs = Object.keys(
-            userData.progress
-        ) as Learnable[]
-        
+        const learnedGlyphs = Object.keys(userData.progress) as Learnable[]
+
         const sortedUnlearnedGlyphs = order.filter(
             (glyph) => !learnedGlyphs.includes(glyph)
         )
@@ -142,12 +171,12 @@ export class ScheduleHandler {
             if (learnedGlyphs.includes(exe.glyph)) return exe
             return { ...exe, glyph: sortedUnlearnedGlyphs.shift()! }
         })
-        
+
         // Remove exercises for glyphs no longer in learnOrder
         newUserData.schedule = newUserData.schedule.filter((exe) =>
             order.includes(exe.glyph)
         )
-                
+
         // If glyphs where added in the update, there might be glyphs left in sortedUnlearned
         while (sortedUnlearnedGlyphs.length > 0) {
             newUserData.schedule.push(
@@ -158,105 +187,6 @@ export class ScheduleHandler {
         this.setUserData(newUserData)
 
         return newUserData.schedule
-    }
-
-    getFromDisk = async () => {
-        const userData = await AsyncStorage.getItem('userData')
-            if (userData) {
-                return JSON.parse(userData) as UserData
-            }
-    }
-
-    // /** Load from disk. Ensures that schedule is initialized and persistence between sessions. */
-    // loadFromDisk = async () => {
-    //     try {
-    //         const startTime = performance.now()
-
-    //         // Load from disk
-    //         const localUserData = this.getFromDisk()
-    //         if (localUserData) {
-    //             this.setUserData(localUserData)
-    //         }
-
-    //         const endTime = performance.now()
-    //         console.log(
-    //             `ScheduleHandler loadFromDisk() took ${
-    //                 endTime - startTime
-    //             } milliseconds.`
-    //         )
-    //     } catch (error) {
-    //         console.warn('Failed to load schedule from disk', error)
-    //     }
-    // }
-
-    saveToDisk = async (userData?: UserData) => {
-        try {
-            const startTime = performance.now()
-
-            await AsyncStorage.setItem(
-                'userData',
-                JSON.stringify(userData ?? this.getUserData())
-            )
-
-            const endTime = performance.now()
-            console.log(
-                `ScheduleHandler saveToDisk() took ${
-                    endTime - startTime
-                } milliseconds.`
-            )
-        } catch (error) {
-            console.warn('Failed to save schedule to disk')
-        }
-    }
-
-    saveToCloud = (userData?: UserData) => {
-        console.log('SAVE TO CLOUD')
-        const reference = storage().ref(`/userData/${auth().currentUser?.uid}.json.txt`);
-        const jsonStr = encode(JSON.stringify(userData ?? this.getUserData()))
-        reference.putString(jsonStr, "raw", {
-            cacheControl: 'no-store', // disable caching
-        }).then(() => console.log('Save to cloud: Success'), () => console.warn("rejected"))
-    }
-
-    getFromCloud = async () => {
-        console.log('GET FROM CLOUD')
-
-        const downloadURL = await storage().ref(`/userData/${auth().currentUser?.uid}.json.txt`).getDownloadURL();
-
-        try {
-            const downloadResult = await createDownloadResumable(
-                downloadURL,
-                documentDirectory + `${auth().currentUser?.uid}.json.txt`,
-            ).downloadAsync();
-
-            if (downloadResult) {
-                const { uri } = downloadResult;
-                const str = await readAsStringAsync(uri)
-                const userData = JSON.parse(decode(str)) as UserData
-                return userData
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    initSchedule(exercises?: Exercise[]) {
-        // console.log('glyph', glyphDict['⺋'])
-        let newSchedule: Exercise[] = []
-        if (exercises) {
-            newSchedule = exercises
-        } else {
-            const glyphs = learnOrder.map((glyph) => glyphDict[glyph])
-            glyphs.forEach((glyph) => {
-                newSchedule.push({
-                    ...this.generalInfo(glyph.glyph),
-                    skill: 'intro',
-                })
-            })
-        }
-
-        this.setUserData({...this.getUserData(), schedule: newSchedule, touched: new Date()})
-        console.log('finished init')
     }
 
     /** Get a copy of the progress. Should not be edited. */
@@ -301,9 +231,10 @@ export class ScheduleHandler {
             }
             const glyphProgress = userData.progress[exercise.glyph]
             if (glyphProgress) {
-                userData.progress[exercise.glyph]!['skills'][exercise.skill] = newLevel
+                userData.progress[exercise.glyph]!['skills'][exercise.skill] =
+                    newLevel
             } else {
-                console.warn("ERR: Something went wrong here");
+                console.warn('ERR: Something went wrong here')
             }
 
             // * Insert first element at index X, remove if max-level
@@ -313,22 +244,21 @@ export class ScheduleHandler {
             } else if (exercise.skill === 'intro') {
                 const newIndex = 3
                 userData.schedule.splice(newIndex, 0, {
-                    ...this.generalInfo(exercise.glyph),
+                    ...generalInfo(exercise.glyph),
                     skill: glyphInfo.comps.position ? 'compose' : 'recognize',
                 })
             }
 
-            userData.touched = new Date()
+            userData.touched = new Date().getTime()
+            userData.stats.reviewCount += 1
 
             this.setUserData(userData)
-            this.saveToDisk(userData)
+            saveToDisk(userData)
         }
     }
 
     /** Get the next valid exercise the user should see. */
     getCurrent() {
-        if (this.getUserData().schedule.length === 0) this.initSchedule()
-
         // Find next valid element (With timeout for crash safety)
         let i = 10000
         while (i > 0) {
@@ -347,10 +277,11 @@ export class ScheduleHandler {
             )
 
             if (missingReq) {
-                const nextPossibleUnlockIdx = this.getUserData().schedule.findIndex(
-                    (exe) =>
-                        exe.glyph === next.glyph && exe.skill === next.skill
-                )
+                const nextPossibleUnlockIdx =
+                    this.getUserData().schedule.findIndex(
+                        (exe) =>
+                            exe.glyph === next.glyph && exe.skill === next.skill
+                    )
                 const doesNotFullfillReqs = this.getUserData().schedule.shift()
                 if (doesNotFullfillReqs)
                     this.getUserData().schedule.splice(

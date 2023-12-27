@@ -24,8 +24,7 @@ Use the the following versioning system: vs.m.b
 | #24 | -    | Daily Streak Counter system                                                                              |
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
 | #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
-| #25 | ↓    | Game over view / popup                                                                                   |
-
+ 
 ### Issues
 
 | #id | Prio | Description                                                                               |
@@ -58,7 +57,6 @@ Sync update.
 | #id | Prio | Description                     |
 | --- | ---- | ------------------------------- |
 | #?? | ^    | Wrong font on kanji success box |
-
 
 ### v0.3.0
 
