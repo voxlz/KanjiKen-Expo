@@ -53,7 +53,8 @@
                         // "deploymentTarget": "13.0"
                     }
                 }
-            ]
+            ],
+            "expo-apple-authentication"
         ]
     },
     "react-native-google-mobile-ads": {

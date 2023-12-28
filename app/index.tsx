@@ -143,6 +143,7 @@ const Home: FC<{}> = ({}) => {
                         } else {
                             auth().signOut()
                             updateUserInfo()
+                            scheduler.clearUserData()
                         }
                     }}
                 />

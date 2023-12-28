@@ -149,6 +149,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const onSessionEnd = () => {
         console.log('onSessionEnd')
         scheduler.syncLocal()
+        scheduler.syncCloud()
         getRegenObj().then((regenObj): void => {
             regenObj.timeOfQuit = Date.now()
             regenObj.healthLeftAtQuit = health

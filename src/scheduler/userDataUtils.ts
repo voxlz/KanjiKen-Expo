@@ -14,5 +14,5 @@ export type UserData = {
 export const userDataProgressCount = (
     userData: UserData | undefined
 ): number => {
-    return userData?.stats.reviewCount ?? 0
+    return userData?.stats?.reviewCount ?? 0
 }

@@ -39,7 +39,11 @@ eas build --profile development --platform ios
 
 When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
 
+## Apple auth: I've used the following article
+
 ## Add new secrets to Expo
+
+https://medium.com/nerd-for-tech/apple-google-authentication-in-expo-apps-using-firebase-997125440032
 
 ```bash
 eas secret:delete (optionally delete it)

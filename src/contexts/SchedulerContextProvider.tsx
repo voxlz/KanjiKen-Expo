@@ -1,9 +1,12 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { createContext } from '../utils/react'
-import { ScheduleHandler } from '../scheduler/scheduleHandler'
 import { View, Text } from 'react-native'
+import ScheduleHandler from '../scheduler/scheduleHandler'
+import auth from '@react-native-firebase/auth'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
+
+let currentUserEmail: string | undefined = undefined
 
 /**  Keeps track of the scheduler. Initializes, loads and saves to disk.*/
 const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
@@ -12,14 +15,31 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
     const [loaded, setLoaded] = useState(false)
     const scheduler = useRef(new ScheduleHandler()).current
 
-    console.log('once')
     useEffect(() => {
+        const sync = () =>
+            scheduler.syncLocal().then(() => {
+                setLoaded(true)
+                scheduler.syncCloud()
+            })
+
         scheduler.syncLocal().then(() => {
-            console.log('Local data loaded')
             setLoaded(true)
-            scheduler.syncCloud().then(() => console.log('Cloud data synced'))
         })
-    }, [])
+
+        return auth().onAuthStateChanged((user) => {
+            if (currentUserEmail !== user?.email ?? 'NEW USER') {
+                if (user) {
+                    console.log('---------------- AUTH STATE CHANGED')
+                    currentUserEmail = user.email ?? ''
+                    sync()
+                        .then(() => console.log('synced'))
+                        .catch((e) => console.warn('something went wrong', e))
+                } else {
+                    currentUserEmail = undefined
+                }
+            }
+        })
+    })
 
     // // Backup to server on startup
     // useEffect(() => {
@@ -50,4 +70,5 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
         </SchedulerContext.Provider>
     )
 }
+
 export default SchedulerContextProvider

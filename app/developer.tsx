@@ -33,9 +33,9 @@ export default function developer({}: Props) {
                 }}
             />
             <StyledButton
-                text="delete save"
+                text="delete local save"
                 styleName="danger"
-                onPress={scheduler.clear}
+                onPress={scheduler.clearUserData}
             />
         </View>
     )

@@ -72,14 +72,14 @@ export default class ScheduleHandler {
         return userData
     }
 
-    setUserData = (newUserData: Partial<UserData>) => {
+    setUserData = (newUserData?: Partial<UserData>) => {
         // By using this setUserData, we ensure that even if cloud or disk data is missing things we expect, the program still runs prefectly fine.
         const userData = !newUserData
             ? defaultUserData
             : deepmerge(defaultUserData, newUserData as UserData)
 
         // Schedule should not be merged.
-        userData.schedule = newUserData.schedule ?? defaultUserData.schedule
+        userData.schedule = newUserData?.schedule ?? defaultUserData.schedule
 
         this.#userData = userData
     }
@@ -137,7 +137,7 @@ export default class ScheduleHandler {
         AsyncStorage.setItem('lastBackup', String(new Date().getTime()))
     }
 
-    constructor(userData: Partial<UserData>) {
+    constructor(userData?: Partial<UserData>) {
         this.setUserData(userData)
     }
 

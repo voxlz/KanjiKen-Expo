@@ -1,6 +1,7 @@
 import {
+    EncodingType,
     createDownloadResumable,
-    documentDirectory,
+    cacheDirectory,
     readAsStringAsync,
 } from 'expo-file-system'
 import { encode, decode } from 'js-base64'
@@ -8,15 +9,15 @@ import { UserData } from './userDataUtils'
 import auth from '@react-native-firebase/auth'
 import storage from '@react-native-firebase/storage'
 
+const serverPath = () => `/userData/${auth().currentUser?.uid}.json.txt`
+
 export const saveToCloud = (userData: UserData) => {
     console.log('SAVE TO CLOUD')
 
-    const reference = storage().ref(
-        `/userData/${auth().currentUser?.uid}.json.txt`
-    )
+    const reference = storage().ref(serverPath())
     const jsonStr = encode(JSON.stringify(userData))
     reference
-        .putString(jsonStr, 'raw', {
+        .putString(jsonStr, 'base64', {
             cacheControl: 'no-store', // disable caching
         })
         .then(
@@ -28,23 +29,36 @@ export const saveToCloud = (userData: UserData) => {
 export const getFromCloud = async () => {
     console.log('GET FROM CLOUD')
 
-    const downloadURL = await storage()
-        .ref(`/userData/${auth().currentUser?.uid}.json.txt`)
+    return await storage()
+        .ref(serverPath())
         .getDownloadURL()
-
-    try {
-        const downloadResult = await createDownloadResumable(
-            downloadURL,
-            documentDirectory + `${auth().currentUser?.uid}.json.txt`
-        ).downloadAsync()
-
-        if (downloadResult) {
-            const { uri } = downloadResult
-            const str = await readAsStringAsync(uri)
-            const userData = JSON.parse(decode(str)) as UserData
-            return userData
-        }
-    } catch (e) {
-        console.error(e)
-    }
+        .then((downloadURL) =>
+            createDownloadResumable(
+                downloadURL,
+                cacheDirectory + `${auth().currentUser?.uid}.json.txt`
+            ).downloadAsync()
+        )
+        .then((downloadResult) => {
+            if (downloadResult) {
+                const { uri } = downloadResult
+                return readAsStringAsync(uri, {
+                    encoding: EncodingType.Base64,
+                })
+            }
+        })
+        .then((str) => {
+            if (str) {
+                const userData = JSON.parse(decode(str)) as UserData
+                console.log('str', decode(str).slice(0, 100))
+                console.log(
+                    'get from cloud progress',
+                    userData.stats.reviewCount
+                )
+                return userData
+            }
+        })
+        .catch((err) => {
+            console.log('Nothing to get. Returning...', err)
+            return undefined
+        })
 }

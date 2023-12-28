@@ -29,6 +29,7 @@ Use the the following versioning system: vs.m.b
 
 | #id | Prio | Description                                                                               |
 | --- | ---- | ----------------------------------------------------------------------------------------- |
+| #11 | -    | Some issue with dragging accuracy, probably only on Android                               |
 | #?? | ↑    | Hardlock crash about 8 lessons in on new save                                             |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                      |
 | #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
