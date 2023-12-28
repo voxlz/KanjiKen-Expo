@@ -24,13 +24,12 @@ Use the the following versioning system: vs.m.b
 | #24 | -    | Daily Streak Counter system                                                                              |
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
 | #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
- 
+
 ### Issues
 
 | #id | Prio | Description                                                                               |
 | --- | ---- | ----------------------------------------------------------------------------------------- |
-| #11 | -    | Some issue with dragging accuracy, probably only on Android                               |
-| #?? | ↑    | Hardlock crash about 8 lessons in on new save                                             |
+| #11 | -    | Some issue with dragging accuracy on Android                                              |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                      |
 | #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
 | #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
@@ -48,16 +47,18 @@ Sync update.
 
 #### Features
 
-| #id | Prio | Description                                                                                                |
-| --- | ---- | ---------------------------------------------------------------------------------------------------------- |
-| #28 | ↑    | Cloud backup / Device Sync (For logged in users)                                                           |
-| #21 | -    | Ensure that updated kanji exercises get added / removed from / into the scheduler on startup after update. |
+| #id | Prio | Description                                                      |
+| --- | ---- | ---------------------------------------------------------------- |
+| #21 | -    | Added "Sign in with Apple" functionallity                        |
+| #28 | ↑    | Added Cloud backup / Device Sync (For logged in users)           |
+| #21 | -    | Now validates queue on database changes. Prevents stale lessons. |
 
 #### Issues
 
-| #id | Prio | Description                     |
-| --- | ---- | ------------------------------- |
-| #?? | ^    | Wrong font on kanji success box |
+| #id | Prio | Description                                         |
+| --- | ---- | --------------------------------------------------- |
+| #?? | ^    | Fixed wrong font in kanji success box               |
+| #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save |
 
 ### v0.3.0
 

@@ -10,6 +10,9 @@ import { AppleButton } from '@invertase/react-native-apple-authentication'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import * as Crypto from 'expo-crypto'
 import { firebase } from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
+import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type Props = {}
 
@@ -28,6 +31,10 @@ const SignInProviders: FC<Props> = ({}) => (
                     buttonStyle={AppleButton.Style.WHITE_OUTLINE}
                     buttonType={AppleButton.Type.SIGN_IN}
                     onPress={() => {
+                        let nickname: string | undefined = undefined
+                        let user: string | undefined = undefined
+                        let email: string | undefined = undefined
+
                         const nonce = Math.random()
                             .toString(36)
                             .substring(2, 10)
@@ -48,20 +55,64 @@ const SignInProviders: FC<Props> = ({}) => (
                                 })
                             )
                             .then((appleCredential) => {
-                                const { identityToken } = appleCredential
-                                const provider =
-                                    new firebase.auth.OAuthProvider('apple.com')
-                                const credential = provider.credential(
-                                    identityToken!,
-                                    nonce
-                                )
-                                return firebase
-                                    .auth()
-                                    .signInWithCredential(credential)
+                                const {
+                                    identityToken,
+                                    fullName: name,
+                                    user: userStr,
+                                    email: userEmail,
+                                } = appleCredential
+
+                                nickname =
+                                    name?.nickname ??
+                                    name?.givenName ??
+                                    undefined
+                                user = userStr
+                                email = userEmail ?? undefined
+
+                                const credential =
+                                    auth.AppleAuthProvider.credential(
+                                        identityToken,
+                                        nonce
+                                    )
+
+                                return auth().signInWithCredential(credential)
                                 // Successful sign in is handled by firebase.auth().onAuthStateChanged
                             })
+                            .then(() => {
+                                nickname &&
+                                    auth()
+                                        .currentUser?.updateProfile({
+                                            displayName: nickname,
+                                        })
+                                        .then(() =>
+                                            console.log(
+                                                'set displayName to',
+                                                nickname
+                                            )
+                                        )
+
+                                user &&
+                                    AsyncStorage.setItem(
+                                        'appleUserStr',
+                                        user
+                                    ).then(() => {
+                                        console.log('Set appleUserStr', user)
+                                        auth().currentUser?.reload()
+                                    })
+
+                                email &&
+                                    auth()
+                                        .currentUser?.updateEmail(email)
+                                        .then(() => {
+                                            console.log('Set email to', email)
+                                            auth().currentUser?.reload()
+                                        })
+
+                                console.log('signed in')
+                                router.back()
+                            })
                             .catch((error) => {
-                                // ...
+                                console.warn(error)
                             })
                     }}
                 />

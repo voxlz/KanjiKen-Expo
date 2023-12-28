@@ -1,9 +1,12 @@
 import React from 'react'
 import { View } from 'react-native'
 import StyledButton from '../src/components/StyledButton'
-import { Stack } from 'expo-router'
+import { Stack, router } from 'expo-router'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
+import * as AppleAuthentication from 'expo-apple-authentication'
+import auth from '@react-native-firebase/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type Props = {}
 
@@ -36,6 +39,39 @@ export default function developer({}: Props) {
                 text="delete local save"
                 styleName="danger"
                 onPress={scheduler.clearUserData}
+            />
+            <StyledButton
+                text="delete apple account"
+                styleName="danger"
+                onPress={async () => {
+                    // Get an authorizationCode from Apple
+                    const { authorizationCode } =
+                        await AppleAuthentication.refreshAsync({
+                            user:
+                                (await AsyncStorage.getItem('appleUserStr')) ??
+                                '',
+                        })
+
+                    // Ensure Apple returned an authorizationCode
+                    if (!authorizationCode) {
+                        throw new Error(
+                            'Apple Revocation failed - no authorizationCode returned'
+                        )
+                    }
+
+                    // Revoke the token
+                    auth()
+                        .revokeToken(authorizationCode)
+                        .then(() => {
+                            auth()
+                                .currentUser?.delete()
+                                .then(() => {
+                                    router.back()
+                                })
+                        })
+                        .catch((err) => console.error('err'))
+                    console.log('token Revoked')
+                }}
             />
         </View>
     )

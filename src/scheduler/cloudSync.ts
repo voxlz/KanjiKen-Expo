@@ -12,8 +12,6 @@ import storage from '@react-native-firebase/storage'
 const serverPath = () => `/userData/${auth().currentUser?.uid}.json.txt`
 
 export const saveToCloud = (userData: UserData) => {
-    console.log('SAVE TO CLOUD')
-
     const reference = storage().ref(serverPath())
     const jsonStr = encode(JSON.stringify(userData))
     reference

@@ -18,13 +18,19 @@ const Home: FC<{}> = ({}) => {
     const scheduler = useContext(SchedulerContext)
 
     useEffect(() => {
-        auth().onAuthStateChanged((user) => {
-            updateUserInfo()
+        auth().onUserChanged((user) => {
+            if (user) {
+                console.log('email', auth().currentUser?.email)
+                updateUserInfo()
+            }
         })
     }, [])
 
     const updateUserInfo = useCallback(() => {
-        setUserName(auth().currentUser?.displayName ?? undefined)
+        setUserName(
+            auth().currentUser?.displayName ??
+                (auth().currentUser ? 'unknown' : undefined)
+        )
         setUserEmail(auth().currentUser?.email ?? undefined)
     }, [])
 
@@ -93,7 +99,8 @@ const Home: FC<{}> = ({}) => {
                         styleName="normal"
                         onPress={() => router.push('/changelog')}
                     />
-                    {userEmail === 'torben.media@gmail.com' && (
+                    {(userEmail === 'torben.media@gmail.com' ||
+                        userEmail === 'torben.nordtorp@gmail.com') && (
                         <StyledButton
                             text="Developer"
                             styleName="disabled"
@@ -123,13 +130,15 @@ const Home: FC<{}> = ({}) => {
                     KanjiKen v{version}
                 </Text>
                 <Text className="text-md text-ui-light">
-                    {userName !== null
+                    {userName !== undefined
                         ? `Logged in as: ${userName}`
                         : 'Not logged in'}{' '}
                 </Text>
                 <Text className="text-md text-ui-light">
-                    {`Last synced: ${
-                        userName !== null ? lastSynced : 'Not logged in'
+                    {`${
+                        userName !== undefined
+                            ? 'Last synced: ' + lastSynced
+                            : ''
                     }`}
                 </Text>
             </View>
@@ -141,9 +150,13 @@ const Home: FC<{}> = ({}) => {
                         if (!userName) {
                             router.push('/auth/login')
                         } else {
-                            auth().signOut()
-                            updateUserInfo()
-                            scheduler.clearUserData()
+                            auth()
+                                .signOut()
+                                .then(() => {
+                                    updateUserInfo()
+                                    scheduler.clearUserData()
+                                })
+                                .catch(() => console.log('Not signed in'))
                         }
                     }}
                 />
