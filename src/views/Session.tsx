@@ -64,8 +64,6 @@ const Session: FC<{}> = ({}) => {
 
         // Check so that we have not died.
         if (relativeHealth.value === 0) {
-            console.log('trag')
-
             quit(true)
         }
 

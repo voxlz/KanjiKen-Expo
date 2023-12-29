@@ -35,9 +35,9 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [isDead, _setIsDead] = useState(false)
     const scheduler = useContext(SchedulerContext)
 
-    const setIsDead = (newDead: boolean) => {
+    const setIsDead = (newDead: boolean, newHealth?: number) => {
         _setIsDead((oldDead) => {
-            if (newDead === true && oldDead !== newDead) onSessionEnd()
+            if (newDead === true && oldDead !== newDead) onSessionEnd(newHealth)
             return newDead
         })
     }
@@ -45,22 +45,42 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     // Animation variables
     const healthProcent = useSharedValue((health / maxHealth) * 100)
     const healthColor = useSharedValue(1)
+
+    // If health changes, update healthProcent smoothly with animation
     useEffect(() => {
-        healthProcent.value = withTiming((health / maxHealth) * 100)
+        console.log('set Health')
+        healthProcent.value = withTiming((health / maxHealth) * 100, {
+            duration: 500,
+        })
     }, [health])
 
+    // Instantly set health on load (Without animation)
     useEffect(() => {
+        console.log('set Helth INSTANT')
         AsyncStorage.getItem('health', (err, res) => {
             if (res) {
                 _setHealth(JSON.parse(res))
+                healthProcent.value = (health / maxHealth) * 100
             }
         })
     }, [])
 
+    /** Sets health according to some lambda. Saves health to disk */
     const setHealth = (someFunc: (oldHealth: number) => number) => {
         const newHealth = someFunc(health)
         AsyncStorage.setItem('health', JSON.stringify(newHealth))
         _setHealth(newHealth)
+
+        if (newHealth <= 0) {
+            setIsDead(newHealth <= 0, newHealth)
+
+            // // Reset regen
+            // getRegenObj().then((regenObj) => {
+            //     regenObj.healthLeftAtQuit = 0
+            //     regenObj.timeOfQuit = Date.now()
+            //     setRegenObj(regenObj)
+            // })
+        }
     }
 
     // Get regen object from storage
@@ -84,7 +104,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
         const healthPerSec = regen.healthPerMin / 60
         const secondsPassed = (Date.now() - regen.timeOfQuit) / 1000
 
-        console.log('seconds passed', secondsPassed, regen.timeOfQuit)
+        console.log('Regen: seconds since onSessionEnd', secondsPassed)
 
         const value = regen.healthLeftAtQuit + healthPerSec * secondsPassed
         const max = maxHealth
@@ -103,7 +123,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const refreshHealthBar = async () => {
         const regen = await getRegenHealth()
         let newHealth: number = regen
-        if (newHealth <= 0) onDamage(true)
+        if (newHealth <= 0) onDamage(newHealth, true)
         if (newHealth >= 0.33 * maxHealth)
             healthColor.value = withSpring(1, {
                 duration: 500,
@@ -115,7 +135,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
     /** Change health */
     const addHealth = async (diff: number) => {
-        // console.log('added health', diff)
+        console.log('added health', diff)
         setHealth((health) => {
             const newHealth = clamp({
                 min: 0,
@@ -125,13 +145,13 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
             // You took damage
             if (diff < 0) {
-                onDamage(newHealth <= 0)
+                onDamage(newHealth, newHealth <= 0)
             }
 
-            // Reset regen
-            getRegenObj().then((regenObj) => {
-                setHealthRegen(regenObj.healthPerMin)
-            })
+            // // Reset regen
+            // getRegenObj().then((regenObj) => {
+            //     setHealthRegen(regenObj.healthPerMin)
+            // })
 
             return newHealth
         })
@@ -145,25 +165,26 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     }
 
     // What should happen on death
-    const onSessionEnd = () => {
+    const onSessionEnd = (newHealth?: number) => {
         console.log('onSessionEnd')
         scheduler.syncLocal()
         scheduler.syncCloud()
         getRegenObj().then((regenObj): void => {
             regenObj.timeOfQuit = Date.now()
-            regenObj.healthLeftAtQuit = health
+            regenObj.healthLeftAtQuit = newHealth ?? health
             setRegenObj(regenObj)
-            setIsDead(true)
+            _setIsDead(true)
         })
     }
 
     // What should happen on damage
-    const onDamage = (isDead: boolean) => {
+    const onDamage = (newHealth: number, isDead: boolean) => {
         console.log('onDamage')
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         if (healthColor.value !== 0) {
             healthColor.value = 0
             if (!isDead) {
+                // Still alive, simply flash red in healthbar
                 healthColor.value = withDelay(
                     300,
                     withSpring(1, {
@@ -171,6 +192,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
                     })
                 )
             }
+            setIsDead(isDead, newHealth)
         }
     }
 
