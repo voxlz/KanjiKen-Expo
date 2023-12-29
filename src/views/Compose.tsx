@@ -29,7 +29,7 @@ const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
             <KanjiSkillTemplate
                 KanjiComp={
                     <KanjiComps
-                        pos={solution?.comps.position}
+                        pos={solution?.comps.position ?? undefined}
                         key={seenCount}
                         showPositionHints={showPositionHints}
                     />
@@ -43,7 +43,6 @@ const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
                         isCorrectAnswer={(glyph) =>
                             solution?.comps.order.includes(glyph)
                         }
-                        clickable={false}
                         hintOnDrag={true}
                     />
                 }

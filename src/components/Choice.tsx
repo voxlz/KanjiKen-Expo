@@ -14,7 +14,6 @@ import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 type Props = {
     altInfo: GlyphInfo
     isCorrectAnswer: boolean
-    clickable?: boolean
     hintOnDrag: boolean
 }
 
@@ -23,14 +22,14 @@ const Choice: FC<Props> = ({
     altInfo,
     isCorrectAnswer,
     hintOnDrag,
-    clickable = false,
 }) => {
+    const glyphWidth = useContext(GlyphWidthContext)
+    // const expectedChoice = useContext(ExpectedChoiceContext)
+
     const glyph = altInfo.glyph
     const { measure: anchor, onLayout, ref } = useMeasure()
     const [, setShow] = useState(false)
     const [isBeingDragged, setIsBeingDragged] = useState(false) // is draggable being dragging?
-    const glyphWidth = useContext(GlyphWidthContext)
-    const expectedChoice = useContext(ExpectedChoiceContext)
 
     return (
         <View
@@ -51,22 +50,22 @@ const Choice: FC<Props> = ({
             {/* ------------- Interactable - Middle layer --------------*/}
 
             <View
-                style={{
-                    pointerEvents:
-                        isCorrectAnswer && expectedChoice === 'FINISH'
-                            ? 'none'
-                            : 'auto',
-                }}
+                // I don't remember why this is here
+                // style={{
+                //     pointerEvents:
+                //         isCorrectAnswer && expectedChoice === 'FINISH'
+                //             ? 'none'
+                //             : 'auto',
+                // }}
                 className="absolute z-20"
             >
                 <Draggable
                     anchor={anchor}
-                    width={glyphWidth}
+                    // width={glyphWidth}
                     glyph={glyph}
                     isCorrectAnswer={isCorrectAnswer}
                     isBeingDragged={isBeingDragged}
                     setIsBeingDragged={setIsBeingDragged}
-                    clickable={clickable}
                     hintOnDrag={hintOnDrag}
                 >
                     <Interactable text={glyph} />

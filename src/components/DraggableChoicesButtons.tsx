@@ -10,14 +10,12 @@ import {
 import { Learnable } from '../types/progress'
 
 type Props = {
-    clickable: boolean
     hintOnDrag: boolean
     isCorrectAnswer: (glyph: Learnable) => boolean
 }
 
 /** Bottom row of dragable choices buttons, used in kanjiExcersiseTemplate */
 const DraggableChoicesButtons: FC<Props> = ({
-    clickable,
     hintOnDrag,
     isCorrectAnswer,
 }) => {
@@ -34,7 +32,6 @@ const DraggableChoicesButtons: FC<Props> = ({
                         key={alt.glyph + i + seenCount}
                         altInfo={alt}
                         isCorrectAnswer={isCorrectAnswer(alt.glyph)}
-                        clickable={clickable}
                         hintOnDrag={hintOnDrag}
                     />
                 )

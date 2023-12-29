@@ -14,10 +14,10 @@ type DropsDispatchType = Dispatch<Parameters<typeof dropsReducer>[1]>
 // type SuccessfulDrop = (glyph: string) => DropInfo | undefined
 
 // Create contexts
-export const DropsContext = CC<DropInfo[]>()
+// export const DropsContext = CC<DropInfo[]>()
 export const DropsFindContext = CC<(glyph?: string) => DropInfo | undefined>()
 export const DropsDispatchContext = CC<DropsDispatchType>()
-export const HoverContext = CC<DropInfo>() // What dropLocation am I currently hovering?
+// export const HoverContext = CC<DropInfo>() // What dropLocation am I currently hovering?
 // export const WasSuccessfulDropContext = CC<SuccessfulDrop>() // What dropLocation was the element dropped on?
 export const HoverUpdateContext = CC<(loc?: XY) => void>()
 
@@ -29,7 +29,7 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
 }) => {
     const [drops, dropsDispatch] = useReducer(dropsReducer, [])
 
-    const updateHover = useCallback(
+    const updateHoverRef = useCallback(
         (loc?: XY) => {
             const newHover = drops.find(
                 (drop) =>
@@ -55,15 +55,15 @@ const DragContextProvider: FC<{ children?: React.ReactNode }> = ({
 
     return (
         <DropsFindContext.Provider value={findDrop}>
-            <DropsContext.Provider value={drops}>
+            {/* <DropsContext.Provider value={drops}> */}
                 <DropsDispatchContext.Provider value={dropsDispatch}>
-                    <HoverContext.Provider value={hoverRef}>
-                        <HoverUpdateContext.Provider value={updateHover}>
+                    {/* <HoverContext.Provider value={hoverRef}> */}
+                        <HoverUpdateContext.Provider value={updateHoverRef}>
                             {children}
                         </HoverUpdateContext.Provider>
-                    </HoverContext.Provider>
+                    {/* </HoverContext.Provider> */}
                 </DropsDispatchContext.Provider>
-            </DropsContext.Provider>
+            {/* </DropsContext.Provider> */}
         </DropsFindContext.Provider>
     )
 }

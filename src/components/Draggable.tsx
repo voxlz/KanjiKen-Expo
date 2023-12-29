@@ -1,15 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import {
     LayoutAnimation,
     NativeModules,
     Platform,
     ViewProps,
 } from 'react-native'
-import {
-    HoverUpdateContext,
-    DropsContext,
-    hoverRef,
-} from '../contexts/DragContextProvider'
+import { HoverUpdateContext, hoverRef } from '../contexts/DragContextProvider'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import {
     ExpectedChoiceContext,
@@ -30,7 +26,10 @@ import { useContext } from '../utils/react'
 import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { Learnable } from '../types/progress'
 import { glyphDict } from '../data/glyphDict'
-import { DropsDispatchContext } from '../contexts/DragContextProvider'
+import {
+    DropsDispatchContext,
+    DropsFindContext,
+} from '../contexts/DragContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { defaultGap } from '../utils/consts'
 
@@ -47,7 +46,6 @@ type Props = {
     children?: React.ReactNode
     glyph?: Learnable
     isCorrectAnswer?: boolean
-    width: number
     setIsBeingDragged: (bool: boolean) => void
     isBeingDragged: boolean
     clickable: boolean
@@ -67,22 +65,20 @@ export const structuredClone = (obj: object) => {
 const Draggable: FC<Props> = ({
     children,
     anchor,
-    width,
     glyph,
-    isCorrectAnswer,
+    isCorrectAnswer = () => false,
     setIsBeingDragged,
     isBeingDragged,
-    clickable = false,
     hintOnDrag = true,
     // ...props
 }) => {
     const hoverUpdate = useContext(HoverUpdateContext)
-    const drops = useContext(DropsContext)
+    const dropsFind = useContext(DropsFindContext)
     const dropsDispatch = useContext(DropsDispatchContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const addHealth = useContext(AddHealthContext)
-    const glyphWidth = useContext(GlyphWidthContext)
+    const width = useContext(GlyphWidthContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
     const transX = useSharedValue(0)
@@ -115,13 +111,8 @@ const Draggable: FC<Props> = ({
     //     width: width,
     // }) // What size did it had at drag start.
 
-    console.log('RERENDER')
-
     const dropSuccessful = (hover: DropInfo, anchor: MeasureType) => {
-        console.log('INSIDE DROPSUCCESSFUL')
-        const a = performance.now()
         onCorrectChoice?.()
-        const b = performance.now()
         const newSize = {
             width: hover.width,
             height: hover.height,
@@ -130,10 +121,6 @@ const Draggable: FC<Props> = ({
             x: hover.x - anchor.x,
             y: hover.y - anchor.y,
         }
-        const c = performance.now()
-
-        let d
-        let f
 
         const newDragState = structuredClone(dragState)
 
@@ -141,32 +128,17 @@ const Draggable: FC<Props> = ({
             dragState.currentSize?.height !== newSize.height &&
             dragState.currentSize?.width !== newSize.width
         ) {
-            console.log('About to set Current')
             newDragState.currentSize = newSize
-            d = performance.now()
-
             newDragState.dragStartSize = newSize
-            f = performance.now()
         }
         moveTo(newTrans)
-        const g = performance.now()
 
         newDragState.droppedBefore = true
         setDragState(newDragState)
-        const h = performance.now()
 
         // Update containsGlyph in dropLocation
         hover.containsGlyph = glyph
         dropsDispatch({ type: 'changed', dropInfo: hover })
-        const i = performance.now()
-
-        console.log('onCorrectChoice', b - a)
-        console.log('newSize', c - b)
-        console.log('setCurrentSize', d! - c)
-        console.log('setDragStartSize', f! - d!)
-        console.log('moveTo', g! - f!)
-        console.log('setDroppedBefore', h! - g!)
-        console.log('OUTSIDE')
     }
 
     const dropCancelled = () => {
@@ -202,7 +174,7 @@ const Draggable: FC<Props> = ({
                     const a = performance.now()
                     prepForLayout()
                     const b = performance.now()
-                    const dropInfo = drops.find((info) => info.glyph === glyph)
+                    const dropInfo = dropsFind(glyph)
                     const c = performance.now()
 
                     if (anchor && expectedChoice === glyph && dropInfo) {
@@ -219,7 +191,7 @@ const Draggable: FC<Props> = ({
                     // console.log('dropSuccessful complete: ', d - c + ' ms')
                     // console.log('setIsBeingDragged complete: ', e - d + ' ms')
                 }),
-        [anchor, drops, expectedChoice, glyph, prepForLayout]
+        [anchor, dropsFind, expectedChoice, glyph, prepForLayout]
     )
 
     /** DRAG - Memo'd as recommended in documentation*/
@@ -239,7 +211,7 @@ const Draggable: FC<Props> = ({
                 })
                 .onChange((drag) => {
                     // Since user might have started drag by dragging edge, check hover based on draggable center instead.
-                    const center = glyphWidth / 2
+                    const center = width / 2
                     const cxDiff = center - drag.x
                     const cyDiff = center - drag.y
                     hoverUpdate?.({
@@ -315,7 +287,10 @@ const Draggable: FC<Props> = ({
         ]
     )
 
-    const composed = Gesture.Simultaneous(tap, drag)
+    const composed = React.useMemo(
+        () => Gesture.Simultaneous(tap, drag),
+        [tap, drag]
+    )
 
     // Move to new default position
     const moveTo = (newpan: { x: number; y: number }) => {
@@ -329,11 +304,13 @@ const Draggable: FC<Props> = ({
             const newDragState = structuredClone(dragState)
             newDragState.dragStartTranslate = newpan
             setDragState(newDragState)
-            // setDragStartTran(newpan)
         }
     }
 
-    scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
+    // Update scale while being dragged
+    useEffect(() => {
+        scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
+    }, [isBeingDragged])
 
     return (
         <GestureDetector gesture={composed}>

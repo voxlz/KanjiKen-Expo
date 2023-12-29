@@ -32,8 +32,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const [correctOrder, setAnswerOrder] = useState<string[]>()
     const [orderIdx, setOrderIdx] = useState(0)
     const [expectedChoice, setExpectedChoice] = useState('')
-
-    // Exposed state
     const [seenCount, setSeenCount] = useState(0) // Used to keep apart different challanges. Used in key's for example.
     const [choices, setChoices] = useState<GlyphInfo[]>([])
 
@@ -73,8 +71,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
                 choices = []
                 break
         }
-
-        // console.log('choices', choices)
 
         let findRandom = 8 - choices.length
         do {

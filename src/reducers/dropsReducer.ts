@@ -27,11 +27,13 @@ export const dropsReducer = (
             const idx = dropInfoArr.findIndex((oldInfo) =>
                 dropInfoEqual(newInfo, oldInfo)
             )
-            return idx != -1
-                ? dropInfoArr.map((oldInfo, i) =>
-                      i === idx ? newInfo : oldInfo
-                  )
-                : [...dropInfoArr, newInfo]
+            const value =
+                idx != -1
+                    ? dropInfoArr.map((oldInfo, i) =>
+                          i === idx ? newInfo : oldInfo
+                      )
+                    : [...dropInfoArr, newInfo]
+            return value
         }
         case 'clear': {
             return []
