@@ -63,6 +63,7 @@ Sync update.
 | #?? | ^    | Fixed wrong font in kanji success box               |
 | #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save |
 | #?? | ↑    | Fixed icon looking zoomed in on android             |
+| #?? | ↑    | Health regen was very broken                        |
 
 ### v0.3.0
 

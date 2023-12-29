@@ -144,8 +144,10 @@ const Draggable: FC<Props> = ({
     const tap = React.useMemo(
         () =>
             Gesture.Tap()
+                .maxDistance(10)
                 .runOnJS(true)
-                .onEnd(() => {
+                .onStart(() => {
+                    console.log('click detected')
                     prepForLayout()
                     const dropInfo = drops.find((info) => info.glyph === glyph)
                     if (anchor && expectedChoice === glyph && dropInfo) {
@@ -243,7 +245,7 @@ const Draggable: FC<Props> = ({
         ]
     )
 
-    const composed = Gesture.Exclusive(tap, drag)
+    const composed = Gesture.Simultaneous(tap, drag)
 
     // Move to new default position
     const moveTo = (newpan: { x: number; y: number }) => {
@@ -257,7 +259,7 @@ const Draggable: FC<Props> = ({
     scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
 
     return (
-        <GestureDetector gesture={!clickable ? drag : composed}>
+        <GestureDetector gesture={composed}>
             <Animated.View
                 id="animate_position"
                 className="absolute"
