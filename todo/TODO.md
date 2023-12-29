@@ -24,18 +24,21 @@ Use the the following versioning system: vs.m.b
 | #24 | -    | Daily Streak Counter system                                                                              |
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
 | #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
+| #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                                  |
+| #?? | -    | Ads after dying / Refil?                                                                                 |
 
 ### Issues
 
 | #id | Prio | Description                                                                               |
 | --- | ---- | ----------------------------------------------------------------------------------------- |
 | #11 | -    | Some issue with dragging accuracy on Android                                              |
+| #?? | -    | Tapping does not register as wrong                                                        |
+| #?? | -    | Tapping does not work in compose exercises                                                |
 | #18 | -    | Click char -> click goal drag or click on single component exercises                      |
 | #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
 | #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
 | #6  | -    | Duplicate characters all fade out in composition, even if only one was used.              |
 | #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                  |
-| #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                   |
 
 ## Changelog
 
@@ -49,7 +52,7 @@ Sync update.
 
 | #id | Prio | Description                                                      |
 | --- | ---- | ---------------------------------------------------------------- |
-| #21 | -    | Added "Sign in with Apple" functionallity                        |
+| #21 | -    | Added "Sign in with Apple" functionallity [iOS only]             |
 | #28 | ↑    | Added Cloud backup / Device Sync (For logged in users)           |
 | #21 | -    | Now validates queue on database changes. Prevents stale lessons. |
 

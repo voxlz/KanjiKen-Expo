@@ -29,6 +29,8 @@ For starting the expo client, run:
 yarn start
 ```
 
+### iOS
+
 To create a development client for ios, do the following:
 
 ```bash
@@ -37,13 +39,36 @@ eas device:create
 eas build --profile development --platform ios
 ```
 
+### Android
+
+```bash
+eas login
+eas build --profile development --platform android
+```
+
+To get debug logs
+
+1. Enable debug mode on the android device
+2. Enable usb debugging
+3. Ensure device shows up when running "adb devices"
+
+```bash
+adb logcat "*:E"
+```
+
 When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
+
+## Admob
+
+https://ninza7.medium.com/monetize-your-react-native-expo-apps-with-google-admob-f12950a233a4
+
+If admob page does not load, disable adblock.
 
 ## Apple auth: I've used the following article
 
-## Add new secrets to Expo
-
 https://medium.com/nerd-for-tech/apple-google-authentication-in-expo-apps-using-firebase-997125440032
+
+## Add new secrets to Expo
 
 ```bash
 eas secret:delete (optionally delete it)
@@ -74,7 +99,7 @@ Then it works as expo go would.
 
 Alternatively: Follow this guide to set up the emulator: <https://docs.expo.dev/workflow/android-studio-emulator/>
 
-### Error: No connection could be made
+### Android debugging
 
 Run this command in the terminal and try again.
 

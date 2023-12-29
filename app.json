@@ -50,7 +50,6 @@
                 {
                     "ios": {
                         "useFrameworks": "static"
-                        // "deploymentTarget": "13.0"
                     }
                 }
             ],
@@ -58,7 +57,7 @@
         ]
     },
     "react-native-google-mobile-ads": {
-        "android_app_id": "ca-app-pub-xxxxxxxx~xxxxxxxx",
-        "ios_app_id": "ca-app-pub-xxxxxxxx~xxxxxxxx"
+        "android_app_id": "ca-app-pub-7133855988692619~5171765150",
+        "ios_app_id": "ca-app-pub-7133855988692619~4721511508"
     }
 }
