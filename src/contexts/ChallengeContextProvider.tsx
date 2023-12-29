@@ -105,7 +105,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             ? correctOrder[orderIdx] ?? 'FINISH'
             : ''
         /** Get the next correct choice. Returns "FINISH" if finished */
-        setExpectedChoice(tempExpectChoice)
+        if (expectedChoice !== tempExpectChoice)
+            setExpectedChoice(tempExpectChoice)
 
         if (tempExpectChoice === 'FINISH') {
             startAnimation()
