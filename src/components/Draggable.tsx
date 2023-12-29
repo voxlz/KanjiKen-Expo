@@ -96,7 +96,10 @@ const Draggable: FC<Props> = ({
     }) // What size did it had at drag start.
 
     const dropSuccessful = (hover: DropInfo, anchor: MeasureType) => {
+        console.log('INSIDE DROPSUCCESSFUL')
+        const a = performance.now()
         onCorrectChoice?.()
+        const b = performance.now()
         const newSize = {
             width: hover.width,
             height: hover.height,
@@ -105,19 +108,37 @@ const Draggable: FC<Props> = ({
             x: hover.x - anchor.x,
             y: hover.y - anchor.y,
         }
+        const c = performance.now()
+        let d
+        let f
         if (
             currSize?.height !== newSize.height &&
             currSize?.width !== newSize.width
         ) {
             setCurrentSize(newSize)
+            d = performance.now()
+
             setDragStartSize(newSize)
+            f = performance.now()
         }
         moveTo(newTrans)
+        const g = performance.now()
+
         setDroppedBefore(true)
+        const h = performance.now()
 
         // Update containsGlyph in dropLocation
         hover.containsGlyph = glyph
         dropsDispatch({ type: 'changed', dropInfo: hover })
+        const i = performance.now()
+
+        console.log('onCorrectChoice', b - a)
+        console.log('newSize', c - b)
+        console.log('setCurrentSize', d! - c)
+        console.log('setDragStartSize', f! - d!)
+        console.log('moveTo', g! - f!)
+        console.log('setDroppedBefore', h! - g!)
+        console.log('OUTSIDE')
     }
 
     const dropCancelled = () => {
@@ -148,12 +169,25 @@ const Draggable: FC<Props> = ({
                 .runOnJS(true)
                 .onStart(() => {
                     console.log('click detected')
+                    const a = performance.now()
                     prepForLayout()
+                    const b = performance.now()
                     const dropInfo = drops.find((info) => info.glyph === glyph)
+                    const c = performance.now()
+
                     if (anchor && expectedChoice === glyph && dropInfo) {
                         dropSuccessful(dropInfo, anchor)
                     }
+                    const d = performance.now()
+
                     setIsBeingDragged(false)
+                    const e = performance.now()
+
+                    console.log('click complete: ', e - a + ' ms')
+                    // console.log('prepForLayout complete: ', b - a + ' ms')
+                    // console.log('dropInfo complete: ', c - b + ' ms')
+                    // console.log('dropSuccessful complete: ', d - c + ' ms')
+                    // console.log('setIsBeingDragged complete: ', e - d + ' ms')
                 }),
         [anchor, drops, expectedChoice, glyph, prepForLayout]
     )
