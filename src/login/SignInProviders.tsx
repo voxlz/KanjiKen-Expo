@@ -1,15 +1,11 @@
 import React, { FC } from 'react'
-import { View, Text, Pressable } from 'react-native'
-import { BorderBoxBtn } from './LoginHelperComponents'
-import { signInWithGoogle, signInWithApple } from './LoginLogic'
+import { View, Platform } from 'react-native'
 import GoogleLogo from '../../assets/logos/google.svg'
-import TwitterLogo from '../../assets/logos/twitter.svg'
 import ProviderBtn from './ProviderBtn'
 import { AppleButton } from '@invertase/react-native-apple-authentication'
 
 import * as AppleAuthentication from 'expo-apple-authentication'
 import * as Crypto from 'expo-crypto'
-import { firebase } from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { router } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -24,7 +20,7 @@ const SignInProviders: FC<Props> = ({}) => (
                 text="Sign in with Google"
                 logo={<GoogleLogo height={42} />}
             />
-            {true && (
+            {Platform.OS === 'ios' && (
                 <AppleButton
                     cornerRadius={10}
                     style={{ height: 50 }}
