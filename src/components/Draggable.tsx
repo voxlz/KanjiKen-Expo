@@ -32,6 +32,7 @@ import {
 } from '../contexts/DragContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { defaultGap } from '../utils/consts'
+import { structuredClone } from '../utils/js'
 
 const { UIManager } = NativeModules
 
@@ -55,10 +56,6 @@ type Props = {
 type Size = {
     height: number
     width: number
-}
-
-export const structuredClone = (obj: object) => {
-    return JSON.parse(JSON.stringify(obj))
 }
 
 /** Makes children draggable. */
@@ -157,12 +154,6 @@ const Draggable: FC<Props> = ({
         }
     }
 
-    const prepForLayout = () =>
-        LayoutAnimation.configureNext({
-            duration: 300,
-            update: { type: 'spring', springDamping: 1 },
-        })
-
     /** TAP - Memo'd as recommended in documentation */
     const tap = React.useMemo(
         () =>
@@ -170,22 +161,16 @@ const Draggable: FC<Props> = ({
                 .maxDistance(10)
                 .runOnJS(true)
                 .onStart(() => {
-                    console.log('click detected')
+                    // console.log('click detected')
                     const a = performance.now()
                     prepForLayout()
-                    const b = performance.now()
                     const dropInfo = dropsFind(glyph)
-                    const c = performance.now()
-
                     if (anchor && expectedChoice === glyph && dropInfo) {
                         dropSuccessful(dropInfo, anchor)
                     }
-                    const d = performance.now()
-
                     setIsBeingDragged(false)
                     const e = performance.now()
-
-                    console.log('click complete: ', e - a + ' ms')
+                    // console.log('click complete: ', e - a + ' ms')
                     // console.log('prepForLayout complete: ', b - a + ' ms')
                     // console.log('dropInfo complete: ', c - b + ' ms')
                     // console.log('dropSuccessful complete: ', d - c + ' ms')
@@ -388,5 +373,11 @@ const Draggable: FC<Props> = ({
         </GestureDetector>
     )
 }
+
+const prepForLayout = () =>
+    LayoutAnimation.configureNext({
+        duration: 300,
+        update: { type: 'spring', springDamping: 1 },
+    })
 
 export default Draggable

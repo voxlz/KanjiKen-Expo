@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode, useEffect, useCallback } from 'react'
+import React, { FC, useState, ReactNode, useCallback } from 'react'
 import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
@@ -8,6 +8,7 @@ import { GlyphDictType } from '../types/glyphDict'
 import { SchedulerContext } from './SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import ScheduleHandler from '../scheduler/scheduleHandler'
+import { structuredClone } from '../utils/js'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
@@ -29,98 +30,130 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     const scheduler = useContext(SchedulerContext)
 
     // Local state
-    const [correctOrder, setAnswerOrder] = useState<string[]>()
-    const [orderIdx, setOrderIdx] = useState(0)
-    const [expectedChoice, setExpectedChoice] = useState('')
-    const [seenCount, setSeenCount] = useState(0) // Used to keep apart different challanges. Used in key's for example.
-    const [choices, setChoices] = useState<GlyphInfo[]>([])
+    const [exeState, setExeState] = useState({
+        answerOrder: undefined as string[] | undefined,
+        answerOrderIdx: 0,
+        expectedAnswer: '',
+        seenCount: 0,
+        choices: [] as GlyphInfo[],
+    })
 
-    const setChallenge = useCallback((excercise: Exercise) => {
-        let info = glyphDict[excercise.glyph]
+    const onOrderIdxChange = useCallback(
+        (
+            answerOrder: string[] | undefined,
+            prevExpectedAnswer: string,
+            answerOrderIdx: number
+        ) => {
+            const tempExpectChoice = answerOrder
+                ? answerOrder[answerOrderIdx] ?? 'FINISH'
+                : ''
 
-        // Set the answers
-        let answers: string[]
-        switch (excercise.skill) {
-            case 'intro':
-                answers = ['just press the button']
-                break
-            case 'compose':
-                answers = info.comps.order
-                break
-            case 'recognize':
-                answers = [info.glyph]
-                break
-            default:
-                answers = []
-                break
-        }
-
-        // Set alts
-        let choices: GlyphInfo[]
-        switch (excercise.skill) {
-            case 'intro':
-                choices = []
-                break
-            case 'compose':
-                choices = info.comps.order.map((glyph) => glyphDict[glyph])
-                break
-            case 'recognize':
-                choices = [info]
-                break
-            default:
-                choices = []
-                break
-        }
-
-        let findRandom = 8 - choices.length
-        do {
-            const seenGlyph = getRandomSeenGlyphInfo(scheduler)
-
-            // const duplicate = choices
-            //     .map((info) => info.glyph)
-            //     .includes(seenGlyph.glyph)
-            // const seenCount = Object.keys(scheduler.getProgress()).length
-            // console.log('seen', seenGlyph.glyph, duplicate, seenCount)
-            if (excercise.glyph !== seenGlyph.glyph) {
-                choices = choices.concat(seenGlyph)
-                findRandom -= 1
+            if (tempExpectChoice === 'FINISH') {
+                startAnimation()
             }
-        } while (findRandom > 0)
 
-        setChoices(shuffle(choices))
+            /** Get the next correct choice. Returns "FINISH" if finished */
+            return prevExpectedAnswer !== tempExpectChoice
+                ? tempExpectChoice
+                : prevExpectedAnswer
+        },
+        [startAnimation]
+    )
 
-        // Update state
-        setAnswerOrder(answers)
-        setOrderIdx(0)
-        dropsDispatch?.({ type: 'clear' })
-        setSeenCount((id) => id + 1)
-    }, [])
+    const setChallenge = useCallback(
+        (excercise: Exercise) => {
+            let info = glyphDict[excercise.glyph]
 
-    useEffect(() => {
-        const tempExpectChoice = correctOrder
-            ? correctOrder[orderIdx] ?? 'FINISH'
-            : ''
-        /** Get the next correct choice. Returns "FINISH" if finished */
-        if (expectedChoice !== tempExpectChoice)
-            setExpectedChoice(tempExpectChoice)
+            // Set the answers
+            let answers: string[]
+            switch (excercise.skill) {
+                case 'intro':
+                    answers = ['just press the button']
+                    break
+                case 'compose':
+                    answers = info.comps.order
+                    break
+                case 'recognize':
+                    answers = [info.glyph]
+                    break
+                default:
+                    answers = []
+                    break
+            }
 
-        if (tempExpectChoice === 'FINISH') {
-            startAnimation()
-        }
-    }, [correctOrder, orderIdx])
+            // Set choices
+            let choices: GlyphInfo[]
+            switch (excercise.skill) {
+                case 'intro':
+                    choices = []
+                    break
+                case 'compose':
+                    choices = info.comps.order.map((glyph) => glyphDict[glyph])
+                    break
+                case 'recognize':
+                    choices = [info]
+                    break
+                default:
+                    choices = []
+                    break
+            }
+
+            let findRandom = 8 - choices.length
+            do {
+                const seenGlyph = getRandomSeenGlyphInfo(scheduler)
+
+                // const duplicate = choices
+                //     .map((info) => info.glyph)
+                //     .includes(seenGlyph.glyph)
+                // const seenCount = Object.keys(scheduler.getProgress()).length
+                // console.log('seen', seenGlyph.glyph, duplicate, seenCount)
+                if (excercise.glyph !== seenGlyph.glyph) {
+                    choices = choices.concat(seenGlyph)
+                    findRandom -= 1
+                }
+            } while (findRandom > 0)
+
+            const newExpectedChoice = onOrderIdxChange(
+                answers,
+                exeState.expectedAnswer,
+                0
+            )
+
+            dropsDispatch?.({ type: 'clear' })
+            // Update state
+            // setChoices(shuffle(choices))
+            // setAnswerOrder(answers)
+            // setOrderIdx(0)
+            // setSeenCount((id) => id + 1)
+            const newExeState = structuredClone(exeState)
+            newExeState.choices = shuffle(choices)
+            newExeState.answerOrderIdx = 0
+            newExeState.answerOrder = answers
+            newExeState.seenCount += 1
+            newExeState.expectedAnswer = newExpectedChoice
+            setExeState(newExeState)
+        },
+        [exeState, glyphDict]
+    )
 
     /** What happens when user answers correctly */
-    const onCorrectChoice = useCallback(
-        () => setOrderIdx((order) => order + 1),
-        []
-    )
+    const onCorrectChoice = useCallback(() => {
+        const newExeState = structuredClone(exeState)
+        newExeState.answerOrderIdx = exeState.answerOrderIdx + 1
+        newExeState.expectedAnswer = onOrderIdxChange(
+            exeState.answerOrder,
+            exeState.expectedAnswer,
+            exeState.answerOrderIdx + 1
+        )
+        setExeState(newExeState)
+    }, [exeState, onOrderIdxChange, structuredClone, setExeState])
 
     return (
         <SetChallengeContext.Provider value={setChallenge}>
             <OnCorrectChoiceContext.Provider value={onCorrectChoice}>
-                <ExpectedChoiceContext.Provider value={expectedChoice}>
-                    <SeenCountContext.Provider value={seenCount}>
-                        <ChoicesContext.Provider value={choices}>
+                <ExpectedChoiceContext.Provider value={exeState.expectedAnswer}>
+                    <SeenCountContext.Provider value={exeState.seenCount}>
+                        <ChoicesContext.Provider value={exeState.choices}>
                             {children}
                         </ChoicesContext.Provider>
                     </SeenCountContext.Provider>
