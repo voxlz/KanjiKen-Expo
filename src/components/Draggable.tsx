@@ -59,6 +59,10 @@ type Size = {
     width: number
 }
 
+export const structuredClone = (obj: object) => {
+    return JSON.parse(JSON.stringify(obj))
+}
+
 /** Makes children draggable. */
 const Draggable: FC<Props> = ({
     children,
@@ -81,19 +85,37 @@ const Draggable: FC<Props> = ({
     const glyphWidth = useContext(GlyphWidthContext)
     const animationInstantReset = useContext(ContinueAnimInstantResetContext)
 
-    const [droppedBefore, setDroppedBefore] = useState(false)
-
-    let transX = useSharedValue(0)
-    let transY = useSharedValue(0)
-    let scale = useSharedValue(1)
+    const transX = useSharedValue(0)
+    const transY = useSharedValue(0)
+    const scale = useSharedValue(1)
 
     // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
-    const [currSize, setCurrentSize] = useState<Size>() // Set current size of the draggable
-    const [dragStartTran, setDragStartTran] = useState({ x: 0, y: 0 }) // What translation did it had at drag start.
-    const [dragStartSize, setDragStartSize] = useState({
-        height: width,
-        width: width,
-    }) // What size did it had at drag start.
+    // const [droppedBefore, setDroppedBefore] = useState(false)
+    const [dragState, setDragState] = useState<{
+        currentSize: Size | undefined
+        dragStartTranslate: { x: number; y: number }
+        dragStartSize: {
+            height: number
+            width: number
+        }
+        droppedBefore: boolean
+    }>({
+        currentSize: undefined,
+        dragStartTranslate: { x: 0, y: 0 },
+        dragStartSize: {
+            height: width,
+            width: width,
+        },
+        droppedBefore: false,
+    })
+    // const [currSize, setCurrentSize] = useState<Size>() // Set current size of the draggable
+    // const [dragStartTran, setDragStartTran] = useState({ x: 0, y: 0 }) // What translation did it had at drag start.
+    // const [dragStartSize, setDragStartSize] = useState({
+    //     height: width,
+    //     width: width,
+    // }) // What size did it had at drag start.
+
+    console.log('RERENDER')
 
     const dropSuccessful = (hover: DropInfo, anchor: MeasureType) => {
         console.log('INSIDE DROPSUCCESSFUL')
@@ -109,22 +131,28 @@ const Draggable: FC<Props> = ({
             y: hover.y - anchor.y,
         }
         const c = performance.now()
+
         let d
         let f
+
+        const newDragState = structuredClone(dragState)
+
         if (
-            currSize?.height !== newSize.height &&
-            currSize?.width !== newSize.width
+            dragState.currentSize?.height !== newSize.height &&
+            dragState.currentSize?.width !== newSize.width
         ) {
-            setCurrentSize(newSize)
+            console.log('About to set Current')
+            newDragState.currentSize = newSize
             d = performance.now()
 
-            setDragStartSize(newSize)
+            newDragState.dragStartSize = newSize
             f = performance.now()
         }
         moveTo(newTrans)
         const g = performance.now()
 
-        setDroppedBefore(true)
+        newDragState.droppedBefore = true
+        setDragState(newDragState)
         const h = performance.now()
 
         // Update containsGlyph in dropLocation
@@ -142,16 +170,18 @@ const Draggable: FC<Props> = ({
     }
 
     const dropCancelled = () => {
-        moveTo(dragStartTran)
+        moveTo(dragState.dragStartTranslate)
         if (
             anchor &&
-            currSize?.height !== dragStartSize.height &&
-            currSize?.width !== dragStartSize.width
+            dragState.currentSize?.height !== dragState.dragStartSize.height &&
+            dragState.currentSize?.width !== dragState.dragStartSize.width
         ) {
-            setCurrentSize({
-                width: dragStartSize.width,
-                height: dragStartSize.height,
-            })
+            const newDragState = structuredClone(dragState)
+            newDragState.currentSize = {
+                width: dragState.dragStartSize.width,
+                height: dragState.dragStartSize.height,
+            }
+            setDragState(newDragState)
         }
     }
 
@@ -199,7 +229,13 @@ const Draggable: FC<Props> = ({
                 .runOnJS(true)
                 .onBegin(() => {
                     setIsBeingDragged(true)
-                    currSize && setDragStartSize(currSize)
+                    dragState.currentSize &&
+                        setDragState((oldState) => {
+                            const newState = structuredClone(oldState)
+                            newState.dragStartSize = dragState.currentSize!
+                            return newState
+                            // setDragStartSize(currSize)
+                        })
                 })
                 .onChange((drag) => {
                     // Since user might have started drag by dragging edge, check hover based on draggable center instead.
@@ -215,7 +251,10 @@ const Draggable: FC<Props> = ({
                     let ty = drag.translationY
 
                     // Respond to drag, but "don't let them move it"
-                    if (droppedBefore || expectedChoice === 'FINISH') {
+                    if (
+                        dragState.droppedBefore ||
+                        expectedChoice === 'FINISH'
+                    ) {
                         tx =
                             tx < 0
                                 ? -Math.log2(Math.abs(tx / 20 - 1)) * 5 - 1
@@ -225,8 +264,8 @@ const Draggable: FC<Props> = ({
                                 ? -Math.log2(Math.abs(ty / 20 - 1)) * 5 - 1
                                 : Math.log2(Math.abs(ty / 20 + 1)) * 5 + 1
                     }
-                    transX.value = dragStartTran.x + tx
-                    transY.value = dragStartTran.y + ty
+                    transX.value = dragState.dragStartTranslate.x + tx
+                    transY.value = dragState.dragStartTranslate.y + ty
                 })
                 .onEnd(() => {
                     setIsBeingDragged(false)
@@ -235,7 +274,7 @@ const Draggable: FC<Props> = ({
                     // Drop successful
                     const hover = hoverRef
                     if (
-                        !droppedBefore && // Not dropped already
+                        !dragState.droppedBefore && // Not dropped already
                         expectedChoice !== 'FINISH' && // not already finished
                         hover &&
                         hover.glyph === glyph && // currently hovering over droplocation with the right glyph
@@ -246,12 +285,12 @@ const Draggable: FC<Props> = ({
                     }
                     // Drop user error
                     else if (
-                        !droppedBefore &&
+                        !dragState.droppedBefore &&
                         expectedChoice !== 'FINISH' && // not already finished
                         !hover?.containsGlyph &&
                         hover
                     ) {
-                        console.log('failed', droppedBefore)
+                        console.log('failed', dragState.droppedBefore)
                         addHealth(-10)
                         dropCancelled()
                     }
@@ -268,14 +307,11 @@ const Draggable: FC<Props> = ({
             hoverUpdate,
             transX,
             transY,
-            dragStartTran,
-            currSize,
             anchor,
             expectedChoice,
             prepForLayout,
-            setCurrentSize,
             setIsBeingDragged,
-            droppedBefore,
+            dragState,
         ]
     )
 
@@ -286,8 +322,15 @@ const Draggable: FC<Props> = ({
         const springConf = { mass: 1, damping: 23, stiffness: 253 }
         transX.value = withSpring(newpan.x, springConf)
         transY.value = withSpring(newpan.y, springConf)
-        if (dragStartTran.x !== newpan.x && dragStartTran.y !== newpan.y)
-            setDragStartTran(newpan)
+        if (
+            dragState.dragStartTranslate.x !== newpan.x &&
+            dragState.dragStartTranslate.y !== newpan.y
+        ) {
+            const newDragState = structuredClone(dragState)
+            newDragState.dragStartTranslate = newpan
+            setDragState(newDragState)
+            // setDragStartTran(newpan)
+        }
     }
 
     scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
@@ -305,8 +348,12 @@ const Draggable: FC<Props> = ({
                     ],
                     zIndex: isBeingDragged ? 10 : 1,
                     elevation: isBeingDragged ? 10 : 1,
-                    height: currSize ? currSize.height : width,
-                    width: currSize ? currSize.width : width,
+                    height: dragState.currentSize
+                        ? dragState.currentSize.height
+                        : width,
+                    width: dragState.currentSize
+                        ? dragState.currentSize.width
+                        : width,
                 }}
                 hitSlop={{
                     top: defaultGap / 2,
@@ -344,8 +391,12 @@ const Draggable: FC<Props> = ({
                 </Animated.View>
                 <GlyphHint
                     anchor={{
-                        height: currSize ? currSize.height : width,
-                        width: currSize ? currSize.width : width,
+                        height: dragState.currentSize
+                            ? dragState.currentSize.height
+                            : width,
+                        width: dragState.currentSize
+                            ? dragState.currentSize.width
+                            : width,
                         left: 0,
                         top: 0,
                         x: 0,

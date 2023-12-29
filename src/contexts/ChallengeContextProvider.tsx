@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode, useEffect } from 'react'
+import React, { FC, useState, ReactNode, useEffect, useCallback } from 'react'
 import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
@@ -7,6 +7,7 @@ import { Exercise, Learnable } from '../types/progress'
 import { GlyphDictType } from '../types/glyphDict'
 import { SchedulerContext } from './SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
+import ScheduleHandler from '../scheduler/scheduleHandler'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
@@ -30,33 +31,13 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     // Local state
     const [correctOrder, setAnswerOrder] = useState<string[]>()
     const [orderIdx, setOrderIdx] = useState(0)
+    const [expectedChoice, setExpectedChoice] = useState('')
 
     // Exposed state
     const [seenCount, setSeenCount] = useState(0) // Used to keep apart different challanges. Used in key's for example.
     const [choices, setChoices] = useState<GlyphInfo[]>([])
 
-    const getRandomGlyphInfo = () => {
-        const possibleGlyphs = Object.keys(glyphDict) as Learnable[]
-        const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
-        const glyph = possibleGlyphs.at(randIdx())!
-        return glyphDict[glyph]
-    }
-
-    const getRandomSeenGlyphInfo = () => {
-        const possibleGlyphs = Object.keys(
-            scheduler.getProgress()
-        ) as Learnable[]
-
-        if (possibleGlyphs.length < 8) {
-            return getRandomGlyphInfo()
-        }
-
-        const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
-        const glyph = possibleGlyphs.at(randIdx())!
-        return glyphDict[glyph]
-    }
-
-    const setChallenge = (excercise: Exercise) => {
+    const setChallenge = useCallback((excercise: Exercise) => {
         let info = glyphDict[excercise.glyph]
 
         // Set the answers
@@ -97,12 +78,12 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
 
         let findRandom = 8 - choices.length
         do {
-            const seenGlyph = getRandomSeenGlyphInfo()
+            const seenGlyph = getRandomSeenGlyphInfo(scheduler)
 
-            const duplicate = choices
-                .map((info) => info.glyph)
-                .includes(seenGlyph.glyph)
-            const seenCount = Object.keys(scheduler.getProgress()).length
+            // const duplicate = choices
+            //     .map((info) => info.glyph)
+            //     .includes(seenGlyph.glyph)
+            // const seenCount = Object.keys(scheduler.getProgress()).length
             // console.log('seen', seenGlyph.glyph, duplicate, seenCount)
             if (excercise.glyph !== seenGlyph.glyph) {
                 choices = choices.concat(seenGlyph)
@@ -117,25 +98,30 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
         setOrderIdx(0)
         dropsDispatch?.({ type: 'clear' })
         setSeenCount((id) => id + 1)
-    }
+    }, [])
 
-    /** Get the next correct choice. Returns "FINISH" if finished */
-    const getExpectedChoice = correctOrder
-        ? correctOrder[orderIdx] ?? 'FINISH'
-        : ''
+    useEffect(() => {
+        const tempExpectChoice = correctOrder
+            ? correctOrder[orderIdx] ?? 'FINISH'
+            : ''
+        /** Get the next correct choice. Returns "FINISH" if finished */
+        setExpectedChoice(tempExpectChoice)
 
-    if (getExpectedChoice === 'FINISH') {
-        startAnimation()
-    }
+        if (tempExpectChoice === 'FINISH') {
+            startAnimation()
+        }
+    }, [correctOrder, orderIdx])
+
     /** What happens when user answers correctly */
-    const onCorrectChoice = () => {
-        setOrderIdx(orderIdx + 1)
-    }
+    const onCorrectChoice = useCallback(
+        () => setOrderIdx((order) => order + 1),
+        []
+    )
 
     return (
         <SetChallengeContext.Provider value={setChallenge}>
             <OnCorrectChoiceContext.Provider value={onCorrectChoice}>
-                <ExpectedChoiceContext.Provider value={getExpectedChoice}>
+                <ExpectedChoiceContext.Provider value={expectedChoice}>
                     <SeenCountContext.Provider value={seenCount}>
                         <ChoicesContext.Provider value={choices}>
                             {children}
@@ -145,6 +131,23 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             </OnCorrectChoiceContext.Provider>
         </SetChallengeContext.Provider>
     )
+}
+
+const getRandomGlyphInfo = () => {
+    const possibleGlyphs = Object.keys(glyphDict) as Learnable[]
+    const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
+    const glyph = possibleGlyphs.at(randIdx())!
+    return glyphDict[glyph]
+}
+
+const getRandomSeenGlyphInfo = (scheduler: ScheduleHandler) => {
+    const possibleGlyphs = Object.keys(scheduler.getProgress()) as Learnable[]
+    if (possibleGlyphs.length < 8) {
+        return getRandomGlyphInfo()
+    }
+    const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
+    const glyph = possibleGlyphs.at(randIdx())!
+    return glyphDict[glyph]
 }
 
 export default ChallengeContextProvider
