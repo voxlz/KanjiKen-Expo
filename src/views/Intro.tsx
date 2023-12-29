@@ -119,12 +119,12 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                     style={{ height: 0.85714285714 * glyphWidth }}
                     className="flex-row max-w-full flex-shrink flex-wrap h-auto px-8 flex-grow-0 mb-4"
                 >
-                    <View className="w-full ">
+                    {/* <View className="w-full ">
                         <Button
                             text="I might know this..."
                             styleName="secondary"
                         />
-                    </View>
+                    </View> */}
                 </View>
                 <View
                     style={{ height: 0.85714285714 * glyphWidth }}
