@@ -62,7 +62,6 @@ const Session: FC<{}> = ({}) => {
             scheduler.onReview(1, exercise.level, glyphDict[exercise.glyph])
         }
 
-        console.log('Trig', relativeHealth.value)
         // Check so that we have not died.
         if (relativeHealth.value === 0) {
             console.log('trag')

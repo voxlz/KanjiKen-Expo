@@ -12,21 +12,23 @@ import storage from '@react-native-firebase/storage'
 const serverPath = () => `/userData/${auth().currentUser?.uid}.json.txt`
 
 export const saveToCloud = (userData: UserData) => {
-    const reference = storage().ref(serverPath())
-    const jsonStr = encode(JSON.stringify(userData))
-    reference
-        .putString(jsonStr, 'base64', {
-            cacheControl: 'no-store', // disable caching
-        })
-        .then(
-            () => console.log('Save to cloud: Success'),
-            () => console.warn('rejected')
-        )
+    if (auth().currentUser) {
+        const reference = storage().ref(serverPath())
+        const jsonStr = encode(JSON.stringify(userData))
+        reference
+            .putString(jsonStr, 'base64', {
+                cacheControl: 'no-store', // disable caching
+            })
+            .then(
+                () => console.log('Save to cloud: Success'),
+                () => console.warn('rejected')
+            )
+    } else {
+        console.log('saveToCloud failed: User not logged in')
+    }
 }
 
 export const getFromCloud = async () => {
-    console.log('GET FROM CLOUD')
-
     return await storage()
         .ref(serverPath())
         .getDownloadURL()
@@ -47,11 +49,7 @@ export const getFromCloud = async () => {
         .then((str) => {
             if (str) {
                 const userData = JSON.parse(decode(str)) as UserData
-                console.log('str', decode(str).slice(0, 100))
-                console.log(
-                    'get from cloud progress',
-                    userData.stats.reviewCount
-                )
+                console.log('Get from cloud: Success')
                 return userData
             }
         })

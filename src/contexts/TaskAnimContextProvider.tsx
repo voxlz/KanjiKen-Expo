@@ -52,8 +52,6 @@ const TaskAnimContextProvider: FC<{ children?: ReactNode }> = ({
     }
 
     const reset = (instant: boolean = false) => {
-        console.log('Reset animation')
-
         if (!instant) {
             progress.value = 1
             progress.value = withSequence(

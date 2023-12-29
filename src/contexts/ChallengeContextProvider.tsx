@@ -110,10 +110,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             }
         } while (findRandom > 0)
 
-        console.log(
-            'CHOICES',
-            choices.map((a) => a.glyph)
-        )
         setChoices(shuffle(choices))
 
         // Update state

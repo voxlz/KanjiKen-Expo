@@ -102,7 +102,6 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     /** Call this to get an accurate readout on health */
     const refreshHealthBar = async () => {
         const regen = await getRegenHealth()
-        console.log('regen', regen)
         let newHealth: number = regen
         if (newHealth <= 0) onDamage(true)
         if (newHealth >= 0.33 * maxHealth)
