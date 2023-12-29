@@ -8,7 +8,7 @@ import { SchedulerContext } from './SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import ScheduleHandler from '../scheduler/scheduleHandler'
 import { structuredClone } from '../utils/js'
-import { clearDrops } from './DragContextProvider'
+import { clearDrops } from '../globalState/DropInfo'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
@@ -119,7 +119,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             )
 
             clearDrops()
-            
+
             // Update state
             // setChoices(shuffle(choices))
             // setAnswerOrder(answers)

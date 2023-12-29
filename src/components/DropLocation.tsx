@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useRef } from 'react'
 import { Animated, ViewProps } from 'react-native'
 import { useMeasure } from '../functions/useMeasure'
 import { ExpectedChoiceContext } from '../contexts/ChallengeContextProvider'
-import { updateDrops, hoverRef } from '../contexts/DragContextProvider'
+import { updateDrops, hoverRef } from '../globalState/DropInfo'
 
 type Props = {
     children: React.ReactNode

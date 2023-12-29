@@ -10,7 +10,7 @@ import {
     hoverRef,
     updateDrops as updateDropInfo,
     updateHoverRef as updateHoverPos,
-} from '../contexts/DragContextProvider'
+} from '../globalState/DropInfo'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import {
     ExpectedChoiceContext,
@@ -79,8 +79,6 @@ const Draggable: FC<Props> = ({
     const transX = useSharedValue(0)
     const transY = useSharedValue(0)
     const scale = useSharedValue(1)
-
-    console.log('RENDER', glyph)
 
     // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
     // const [droppedBefore, setDroppedBefore] = useState(false)
