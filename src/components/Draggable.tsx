@@ -5,7 +5,12 @@ import {
     Platform,
     ViewProps,
 } from 'react-native'
-import { HoverUpdateContext, hoverRef } from '../contexts/DragContextProvider'
+import {
+    findDrop as findDropInfo,
+    hoverRef,
+    updateDrops as updateDropInfo,
+    updateHoverRef as updateHoverPos,
+} from '../contexts/DragContextProvider'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import {
     ExpectedChoiceContext,
@@ -26,10 +31,6 @@ import { useContext } from '../utils/react'
 import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
 import { Learnable } from '../types/progress'
 import { glyphDict } from '../data/glyphDict'
-import {
-    DropsDispatchContext,
-    DropsFindContext,
-} from '../contexts/DragContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { defaultGap } from '../utils/consts'
 import { structuredClone } from '../utils/js'
@@ -69,9 +70,6 @@ const Draggable: FC<Props> = ({
     hintOnDrag = true,
     // ...props
 }) => {
-    const hoverUpdate = useContext(HoverUpdateContext)
-    const dropsFind = useContext(DropsFindContext)
-    const dropsDispatch = useContext(DropsDispatchContext)
     const expectedChoice = useContext(ExpectedChoiceContext)
     const onCorrectChoice = useContext(OnCorrectChoiceContext)
     const addHealth = useContext(AddHealthContext)
@@ -81,6 +79,8 @@ const Draggable: FC<Props> = ({
     const transX = useSharedValue(0)
     const transY = useSharedValue(0)
     const scale = useSharedValue(1)
+
+    console.log('RENDER', glyph)
 
     // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
     // const [droppedBefore, setDroppedBefore] = useState(false)
@@ -135,7 +135,7 @@ const Draggable: FC<Props> = ({
 
         // Update containsGlyph in dropLocation
         hover.containsGlyph = glyph
-        dropsDispatch({ type: 'changed', dropInfo: hover })
+        updateDropInfo(hover)
     }
 
     const dropCancelled = () => {
@@ -164,7 +164,7 @@ const Draggable: FC<Props> = ({
                     // console.log('click detected')
                     const a = performance.now()
                     prepForLayout()
-                    const dropInfo = dropsFind(glyph)
+                    const dropInfo = findDropInfo(glyph)
                     if (anchor && expectedChoice === glyph && dropInfo) {
                         dropSuccessful(dropInfo, anchor)
                     }
@@ -176,7 +176,7 @@ const Draggable: FC<Props> = ({
                     // console.log('dropSuccessful complete: ', d - c + ' ms')
                     // console.log('setIsBeingDragged complete: ', e - d + ' ms')
                 }),
-        [anchor, dropsFind, expectedChoice, glyph, prepForLayout]
+        [anchor, expectedChoice, glyph, prepForLayout]
     )
 
     /** DRAG - Memo'd as recommended in documentation*/
@@ -199,7 +199,7 @@ const Draggable: FC<Props> = ({
                     const center = width / 2
                     const cxDiff = center - drag.x
                     const cyDiff = center - drag.y
-                    hoverUpdate?.({
+                    updateHoverPos({
                         x: drag.absoluteX + cxDiff,
                         y: drag.absoluteY + cyDiff,
                     })
@@ -255,13 +255,12 @@ const Draggable: FC<Props> = ({
                     else {
                         dropCancelled()
                     }
-                    hoverUpdate?.()
+                    updateHoverPos()
                 })
                 .onFinalize(() => {
                     setIsBeingDragged(false)
                 }),
         [
-            hoverUpdate,
             transX,
             transY,
             anchor,

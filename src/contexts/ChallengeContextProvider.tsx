@@ -1,5 +1,4 @@
 import React, { FC, useState, ReactNode, useCallback } from 'react'
-import { DropsDispatchContext } from './DragContextProvider'
 import { shuffle } from '../functions/shuffle'
 import { createContext as CC, useContext } from '../utils/react'
 import { StartFinishAnimationContext } from './TaskAnimContextProvider'
@@ -9,6 +8,7 @@ import { SchedulerContext } from './SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import ScheduleHandler from '../scheduler/scheduleHandler'
 import { structuredClone } from '../utils/js'
+import { clearDrops } from './DragContextProvider'
 
 // Types
 export type GlyphInfo = GlyphDictType[Learnable]
@@ -25,7 +25,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
     children,
 }) => {
     // Context state
-    const dropsDispatch = useContext(DropsDispatchContext)
     const startAnimation = useContext(StartFinishAnimationContext)
     const scheduler = useContext(SchedulerContext)
 
@@ -119,7 +118,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
                 0
             )
 
-            dropsDispatch?.({ type: 'clear' })
+            clearDrops()
+            
             // Update state
             // setChoices(shuffle(choices))
             // setAnswerOrder(answers)

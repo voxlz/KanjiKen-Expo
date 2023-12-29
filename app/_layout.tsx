@@ -18,7 +18,7 @@ import { useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
-import DragContextProvider from '../src/contexts/DragContextProvider'
+import {} from '../src/contexts/DragContextProvider'
 import HealthContextProvider from '../src/contexts/HealthContextProvider'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
 import { View } from 'react-native'
@@ -55,23 +55,21 @@ export default function Layout() {
                 <SchedulerContextProvider>
                     <OnAuthChange>
                         <HealthContextProvider>
-                            <DragContextProvider>
-                                <TaskAnimContextProvider>
-                                    <ChallengeContextProvider>
-                                        <StatusBar backgroundColor="white" />
-                                        <Stack
-                                            screenOptions={{
-                                                headerShown: false,
-                                                contentStyle: {
-                                                    backgroundColor: 'white',
-                                                    flexGrow: 1,
-                                                },
-                                            }}
-                                            initialRouteName="/home"
-                                        />
-                                    </ChallengeContextProvider>
-                                </TaskAnimContextProvider>
-                            </DragContextProvider>
+                            <TaskAnimContextProvider>
+                                <ChallengeContextProvider>
+                                    <StatusBar backgroundColor="white" />
+                                    <Stack
+                                        screenOptions={{
+                                            headerShown: false,
+                                            contentStyle: {
+                                                backgroundColor: 'white',
+                                                flexGrow: 1,
+                                            },
+                                        }}
+                                        initialRouteName="/home"
+                                    />
+                                </ChallengeContextProvider>
+                            </TaskAnimContextProvider>
                         </HealthContextProvider>
                     </OnAuthChange>
                 </SchedulerContextProvider>
