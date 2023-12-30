@@ -180,12 +180,15 @@ const Draggable: FC<Props> = ({
 
    const calcAndUpdateHoverPos = useCallback(
       (drag: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
-         console.log('calc and update')
+         console.log('calc and update', width, drag.x, drag.y)
          const center = width / 2
 
          // Drag x & y seem kinda bad, but the following seems to keep the hit-box in the middle somewhat. Let's hope it's not screen specific
-         const topLeftX = drag.absoluteX - drag.x - 5
-         const topLeftY = drag.absoluteY - drag.y + 30
+         const topLeftX = drag.absoluteX - drag.x
+         const topLeftY =
+            Platform.OS === 'ios'
+               ? drag.absoluteY - drag.y
+               : drag.absoluteY - drag.y + center
 
          updateHoverPos({
             x: topLeftX + center,
@@ -360,7 +363,7 @@ const Draggable: FC<Props> = ({
          transform: [
             { translateX: transX.value },
             { translateY: transY.value },
-            { scale: scale.value },
+            // { scale: scale.value },
          ],
          zIndex: isBeingDragged ? 10 : 1,
          elevation: isBeingDragged ? 10 : 1,

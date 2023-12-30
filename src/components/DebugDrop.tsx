@@ -15,7 +15,10 @@ const DebugDrop: FC = () => {
       setHoverInfos(drops)
    }, 1000)
    return (
-      <View className="absolute w-full h-full">
+      <View
+         style={{ elevation: -1, zIndex: -1 }}
+         className="absolute w-full h-full"
+      >
          <View
             style={{ elevation: -10, zIndex: -10 }}
             className="absolute w-full h-full bg-red-200"

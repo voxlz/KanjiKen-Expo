@@ -31,10 +31,6 @@ Use the the following versioning system: vs.m.b
 
 | #id | Prio | Description                                                                               |
 | --- | ---- | ----------------------------------------------------------------------------------------- |
-| #11 | -    | Some issue with dragging accuracy on Android                                              |
-| #?? | -    | Tapping does not register as wrong                                                        |
-| #?? | -    | Tapping does not work in compose exercises                                                |
-| #18 | -    | Click char -> click goal drag or click on single component exercises                      |
 | #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
 | #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
 | #6  | -    | Duplicate characters all fade out in composition, even if only one was used.              |
@@ -65,6 +61,9 @@ Sync update.
 | #?? | ↑    | Fixed icon looking zoomed in on android                                        |
 | #?? | ↑    | Fixed health regen: Sensible default values for new users + improved animation |
 | #?? | ↑    | Performance optimizations                                                      |
+| #11 | -    | Probably fixed dragging accuracy???                                            |
+| #?? | -    | Fixed tapping does not register as wrong                                       |
+| #?? | -    | Fixed tapping does not work in compose exercises                               |
 
 ### v0.3.0
 
