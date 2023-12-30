@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react'
-import { View, Text } from 'react-native'
+import React, { FC, useCallback, useEffect, useState } from 'react'
+import { View } from 'react-native'
 import Animated from 'react-native-reanimated'
 
 import Compose from './Compose'
@@ -8,6 +8,7 @@ import LowHealth from './LowHealth'
 import Recognize from './Recognize'
 import BottomBar from '../components/BottomBar'
 import { ButtonStyles } from '../components/Button'
+import LoadingScreen from '../components/LoadingScreen'
 import UpperBar from '../components/UpperBar'
 import {
    SetChallengeContext,
@@ -16,7 +17,6 @@ import {
 } from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import {
-   TimeTillFullHealthContext,
    RelativeHealthContext,
    setIsDeadContext,
 } from '../contexts/HealthContextProvider'
@@ -25,10 +25,9 @@ import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../context
 import { glyphDict } from '../data/glyphDict'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
-import LoadingScreen from '../components/LoadingScreen'
 
 /** The general challenge view for doing kanji exercises */
-const Session: FC<object> = ({}) => {
+const Session: FC = () => {
    // How wide is a glyph part of a 1x4 row with margins and gap considered?
    // Calc the scale, use this to scale UI
 
@@ -43,13 +42,6 @@ const Session: FC<object> = ({}) => {
 
    const relativeHealth = useContext(RelativeHealthContext)
 
-   // When session starts
-   useEffect(() => {
-      console.log('session start', relativeHealth.value)
-      nextExercise()
-      resetSkillAnim(true) // In case they exited during an exercise.
-   }, [])
-
    // State
    const [skillTitle, setSkillTitle] = useState('No title')
    const [continueBtnText, setContinueBtnText] = useState('Continue')
@@ -57,7 +49,7 @@ const Session: FC<object> = ({}) => {
    const [continueBtnStyle, setContinueBtnStyle] =
       useState<ButtonStyles>('forest')
 
-   const nextExercise = () => {
+   const nextExercise = useCallback(() => {
       // If we are currently on an exercise, mark as reviewd and go to next.
       if (exercise) {
          resetSkillAnim()
@@ -98,9 +90,24 @@ const Session: FC<object> = ({}) => {
             break
       }
 
-      // setProgressIdx(newIdx)
       return undefined
-   }
+   }, [
+      exercise,
+      quit,
+      relativeHealth.value,
+      resetSkillAnim,
+      scheduler,
+      setChallenge,
+   ])
+
+   // When session starts
+   useEffect(() => {
+      if (!exercise) {
+         console.log('session start', relativeHealth.value)
+         nextExercise()
+         resetSkillAnim(true) // In case they exited during an exercise.
+      }
+   }, [exercise, nextExercise, relativeHealth.value, resetSkillAnim])
 
    if (!exercise) return <LoadingScreen />
 
