@@ -52,7 +52,8 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    useEffect(() => {
       if (loading) {
          AsyncStorage.getItem('health', (err, res) => {
-            if (res) {
+            if (err) console.warn(err)
+            else if (res) {
                console.log('set Helth INSTANT')
                _setHealth(JSON.parse(res))
                healthProcent.value = (health / maxHealth) * 100
@@ -67,7 +68,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
             duration: 500,
          })
       }
-   }, [health])
+   }, [health, healthProcent, loading, maxHealth])
 
    /** Sets health according to some lambda. Saves health to disk */
    const setHealth = (someFunc: (oldHealth: number) => number) => {

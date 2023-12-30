@@ -187,7 +187,7 @@ const Draggable: FC<Props> = ({
                const dropInfo = findDropInfo(glyph)
                if (anchor && expectedChoice === glyph && dropInfo) {
                   dropSuccessful(dropInfo, anchor)
-               } else {
+               } else if (expectedChoice !== 'FINISH') {
                   dropMisstake()
                }
                setIsBeingDragged(false)

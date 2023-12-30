@@ -1,6 +1,6 @@
 import { router } from 'expo-router'
 import React, { FC } from 'react'
-import { View, Pressable } from 'react-native'
+import { Pressable } from 'react-native'
 import Animated, {
    interpolateColor,
    useAnimatedStyle,
