@@ -51,7 +51,6 @@ type Props = {
    isCorrectAnswer?: boolean
    setIsBeingDragged: (bool: boolean) => void
    isBeingDragged: boolean
-   clickable: boolean
    hintOnDrag: boolean
 } & ViewProps
 

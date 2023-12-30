@@ -1,7 +1,4 @@
 import React, { FC } from 'react'
-import { View } from 'react-native'
-
-import Alternative from './Alternative.1'
 
 type Props = {
    alts: { glyph: string }[]

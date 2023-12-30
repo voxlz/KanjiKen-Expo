@@ -1,12 +1,9 @@
 import React, { FC, useState } from 'react'
 import { Pressable, StyleProp, Text, TextStyle, ViewStyle } from 'react-native'
-import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils'
-import resolveConfig from 'tailwindcss/resolveConfig'
 
-import tailwindConfig from '../../tailwind.config'
 import { font } from '../utils/fonts'
 
-const fullConfig = resolveConfig(tailwindConfig)
+// const fullConfig = resolveConfig(tailwindConfig)
 
 // fullConfig.theme?.extend?.colors['forest']
 

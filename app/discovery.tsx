@@ -13,10 +13,8 @@ import { glyphDict } from '../src/data/glyphDict'
 import { Learnable } from '../src/types/progress'
 import { useContext } from '../src/utils/react'
 
-type Props = object
-
 /** Forgot to write a component discription. */
-const Discovery: FC<Props> = ({}) => {
+const Discovery: FC = () => {
    const scheduler = useContext(SchedulerContext)
    const prog = scheduler.getProgress()
    const glyphs = learnOrder.map((glyph: Learnable) => glyphDict[glyph])

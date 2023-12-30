@@ -6,7 +6,7 @@ import Animated, {
    useAnimatedStyle,
 } from 'react-native-reanimated'
 
-import Button, { ButtonStyles } from './Button'
+import { ButtonStyles } from './Button'
 import StyledButton from './StyledButton'
 import { ContinueAnimContext } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'

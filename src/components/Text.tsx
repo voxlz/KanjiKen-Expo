@@ -1,6 +1,6 @@
 import { StyledProps } from 'nativewind'
 import React, { FC } from 'react'
-import { Text as NativeText, StyleProp, TextStyle } from 'react-native'
+import { Text as NativeText, TextStyle } from 'react-native'
 
 import { font } from '../utils/fonts'
 

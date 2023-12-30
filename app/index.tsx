@@ -10,13 +10,21 @@ import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
 
 /** Homepage of the application. Where you start the exercises for example. */
-const Home: FC<object> = ({}) => {
+const Home: FC = () => {
    const [userName, setUserName] = useState<string>()
    const [userEmail, setUserEmail] = useState<string>()
    const [lastSynced, setLastSynced] = useState<string>('Not synced')
    // const [serverTouch, setServerTouch] = useState<Date>()
 
    const scheduler = useContext(SchedulerContext)
+
+   const updateUserInfo = useCallback(() => {
+      setUserName(
+         auth().currentUser?.displayName ??
+            (auth().currentUser ? 'unknown' : undefined)
+      )
+      setUserEmail(auth().currentUser?.email ?? undefined)
+   }, [])
 
    useEffect(() => {
       auth().onUserChanged((user) => {
@@ -25,14 +33,6 @@ const Home: FC<object> = ({}) => {
             updateUserInfo()
          }
       })
-   }, [])
-
-   const updateUserInfo = useCallback(() => {
-      setUserName(
-         auth().currentUser?.displayName ??
-            (auth().currentUser ? 'unknown' : undefined)
-      )
-      setUserEmail(auth().currentUser?.email ?? undefined)
    }, [])
 
    useFocusEffect(updateUserInfo)
@@ -53,7 +53,7 @@ const Home: FC<object> = ({}) => {
             console.log('same version as last time')
          } else {
             console.log('new version')
-            router.push('changelog')
+            router.push('ChangeLog')
             scheduler.validate()
          }
 
@@ -63,7 +63,7 @@ const Home: FC<object> = ({}) => {
             console.error('no version found')
          }
       })
-   }, [])
+   }, [scheduler])
 
    useEffect(() => {
       AsyncStorage.getItem('lastBackup').then((getTimeNum) =>
@@ -98,7 +98,7 @@ const Home: FC<object> = ({}) => {
                <StyledButton
                   text="Changelog"
                   styleName="normal"
-                  onPress={() => router.push('/changelog')}
+                  onPress={() => router.push('/ChangeLog')}
                />
                {(userEmail === 'torben.media@gmail.com' ||
                   userEmail === 'torben.nordtorp@gmail.com') && (

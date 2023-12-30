@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { View } from 'react-native'
 
 import CharacterGrid from './CharacterGrid'
 import {
@@ -22,6 +21,7 @@ const ChoicesButtons: FC<{ glyphInfo: GlyphInfo }> = ({ glyphInfo }) => {
    const onPress = (alt: GlyphInfo) => {
       const isCorrectAnswer = glyphInfo?.glyph === alt.glyph
       if (expectedChoice !== 'FINISH') {
+         // eslint-disable-next-line no-unused-expressions
          isCorrectAnswer ? onCorrectChoice?.() : addHealth(-10)
          return isCorrectAnswer
       }

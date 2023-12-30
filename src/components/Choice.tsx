@@ -2,10 +2,7 @@ import React, { FC, useState } from 'react'
 import { View, Pressable } from 'react-native'
 
 import Draggable from './Draggable'
-import {
-   ExpectedChoiceContext,
-   GlyphInfo,
-} from '../contexts/ChallengeContextProvider'
+import { GlyphInfo } from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import Interactable from '../displays/Interactable'
 import Outline from '../displays/Outline'
@@ -58,7 +55,6 @@ const Choice: FC<Props> = ({ altInfo, isCorrectAnswer, hintOnDrag }) => {
          >
             <Draggable
                anchor={anchor}
-               // width={glyphWidth}
                glyph={glyph}
                isCorrectAnswer={isCorrectAnswer}
                isBeingDragged={isBeingDragged}

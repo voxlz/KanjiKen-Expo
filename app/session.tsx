@@ -1,12 +1,20 @@
-import React, { FC } from 'react'
+import { registerRootComponent } from 'expo'
+import { StatusBar } from 'expo-status-bar'
+import React from 'react'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-import App from '../src/App'
+import Session from '../src/views/Session'
 
-type Props = object
+// Used for web to render tailwind
+// import "./src/input";
 
-/** Route to the kanjiken exercise session component */
-const SessionRoute: FC<Props> = ({}) => {
-   return <App />
+export default function App() {
+   return (
+      <GestureHandlerRootView className="w-full h-full max-w-full max-h-full">
+         <StatusBar style="auto" />
+         <Session />
+      </GestureHandlerRootView>
+   )
 }
 
-export default SessionRoute
+registerRootComponent(App)
