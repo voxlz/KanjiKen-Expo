@@ -27,10 +27,10 @@ const config = getDefaultConfig(__dirname)
 
 // Override default config to allow for SVG
 config.transformer.babelTransformerPath = require.resolve(
-    'react-native-svg-transformer'
+   'react-native-svg-transformer'
 )
 config.resolver.assetExts = config.resolver.assetExts.filter(
-    (ext) => ext !== 'svg'
+   (ext) => ext !== 'svg'
 )
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg', 'cjs']
 config.resolver.assetExts = [...config.resolver.assetExts, 'md', 'txt'] // bundle md and txt files
