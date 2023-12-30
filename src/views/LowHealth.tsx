@@ -10,11 +10,10 @@ import { View } from 'react-native'
 
 import ClockIcon from '../../assets/icons/ph_clock-duotone.svg'
 import SwordIcon from '../../assets/icons/ph_kanjiken-sword.svg'
-import TextView from '../components/TextView'
 import StyledButton from '../components/StyledButton'
+import TextView from '../components/TextView'
 import {
    RefreshHealthBarContext,
-   RelativeHealthContext,
    SetHealthRegenContext,
    TimeTillFullHealthContext,
    setIsDeadContext,

@@ -25,6 +25,7 @@ import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../context
 import { glyphDict } from '../data/glyphDict'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
+import { NewExerciseHealthContext } from '../contexts/HealthContextProvider'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {
@@ -39,6 +40,7 @@ const Session: FC = () => {
    const resetSkillAnim = useContext(ResetSkillAnimContext)
    const glyphWidth = useContext(GlyphWidthContext)
    const quit = useContext(setIsDeadContext)
+   const newExerciseHealth = useContext(NewExerciseHealthContext)
 
    const relativeHealth = useContext(RelativeHealthContext)
 
@@ -50,6 +52,9 @@ const Session: FC = () => {
       useState<ButtonStyles>('forest')
 
    const nextExercise = useCallback(() => {
+      // Ensure we take damage during this exercise
+      newExerciseHealth()
+
       // If we are currently on an exercise, mark as reviewd and go to next.
       if (exercise) {
          resetSkillAnim()
@@ -93,6 +98,7 @@ const Session: FC = () => {
       return undefined
    }, [
       exercise,
+      newExerciseHealth,
       quit,
       relativeHealth.value,
       resetSkillAnim,
