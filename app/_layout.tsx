@@ -21,7 +21,6 @@ import { View } from 'react-native'
 import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
 import GlyphWidthContextProvider from '../src/contexts/GlyphWidthContextProvider'
 import HealthContextProvider from '../src/contexts/HealthContextProvider'
-import OnAuthChange from '../src/contexts/OnAuthChange'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import {} from '../src/globalState/DropInfo'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
@@ -54,25 +53,23 @@ export default function Layout() {
       <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
          <GlyphWidthContextProvider>
             <SchedulerContextProvider>
-               <OnAuthChange>
-                  <HealthContextProvider>
-                     <TaskAnimContextProvider>
-                        <ChallengeContextProvider>
-                           <StatusBar backgroundColor="white" />
-                           <Stack
-                              screenOptions={{
-                                 headerShown: false,
-                                 contentStyle: {
-                                    backgroundColor: 'white',
-                                    flexGrow: 1,
-                                 },
-                              }}
-                              initialRouteName="/home"
-                           />
-                        </ChallengeContextProvider>
-                     </TaskAnimContextProvider>
-                  </HealthContextProvider>
-               </OnAuthChange>
+               <HealthContextProvider>
+                  <TaskAnimContextProvider>
+                     <ChallengeContextProvider>
+                        <StatusBar backgroundColor="white" />
+                        <Stack
+                           screenOptions={{
+                              headerShown: false,
+                              contentStyle: {
+                                 backgroundColor: 'white',
+                                 flexGrow: 1,
+                              },
+                           }}
+                           initialRouteName="/home"
+                        />
+                     </ChallengeContextProvider>
+                  </TaskAnimContextProvider>
+               </HealthContextProvider>
             </SchedulerContextProvider>
          </GlyphWidthContextProvider>
       </View>

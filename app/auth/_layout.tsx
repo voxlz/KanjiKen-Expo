@@ -5,10 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ExitBtn } from '../../src/components/HealthBar'
 
-type Props = object
-
 /** Wrapper view for login routes */
-const _layout: FC<Props> = ({}) => (
+const _layout: FC = () => (
    <SafeAreaView className="flex-grow">
       <Pressable
          onPress={() => Keyboard.dismiss()}

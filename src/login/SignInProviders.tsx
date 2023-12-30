@@ -10,10 +10,8 @@ import { View, Platform } from 'react-native'
 import ProviderBtn from './ProviderBtn'
 import GoogleLogo from '../../assets/logos/google.svg'
 
-type Props = object
-
 /** Provide google and apple sign in options */
-const SignInProviders: FC<Props> = ({}) => (
+const SignInProviders: FC = () => (
    <>
       <View style={{ gap: 12 }} className="flex-col w-full">
          <ProviderBtn

@@ -9,8 +9,8 @@ type Props = {
 
 /** Forgot to write a component discription. */
 const TextBox: FC<Props> = ({ text, boxClasses, textClasses }) => (
-   <View className={boxClasses ?? ' ' + ' flex-grow justify-center'}>
-      <Text className={textClasses ?? ' ' + ' text-center'} children={text} />
+   <View className={boxClasses ?? '  flex-grow justify-center'}>
+      <Text className={textClasses ?? '  text-center'} children={text} />
    </View>
 )
 

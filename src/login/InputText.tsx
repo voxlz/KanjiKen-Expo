@@ -1,4 +1,3 @@
-import { router } from 'expo-router'
 import React from 'react'
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import { View, Text, TextInput, Pressable } from 'react-native'

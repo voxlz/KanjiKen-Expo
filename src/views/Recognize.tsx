@@ -9,10 +9,8 @@ import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import { useContext } from '../utils/react'
 
-type Props = object
-
 /** Drag components to build a glyph */
-const Recognize: FC<Props> = ({}) => {
+const Recognize: FC = () => {
    const scheduler = useContext(SchedulerContext)
    const solution = glyphDict[scheduler.getCurrent().glyph]
    return (
@@ -29,7 +27,6 @@ const Recognize: FC<Props> = ({}) => {
             ChoicesComp={
                <DraggableChoicesButtons
                   hintOnDrag={false}
-                  clickable
                   isCorrectAnswer={(glyph) => solution?.glyph === glyph}
                />
             }

@@ -28,7 +28,7 @@ export const dropsReducer = (
             dropInfoEqual(newInfo, oldInfo)
          )
          const value =
-            idx != -1
+            idx !== -1
                ? dropInfoArr.map((oldInfo, i) =>
                     i === idx ? newInfo : oldInfo
                  )

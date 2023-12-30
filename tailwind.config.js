@@ -14,7 +14,6 @@ module.exports = {
             'noto-thin': 'noto-thin',
             'noto-light': 'noto-light',
             'noto-reg': 'noto-reg',
-            'noto-md': 'noto-md',
             'noto-bold': 'noto-bold',
             'noto-black': 'noto-black',
             'klee-reg': 'klee-reg',
