@@ -4,6 +4,7 @@ import { View, Text } from 'react-native'
 
 import ScheduleHandler from '../scheduler/scheduleHandler'
 import { createContext } from '../utils/react'
+import LoadingScreen from '../components/LoadingScreen'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
 
@@ -58,12 +59,7 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
    //         }
    // }, [loaded])
 
-   if (!loaded)
-      return (
-         <View className="flex-grow justify-center items-center">
-            <Text>Loading</Text>
-         </View>
-      )
+   if (!loaded) return <LoadingScreen />
 
    return (
       <SchedulerContext.Provider value={scheduler}>

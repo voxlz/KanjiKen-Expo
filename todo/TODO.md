@@ -64,6 +64,7 @@ Sync update.
 | #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save                            |
 | #?? | ↑    | Fixed icon looking zoomed in on android                                        |
 | #?? | ↑    | Fixed health regen: Sensible default values for new users + improved animation |
+| #?? | ↑    | Performance optimizations                                                      |
 
 ### v0.3.0
 

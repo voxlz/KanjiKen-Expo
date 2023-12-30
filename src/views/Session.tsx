@@ -25,6 +25,7 @@ import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../context
 import { glyphDict } from '../data/glyphDict'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
+import LoadingScreen from '../components/LoadingScreen'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC<object> = ({}) => {
@@ -101,7 +102,7 @@ const Session: FC<object> = ({}) => {
       return undefined
    }
 
-   if (!exercise) return <Text>ERRORRRR</Text>
+   if (!exercise) return <LoadingScreen />
 
    return (
       <Animated.View className="items-center w-full h-full flex-grow">

@@ -10,7 +10,7 @@ import { View } from 'react-native'
 
 import ClockIcon from '../../assets/icons/ph_clock-duotone.svg'
 import SwordIcon from '../../assets/icons/ph_kanjiken-sword.svg'
-import Text from '../../src/components/Text'
+import TextView from '../components/TextView'
 import StyledButton from '../components/StyledButton'
 import {
    RefreshHealthBarContext,
@@ -69,18 +69,18 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
                   >
                      {enoughHealth ? <SwordIcon /> : <ClockIcon />}
                      <View className="items-center mb-16 mt-10">
-                        <Text
+                        <TextView
                            className="text-black text-2xl"
                            style={{ fontFamily: 'noto-black' }}
                         >
                            {enoughHealth ? 'Good to go' : 'Low Health'}
-                        </Text>
-                        <Text style={{ fontFamily: 'noto-reg' }}>
+                        </TextView>
+                        <TextView style={{ fontFamily: 'noto-reg' }}>
                            {timeTillFullHealth()
                               ? 'Full health will finish restoring in ' +
                                 timeTillFullHealth()
                               : 'Full health has been restored'}
-                        </Text>
+                        </TextView>
                      </View>
                   </View>
                   <StyledButton

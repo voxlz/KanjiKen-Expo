@@ -10,7 +10,7 @@ type Props = {
 }
 
 /** Wrapper around text to make auto-importing easier, ensure KanjiKen-font is used where possible. */
-const Text: FC<StyledProps<Props>> = ({ children, style, className }) => (
+const TextView: FC<StyledProps<Props>> = ({ children, style, className }) => (
    <NativeText
       style={[{ fontFamily: font(children, style?.fontFamily) }, style]}
       className={className}
@@ -19,4 +19,4 @@ const Text: FC<StyledProps<Props>> = ({ children, style, className }) => (
    </NativeText>
 )
 
-export default Text
+export default TextView
