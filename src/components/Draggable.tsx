@@ -1,24 +1,11 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useCallback } from 'react'
 import {
     LayoutAnimation,
     NativeModules,
     Platform,
     ViewProps,
 } from 'react-native'
-import {
-    findDrop as findDropInfo,
-    hoverRef,
-    updateDrops as updateDropInfo,
-    updateHoverRef as updateHoverPos,
-} from '../globalState/DropInfo'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
-import {
-    ExpectedChoiceContext,
-    OnCorrectChoiceContext,
-} from '../contexts/ChallengeContextProvider'
-import GlyphHint from './GlyphHint'
-import { DropInfo, MeasureType } from '../types/dropInfo'
-import { AddHealthContext } from '../contexts/HealthContextProvider'
 import Animated, {
     Extrapolation,
     interpolate,
@@ -27,13 +14,27 @@ import Animated, {
     withSpring,
     withTiming,
 } from 'react-native-reanimated'
-import { useContext } from '../utils/react'
-import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
-import { Learnable } from '../types/progress'
-import { glyphDict } from '../data/glyphDict'
+
+import GlyphHint from './GlyphHint'
+import {
+    ExpectedChoiceContext,
+    OnCorrectChoiceContext,
+} from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
+import { AddHealthContext } from '../contexts/HealthContextProvider'
+import { ContinueAnimInstantResetContext } from '../contexts/TaskAnimContextProvider'
+import { glyphDict } from '../data/glyphDict'
+import {
+    findDrop as findDropInfo,
+    hoverRef,
+    updateDrops as updateDropInfo,
+    updateHoverRef as updateHoverPos,
+} from '../globalState/DropInfo'
+import { DropInfo, MeasureType } from '../types/dropInfo'
+import { Learnable } from '../types/progress'
 import { defaultGap } from '../utils/consts'
 import { structuredClone } from '../utils/js'
+import { useContext } from '../utils/react'
 
 const { UIManager } = NativeModules
 
@@ -95,7 +96,7 @@ const Draggable: FC<Props> = ({
         dragStartTranslate: { x: 0, y: 0 },
         dragStartSize: {
             height: width,
-            width: width,
+            width,
         },
         droppedBefore: false,
     })
@@ -152,6 +153,12 @@ const Draggable: FC<Props> = ({
         }
     }
 
+    const dropMisstake = useCallback(() => {
+        console.log('drop user misstake', dragState.currentSize)
+        addHealth(-10)
+        dropCancelled()
+    }, [])
+
     /** TAP - Memo'd as recommended in documentation */
     const tap = React.useMemo(
         () =>
@@ -160,21 +167,23 @@ const Draggable: FC<Props> = ({
                 .runOnJS(true)
                 .onStart(() => {
                     // console.log('click detected')
-                    const a = performance.now()
+                    // const a = performance.now()
                     prepForLayout()
                     const dropInfo = findDropInfo(glyph)
                     if (anchor && expectedChoice === glyph && dropInfo) {
                         dropSuccessful(dropInfo, anchor)
+                    } else {
+                        dropMisstake()
                     }
                     setIsBeingDragged(false)
-                    const e = performance.now()
+                    // const e = performance.now()
                     // console.log('click complete: ', e - a + ' ms')
                     // console.log('prepForLayout complete: ', b - a + ' ms')
                     // console.log('dropInfo complete: ', c - b + ' ms')
                     // console.log('dropSuccessful complete: ', d - c + ' ms')
                     // console.log('setIsBeingDragged complete: ', e - d + ' ms')
                 }),
-        [anchor, expectedChoice, glyph, prepForLayout]
+        [anchor, expectedChoice, glyph, prepForLayout, dropMisstake]
     )
 
     /** DRAG - Memo'd as recommended in documentation*/
@@ -245,9 +254,7 @@ const Draggable: FC<Props> = ({
                         !hover?.containsGlyph &&
                         hover
                     ) {
-                        console.log('failed', dragState.droppedBefore)
-                        addHealth(-10)
-                        dropCancelled()
+                        dropMisstake()
                     }
                     // Drop cancelled.
                     else {
@@ -294,6 +301,28 @@ const Draggable: FC<Props> = ({
         scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
     }, [isBeingDragged])
 
+    const animStyle = useAnimatedStyle(
+        () => ({
+            opacity: interpolate(
+                animationInstantReset.value,
+                [-1, 0, 1],
+                [1, 1, 0],
+                Extrapolation.EXTEND
+            ),
+            transform: [
+                {
+                    scale: interpolate(
+                        animationInstantReset.value,
+                        [-1, 0, 1],
+                        [1, 1.2, 0.5],
+                        Extrapolation.EXTEND
+                    ),
+                },
+            ],
+        }),
+        [animationInstantReset.value]
+    )
+
     return (
         <GestureDetector gesture={composed}>
             <Animated.View
@@ -303,7 +332,7 @@ const Draggable: FC<Props> = ({
                     transform: [
                         { translateX: transX },
                         { translateY: transY },
-                        { scale: scale },
+                        { scale },
                     ],
                     zIndex: isBeingDragged ? 10 : 1,
                     elevation: isBeingDragged ? 10 : 1,
@@ -323,28 +352,7 @@ const Draggable: FC<Props> = ({
             >
                 <Animated.View
                     className="flex-grow"
-                    style={
-                        isCorrectAnswer
-                            ? useAnimatedStyle(() => ({
-                                  opacity: interpolate(
-                                      animationInstantReset.value,
-                                      [-1, 0, 1],
-                                      [1, 1, 0],
-                                      Extrapolation.EXTEND
-                                  ),
-                                  transform: [
-                                      {
-                                          scale: interpolate(
-                                              animationInstantReset.value,
-                                              [-1, 0, 1],
-                                              [1, 1.2, 0.5],
-                                              Extrapolation.EXTEND
-                                          ),
-                                      },
-                                  ],
-                              }))
-                            : {}
-                    }
+                    style={isCorrectAnswer ? animStyle : {}}
                 >
                     {children}
                 </Animated.View>
