@@ -19,13 +19,13 @@ import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import {
    RelativeHealthContext,
    setIsDeadContext,
+   NewExerciseHealthContext,
 } from '../contexts/HealthContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
-import { NewExerciseHealthContext } from '../contexts/HealthContextProvider'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {

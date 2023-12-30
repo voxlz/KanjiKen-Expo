@@ -5,7 +5,12 @@ import {
    Platform,
    ViewProps,
 } from 'react-native'
-import { GestureDetector, Gesture } from 'react-native-gesture-handler'
+import {
+   GestureDetector,
+   Gesture,
+   GestureUpdateEvent,
+   PanGestureHandlerEventPayload,
+} from 'react-native-gesture-handler'
 import Animated, {
    Extrapolation,
    interpolate,
@@ -173,6 +178,23 @@ const Draggable: FC<Props> = ({
       dropCancelled()
    }, [addHealth, dropCancelled])
 
+   const calcAndUpdateHoverPos = useCallback(
+      (drag: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
+         console.log('calc and update')
+         const center = width / 2
+
+         // Drag x & y seem kinda bad, but the following seems to keep the hit-box in the middle somewhat. Let's hope it's not screen specific
+         const topLeftX = drag.absoluteX - drag.x - 5
+         const topLeftY = drag.absoluteY - drag.y + 30
+
+         updateHoverPos({
+            x: topLeftX + center,
+            y: topLeftY + center,
+         })
+      },
+      [width]
+   )
+
    /** TAP - Memo'd as recommended in documentation */
    const tap = React.useMemo(
       () =>
@@ -223,20 +245,16 @@ const Draggable: FC<Props> = ({
                   })
             })
             .onChange((drag) => {
-               // Since user might have started drag by dragging edge, check hover based on draggable center instead.
-               const center = width / 2
-               const cxDiff = center - drag.x
-               const cyDiff = center - drag.y
-               updateHoverPos({
-                  x: drag.absoluteX + cxDiff,
-                  y: drag.absoluteY + cyDiff,
-               })
+               calcAndUpdateHoverPos(drag)
 
                let tx = drag.translationX
                let ty = drag.translationY
 
+               const isDragDisabled =
+                  dragState.droppedBefore || expectedChoice === 'FINISH'
+
                // Respond to drag, but "don't let them move it"
-               if (dragState.droppedBefore || expectedChoice === 'FINISH') {
+               if (isDragDisabled) {
                   tx =
                      tx < 0
                         ? -Math.log2(Math.abs(tx / 20 - 1)) * 5 - 1
@@ -246,10 +264,14 @@ const Draggable: FC<Props> = ({
                         ? -Math.log2(Math.abs(ty / 20 - 1)) * 5 - 1
                         : Math.log2(Math.abs(ty / 20 + 1)) * 5 + 1
                }
+
+               // Apply drag
                transX.value = dragState.dragStartTranslate.x + tx
                transY.value = dragState.dragStartTranslate.y + ty
             })
-            .onEnd(() => {
+            .onEnd((drag) => {
+               calcAndUpdateHoverPos(drag)
+
                setIsBeingDragged(false)
                prepForLayout()
 
@@ -289,7 +311,7 @@ const Draggable: FC<Props> = ({
          dragState.droppedBefore,
          dragState.dragStartTranslate.x,
          dragState.dragStartTranslate.y,
-         width,
+         calcAndUpdateHoverPos,
          expectedChoice,
          transX,
          transY,

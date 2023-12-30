@@ -44,7 +44,7 @@ const KanjiSkillTemplate: FC<Props> = ({
             scale: interpolate(
                animationInstantReset.value,
                [-1, 0, 1],
-               [1, 1.2, 0.5],
+               [1, 1.2, 1],
                Extrapolation.EXTEND
             ),
          },

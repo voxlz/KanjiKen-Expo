@@ -5,8 +5,9 @@ import { DropInfo, XY } from '../types/dropInfo'
 // The following few statements do exactly that
 
 export let hoverRef: DropInfo | undefined // access but won't trigger rerender on change
+export let hoverPos: XY | undefined
 
-let drops: DropInfo[] = [] // Global drops list
+export let drops: DropInfo[] = [] // Global drops list
 
 export const findDrop = (glyph?: string) =>
    drops.find((info) => info.glyph === glyph)
@@ -22,6 +23,7 @@ export const updateDrops = (newInfo: DropInfo) => {
 }
 
 export const updateHoverRef = (loc?: XY) => {
+   hoverPos = loc
    const newHover = drops.find(
       (drop) =>
          loc &&
