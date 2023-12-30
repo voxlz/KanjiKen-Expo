@@ -21,6 +21,8 @@ import {
 } from '../contexts/HealthContextProvider'
 import { useInterval } from '../hooks/useInterval'
 import { useContext } from '../utils/react'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider';
+import { SetChallengeContext } from '../contexts/ChallengeContextProvider';
 
 /** View before start of session, if not full health */
 const LowHealth: FC<PropsWithChildren> = ({ children }) => {
@@ -28,6 +30,8 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
    const refreshHealthbar = useContext(RefreshHealthBarContext)
    const setHealthRegen = useContext(SetHealthRegenContext)
    const setDeath = useContext(setIsDeadContext)
+   const scheduler = useContext(SchedulerContext)
+   const setChallenge = useContext(SetChallengeContext)
    const death = useContext(DeathContext)
 
    const [enoughHealth, setEnoughHealth] = useState(true)
@@ -93,6 +97,7 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
                         if (enoughHealth) {
                            setEnoughHealth(false)
                            setDeath(false)
+                           setChallenge(scheduler.getCurrent())
                         }
                      }}
                   />

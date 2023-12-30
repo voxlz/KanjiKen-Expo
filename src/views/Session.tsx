@@ -69,7 +69,6 @@ const Session: FC = () => {
       // Regardless, let's load the current challenge
       const next = scheduler.getCurrent()
       setExercise(next)
-
       setChallenge?.(next)
 
       switch (next.skill) {
