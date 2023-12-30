@@ -58,12 +58,12 @@ Sync update.
 
 #### Issues
 
-| #id | Prio | Description                                         |
-| --- | ---- | --------------------------------------------------- |
-| #?? | ^    | Fixed wrong font in kanji success box               |
-| #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save |
-| #?? | ↑    | Fixed icon looking zoomed in on android             |
-| #?? | ↑    | Health regen was very broken                        |
+| #id | Prio | Description                                                                    |
+| --- | ---- | ------------------------------------------------------------------------------ |
+| #?? | ^    | Fixed wrong font in kanji success box                                          |
+| #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save                            |
+| #?? | ↑    | Fixed icon looking zoomed in on android                                        |
+| #?? | ↑    | Fixed health regen: Sensible default values for new users + improved animation |
 
 ### v0.3.0
 

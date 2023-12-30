@@ -34,6 +34,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const [regenCache, setRegenCache] = useState<RegenObj>()
     const [isDead, _setIsDead] = useState(false)
     const scheduler = useContext(SchedulerContext)
+    const [loading, setLoading] = useState(true)
 
     const setIsDead = (newDead: boolean, newHealth?: number) => {
         _setIsDead((oldDead) => {
@@ -46,24 +47,26 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const healthProcent = useSharedValue((health / maxHealth) * 100)
     const healthColor = useSharedValue(1)
 
-    // If health changes, update healthProcent smoothly with animation
-    useEffect(() => {
-        console.log('set Health')
-        healthProcent.value = withTiming((health / maxHealth) * 100, {
-            duration: 500,
-        })
-    }, [health])
-
     // Instantly set health on load (Without animation)
     useEffect(() => {
-        console.log('set Helth INSTANT')
-        AsyncStorage.getItem('health', (err, res) => {
-            if (res) {
-                _setHealth(JSON.parse(res))
-                healthProcent.value = (health / maxHealth) * 100
-            }
-        })
-    }, [])
+        if (loading) {
+            AsyncStorage.getItem('health', (err, res) => {
+                if (res) {
+                    console.log('set Helth INSTANT')
+                    _setHealth(JSON.parse(res))
+                    healthProcent.value = (health / maxHealth) * 100
+                } else {
+                    healthProcent.value = 100
+                    _setHealth(maxHealth)
+                }
+            }).then(() => setLoading(false))
+        } else {
+            console.log('set Health')
+            healthProcent.value = withTiming((health / maxHealth) * 100, {
+                duration: 500,
+            })
+        }
+    }, [health])
 
     /** Sets health according to some lambda. Saves health to disk */
     const setHealth = (someFunc: (oldHealth: number) => number) => {
@@ -87,7 +90,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
     const getRegenObj = async (): Promise<RegenObj> => {
         const regenStr = await AsyncStorage.getItem('regen')
         if (!regenStr)
-            return { timeOfQuit: 0, healthPerMin: 0, healthLeftAtQuit: 0 }
+            return { timeOfQuit: 0, healthPerMin: 60, healthLeftAtQuit: 1000 }
         return JSON.parse(regenStr)
     }
 
@@ -130,6 +133,8 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
             })
 
         setHealth(() => newHealth)
+
+        console.log('REFRESH NEW HEALTH', newHealth)
         return (newHealth / maxHealth) * 100
     }
 

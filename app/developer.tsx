@@ -36,9 +36,12 @@ export default function developer({}: Props) {
                 }}
             />
             <StyledButton
-                text="delete local save"
+                text="delete local save and cashe"
                 styleName="danger"
-                onPress={scheduler.clearUserData}
+                onPress={() => {
+                    scheduler.clearUserData()
+                    AsyncStorage.clear()
+                }}
             />
             <StyledButton
                 text="delete apple account"
