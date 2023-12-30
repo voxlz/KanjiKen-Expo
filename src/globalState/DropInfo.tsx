@@ -16,7 +16,7 @@ export const clearDrops = () => (drops = [])
 export const updateDrops = (newInfo: DropInfo) => {
    const idx = drops.findIndex((oldInfo) => dropInfoEqual(newInfo, oldInfo))
    drops =
-      idx != -1
+      idx !== -1
          ? drops.map((oldInfo, i) => (i === idx ? newInfo : oldInfo))
          : [...drops, newInfo]
 }

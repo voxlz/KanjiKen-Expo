@@ -1,20 +1,13 @@
 import React, { FC } from 'react'
-import { View } from 'react-native'
 
 import KanjiSkillTemplate from './KanjiSkillTemplate'
-import Choice from '../components/Choice'
 import DraggableChoicesButtons from '../components/DraggableChoicesButtons'
 import KanjiComps from '../components/KanjiComps'
-import {
-   ChoicesContext,
-   ExpectedChoiceContext,
-   SeenCountContext,
-} from '../contexts/ChallengeContextProvider'
+import { SeenCountContext } from '../contexts/ChallengeContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import KanjiMeaning from '../displays/KanjiMeaning'
-import { defaultGap } from '../utils/consts'
 import { useContext } from '../utils/react'
 
 type Props = { glyphWidth: number; showPositionHints: boolean }

@@ -134,7 +134,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
          newExeState.expectedAnswer = newExpectedChoice
          setExeState(newExeState)
       },
-      [exeState, glyphDict]
+      [exeState, onOrderIdxChange, scheduler]
    )
 
    /** What happens when user answers correctly */
@@ -147,7 +147,7 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
          exeState.answerOrderIdx + 1
       )
       setExeState(newExeState)
-   }, [exeState, onOrderIdxChange, structuredClone, setExeState])
+   }, [exeState, onOrderIdxChange, setExeState])
 
    return (
       <SetChallengeContext.Provider value={setChallenge}>

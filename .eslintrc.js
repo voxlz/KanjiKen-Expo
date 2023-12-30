@@ -1,4 +1,8 @@
 module.exports = {
    root: true,
-   extends: ['universe/native'],
+   plugins: ['react-hooks'],
+   extends: ['universe/native', 'plugin:react-hooks/recommended'],
+   rules: {
+      'react-hooks/exhaustive-deps': ['warn'],
+   },
 }

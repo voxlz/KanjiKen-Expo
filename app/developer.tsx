@@ -9,9 +9,7 @@ import StyledButton from '../src/components/StyledButton'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
 
-type Props = object
-
-export default function developer({}: Props) {
+export default function Developer() {
    const scheduler = useContext(SchedulerContext)
    return (
       <View
@@ -71,7 +69,7 @@ export default function developer({}: Props) {
                            router.back()
                         })
                   })
-                  .catch((err) => console.error('err'))
+                  .catch((err) => console.error('err', err))
                console.log('token Revoked')
             }}
          />

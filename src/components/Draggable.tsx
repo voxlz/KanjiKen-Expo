@@ -100,44 +100,59 @@ const Draggable: FC<Props> = ({
       },
       droppedBefore: false,
    })
-   // const [currSize, setCurrentSize] = useState<Size>() // Set current size of the draggable
-   // const [dragStartTran, setDragStartTran] = useState({ x: 0, y: 0 }) // What translation did it had at drag start.
-   // const [dragStartSize, setDragStartSize] = useState({
-   //     height: width,
-   //     width: width,
-   // }) // What size did it had at drag start.
 
-   const dropSuccessful = (hover: DropInfo, anchor: MeasureType) => {
-      onCorrectChoice?.()
-      const newSize = {
-         width: hover.width,
-         height: hover.height,
-      }
-      const newTrans = {
-         x: hover.x - anchor.x,
-         y: hover.y - anchor.y,
-      }
+   // Move to new default position
+   const moveTo = useCallback(
+      (newPan: { x: number; y: number }) => {
+         const springConf = { mass: 1, damping: 23, stiffness: 253 }
+         transX.value = withSpring(newPan.x, springConf)
+         transY.value = withSpring(newPan.y, springConf)
+      },
+      [transX, transY]
+   )
 
-      const newDragState = structuredClone(dragState)
+   const dropSuccessful = useCallback(
+      (hover: DropInfo, anchor: MeasureType) => {
+         onCorrectChoice?.()
+         const newSize = {
+            width: hover.width,
+            height: hover.height,
+         }
+         const newTrans = {
+            x: hover.x - anchor.x,
+            y: hover.y - anchor.y,
+         }
 
-      if (
-         dragState.currentSize?.height !== newSize.height &&
-         dragState.currentSize?.width !== newSize.width
-      ) {
-         newDragState.currentSize = newSize
-         newDragState.dragStartSize = newSize
-      }
-      moveTo(newTrans)
+         const newDragState = structuredClone(dragState)
 
-      newDragState.droppedBefore = true
-      setDragState(newDragState)
+         if (
+            dragState.currentSize?.height !== newSize.height &&
+            dragState.currentSize?.width !== newSize.width
+         ) {
+            newDragState.currentSize = newSize
+            newDragState.dragStartSize = newSize
+         }
 
-      // Update containsGlyph in dropLocation
-      hover.containsGlyph = glyph
-      updateDropInfo(hover)
-   }
+         if (
+            dragState.dragStartTranslate.x !== newTrans.x &&
+            dragState.dragStartTranslate.y !== newTrans.y
+         ) {
+            newDragState.dragStartTranslate = newTrans
+         }
 
-   const dropCancelled = () => {
+         moveTo(newTrans)
+
+         newDragState.droppedBefore = true
+         setDragState(newDragState)
+
+         // Update containsGlyph in dropLocation
+         hover.containsGlyph = glyph
+         updateDropInfo(hover)
+      },
+      [dragState, glyph, moveTo, onCorrectChoice]
+   )
+
+   const dropCancelled = useCallback(() => {
       moveTo(dragState.dragStartTranslate)
       if (
          anchor &&
@@ -151,13 +166,13 @@ const Draggable: FC<Props> = ({
          }
          setDragState(newDragState)
       }
-   }
+   }, [anchor, dragState, moveTo])
 
    const dropMisstake = useCallback(() => {
-      console.log('drop user misstake', dragState.currentSize)
+      console.log('drop user misstake')
       addHealth(-10)
       dropCancelled()
-   }, [])
+   }, [addHealth, dropCancelled])
 
    /** TAP - Memo'd as recommended in documentation */
    const tap = React.useMemo(
@@ -183,7 +198,14 @@ const Draggable: FC<Props> = ({
                // console.log('dropSuccessful complete: ', d - c + ' ms')
                // console.log('setIsBeingDragged complete: ', e - d + ' ms')
             }),
-      [anchor, expectedChoice, glyph, prepForLayout, dropMisstake]
+      [
+         glyph,
+         anchor,
+         expectedChoice,
+         setIsBeingDragged,
+         dropSuccessful,
+         dropMisstake,
+      ]
    )
 
    /** DRAG - Memo'd as recommended in documentation*/
@@ -263,13 +285,20 @@ const Draggable: FC<Props> = ({
                setIsBeingDragged(false)
             }),
       [
+         setIsBeingDragged,
+         dragState.currentSize,
+         dragState.droppedBefore,
+         dragState.dragStartTranslate.x,
+         dragState.dragStartTranslate.y,
+         width,
+         expectedChoice,
          transX,
          transY,
+         glyph,
          anchor,
-         expectedChoice,
-         prepForLayout,
-         setIsBeingDragged,
-         dragState,
+         dropSuccessful,
+         dropMisstake,
+         dropCancelled,
       ]
    )
 
@@ -278,25 +307,10 @@ const Draggable: FC<Props> = ({
       [tap, drag]
    )
 
-   // Move to new default position
-   const moveTo = (newpan: { x: number; y: number }) => {
-      const springConf = { mass: 1, damping: 23, stiffness: 253 }
-      transX.value = withSpring(newpan.x, springConf)
-      transY.value = withSpring(newpan.y, springConf)
-      if (
-         dragState.dragStartTranslate.x !== newpan.x &&
-         dragState.dragStartTranslate.y !== newpan.y
-      ) {
-         const newDragState = structuredClone(dragState)
-         newDragState.dragStartTranslate = newpan
-         setDragState(newDragState)
-      }
-   }
-
    // Update scale while being dragged
    useEffect(() => {
       scale.value = withTiming(isBeingDragged ? 1.2 : 1, { duration: 50 })
-   }, [isBeingDragged])
+   }, [isBeingDragged, scale])
 
    const animStyle = useAnimatedStyle(
       () => ({
@@ -320,26 +334,34 @@ const Draggable: FC<Props> = ({
       [animationInstantReset.value]
    )
 
+   const parentStyle = useAnimatedStyle(
+      () => ({
+         transform: [
+            { translateX: transX.value },
+            { translateY: transY.value },
+            { scale: scale.value },
+         ],
+         zIndex: isBeingDragged ? 10 : 1,
+         elevation: isBeingDragged ? 10 : 1,
+         height: dragState.currentSize ? dragState.currentSize.height : width,
+         width: dragState.currentSize ? dragState.currentSize.width : width,
+      }),
+      [
+         transX,
+         transY,
+         isBeingDragged,
+         scale,
+         dragState.currentSize?.height,
+         dragState.currentSize?.width,
+      ]
+   )
+
    return (
       <GestureDetector gesture={composed}>
          <Animated.View
             id="animate_position"
             className="absolute"
-            style={{
-               transform: [
-                  { translateX: transX },
-                  { translateY: transY },
-                  { scale },
-               ],
-               zIndex: isBeingDragged ? 10 : 1,
-               elevation: isBeingDragged ? 10 : 1,
-               height: dragState.currentSize
-                  ? dragState.currentSize.height
-                  : width,
-               width: dragState.currentSize
-                  ? dragState.currentSize.width
-                  : width,
-            }}
+            style={parentStyle}
             hitSlop={{
                top: defaultGap / 2,
                bottom: defaultGap / 2,
