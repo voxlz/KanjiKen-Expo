@@ -1,63 +1,63 @@
 {
-    "expo": {
-        "name": "KanjiKen",
-        "slug": "Kanjiken",
-        "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
-        "version": "0.4.0",
-        "android": {
-            "googleServicesFile": "./keys/google-services.json",
-            "versionCode": 5,
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            },
-            "package": "com.voxlz.KanjiKen"
-        },
-        "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "scheme": "kanjiken",
-        "userInterfaceStyle": "light",
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "contain",
+   "expo": {
+      "name": "KanjiKen",
+      "slug": "Kanjiken",
+      "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
+      "version": "0.4.0", // <- change when updating the version
+      "android": {
+         "versionCode": 5, // <- change when updating the version
+         "googleServicesFile": "./keys/google-services.json",
+         "adaptiveIcon": {
+            "foregroundImage": "./assets/adaptive-icon.png",
             "backgroundColor": "#ffffff"
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.voxlz.KanjiKen",
-            "googleServicesFile": "./keys/GoogleService-Info.plist",
-            "usesAppleSignIn": true
-        },
-        "web": {
-            "favicon": "./assets/favicon.png",
-            "bundler": "metro"
-        },
-        "extra": {
-            "eas": {
-                "projectId": "57852673-b0dd-4a4a-abc2-be6e438afbab"
+         },
+         "package": "com.voxlz.KanjiKen"
+      },
+      "orientation": "portrait",
+      "icon": "./assets/icon.png",
+      "scheme": "kanjiken",
+      "userInterfaceStyle": "light",
+      "splash": {
+         "image": "./assets/splash.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#ffffff"
+      },
+      "assetBundlePatterns": ["**/*"],
+      "ios": {
+         "supportsTablet": true,
+         "bundleIdentifier": "com.voxlz.KanjiKen",
+         "googleServicesFile": "./keys/GoogleService-Info.plist",
+         "usesAppleSignIn": true
+      },
+      "web": {
+         "favicon": "./assets/favicon.png",
+         "bundler": "metro"
+      },
+      "extra": {
+         "eas": {
+            "projectId": "57852673-b0dd-4a4a-abc2-be6e438afbab"
+         }
+      },
+      "plugins": [
+         "expo-router",
+         "@react-native-google-signin/google-signin",
+         "@react-native-firebase/app",
+         "@react-native-firebase/perf",
+         "@react-native-firebase/crashlytics",
+         "@react-native-firebase/auth",
+         [
+            "expo-build-properties",
+            {
+               "ios": {
+                  "useFrameworks": "static"
+               }
             }
-        },
-        "plugins": [
-            "expo-router",
-            "@react-native-google-signin/google-signin",
-            "@react-native-firebase/app",
-            "@react-native-firebase/perf",
-            "@react-native-firebase/crashlytics",
-            "@react-native-firebase/auth",
-            [
-                "expo-build-properties",
-                {
-                    "ios": {
-                        "useFrameworks": "static"
-                    }
-                }
-            ],
-            "expo-apple-authentication"
-        ]
-    },
-    "react-native-google-mobile-ads": {
-        "android_app_id": "ca-app-pub-7133855988692619~5171765150",
-        "ios_app_id": "ca-app-pub-7133855988692619~4721511508"
-    }
+         ],
+         "expo-apple-authentication"
+      ]
+   },
+   "react-native-google-mobile-ads": {
+      "android_app_id": "ca-app-pub-7133855988692619~5171765150",
+      "ios_app_id": "ca-app-pub-7133855988692619~4721511508"
+   }
 }

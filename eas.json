@@ -1,21 +1,28 @@
 {
-    "cli": {
-        "version": ">= 5.6.0"
-    },
-    "build": {
-        "development": {
-            "developmentClient": true,
-            "distribution": "internal"
-        },
-        "preview": {
-            "ios": {
-                "simulator": true
-            },
-            "distribution": "internal"
-        },
-        "production": {}
-    },
-    "submit": {
-        "production": {}
-    }
+   "cli": {
+      "version": ">= 5.6.0"
+   },
+   "build": {
+      "development": {
+         "developmentClient": true,
+         "distribution": "internal",
+         "env": {
+            "APP_ENV": "development"
+         }
+      },
+      "preview": {
+         "ios": {
+            "simulator": true
+         },
+         "distribution": "internal"
+      },
+      "production": {
+         "env": {
+            "APP_ENV": "production"
+         }
+      }
+   },
+   "submit": {
+      "production": {}
+   }
 }

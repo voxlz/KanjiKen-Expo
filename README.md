@@ -1,6 +1,6 @@
 # KanjiKen
 
-The kanji app to end all other kanji apps. Hopefully.
+The kanji app to end all other kanji apps.
 
 ## Installation
 
@@ -21,7 +21,7 @@ The kanji app to end all other kanji apps. Hopefully.
     git submodule update --init --recursive
     ```
 
-## Developing
+## Development
 
 For starting the expo client, run:
 
@@ -29,22 +29,34 @@ For starting the expo client, run:
 yarn start
 ```
 
-### iOS
+### Development clients
 
-To create a development client for ios, do the following:
+We are using native code in this project, so development clients must be used to test on device. (Expo GO does not work with native plugins.)
+
+#### iOS
 
 ```bash
 eas login
-eas device:create
+eas device:create 
 eas build --profile development --platform ios
 ```
 
-### Android
+#### Android
 
 ```bash
 eas login
 eas build --profile development --platform android
 ```
+
+## Building
+
+We use EAS to build the app. The following command should be used to build and publish the apps for testing.
+
+```bash
+eas build --profile production --platform all
+```
+
+## Debugging
 
 To get debug logs
 
@@ -57,6 +69,7 @@ adb logcat "*:E"
 ```
 
 When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
+
 
 ## Admob
 
