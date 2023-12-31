@@ -35,6 +35,7 @@ Use the the following versioning system: vs.m.b
 | #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
 | #6  | -    | Duplicate characters all fade out in composition, even if only one was used.              |
 | #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                  |
+| #?? | ^    | Death now triggers between 2 exercises, instead of during one.                            |
 
 ## Changelog
 
@@ -42,7 +43,7 @@ Use the the following versioning system: vs.m.b
 
 #### UpdateDesc
 
-Sync update.
+Sync update. Bunch of bug fixes / polish. We are closing in on the first stable build. Hurray!
 
 #### Features
 
@@ -54,16 +55,16 @@ Sync update.
 
 #### Issues
 
-| #id | Prio | Description                                                                    |
-| --- | ---- | ------------------------------------------------------------------------------ |
-| #?? | ^    | Fixed wrong font in kanji success box                                          |
-| #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save                            |
-| #?? | ↑    | Fixed icon looking zoomed in on android                                        |
-| #?? | ↑    | Fixed health regen: Sensible default values for new users + improved animation |
-| #?? | ↑    | Performance optimizations                                                      |
-| #11 | -    | Probably fixed dragging accuracy???                                            |
-| #?? | -    | Fixed tapping does not register as wrong                                       |
-| #?? | -    | Fixed tapping does not work in compose exercises                               |
+| #id | Prio | Description                                                                         |
+| --- | ---- | ----------------------------------------------------------------------------------- |
+| #?? | ^    | Fixed wrong font in kanji success box                                               |
+| #?? | ↑    | Fixed hardlock crash about 8 lessons in on new save                                 |
+| #?? | ↑    | Fixed icon looking zoomed in on android                                             |
+| #?? | ↑    | Fixed health regen: Sensible default values for new users + improved animation      |
+| #?? | ↑    | Performance optimizations                                                           |
+| #11 | -    | Experemented some more with dragging accuracy. Please report if it's better / worse |
+| #?? | -    | Fixed tapping does not register as wrong                                            |
+| #?? | -    | Fixed tapping does not work in compose exercises                                    |
 
 ### v0.3.0
 
@@ -81,11 +82,10 @@ lead the way for cloud backup in a coming update. Merry Christmas!
 
 #### Issues
 
-| #id | Prio | Description                                                    |
-| --- | ---- | -------------------------------------------------------------- |
-| #?? | ^    | You can now drag in the recognize skill as well.               |
-| #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
-| #?? | ^    | Fixed issue with custom radicals not rendering properly        |
+| #id | Prio | Description                                             |
+| --- | ---- | ------------------------------------------------------- |
+| #?? | ^    | You can now drag in the recognize skill as well.        |
+| #?? | ^    | Fixed issue with custom radicals not rendering properly |
 
 ### v0.2.0
 
