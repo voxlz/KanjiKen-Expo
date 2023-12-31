@@ -1,0 +1,10 @@
+node_modules
+dict
+/.git
+/.vscode
+/.pytest_cache
+/.expo
+__mocks__
+**/*.test.ts
+android
+ios

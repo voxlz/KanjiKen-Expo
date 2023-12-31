@@ -1,5 +1,10 @@
 import { ExpoConfig, ConfigContext } from 'expo/config'
 
+const identifier =
+   process.env.APP_ENV === 'production'
+      ? 'com.voxlz.KanjiKen'
+      : 'com.voxlz.KanjiKen-dev'
+
 // loads app.json first and then runs the following, sending app.json values through config object
 // Override dynamic values here!
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -11,9 +16,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
          : config.name! + ' (DEV)',
    ios: {
       ...config.ios,
-      bundleIdentifier:
-         process.env.APP_ENV === 'production'
-            ? config.ios?.bundleIdentifier!
-            : config.ios?.bundleIdentifier + '-dev',
+      bundleIdentifier: identifier,
    },
+   android: {
+      ...config.android,
+      adaptiveIcon: {
+         ...config.android?.adaptiveIcon,
+         foregroundImage:
+            process.env.APP_ENV === 'production'
+               ? './assets/adaptive-icon.png'
+               : './assets/adaptive-icon-dev.png',
+      },
+      package: identifier,
+   },
+   icon:
+      process.env.APP_ENV === 'production'
+         ? './assets/icon.png'
+         : './assets/icon-dev.png',
 })
