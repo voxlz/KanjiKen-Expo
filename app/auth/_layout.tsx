@@ -10,12 +10,12 @@ const _layout: FC = () => (
    <SafeAreaView className="flex-grow">
       <Pressable
          onPress={() => Keyboard.dismiss()}
-         className="justify-center flex-grow"
+         className="justify-center flex-grow flex-col px-8"
       >
-         <View className="items-start absolute top-8 left-8">
+         <View className="items-end mt-8">
             <ExitBtn height={20} />
          </View>
-         <View className="px-6 w-[400px] m-auto min-w-sm max-w-[90%] pb-20 ">
+         <View className="flex-grow min-w-sm pb-20 mt-[20%]">
             <Slot />
          </View>
       </Pressable>

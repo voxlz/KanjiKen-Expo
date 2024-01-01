@@ -39,6 +39,21 @@ Use the the following versioning system: vs.m.b
 
 ## Changelog
 
+### v0.4.1
+
+#### UpdateDesc
+
+#### Features
+
+| #id | Prio | Description |
+| --- | ---- | ----------- |
+
+#### Issues
+
+| #id | Prio | Description                                              |
+| --- | ---- | -------------------------------------------------------- |
+| #?? | ^    | Fixed crash when trying to log in with emtpy email field |
+
 ### v0.4.0
 
 #### UpdateDesc

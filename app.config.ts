@@ -17,6 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
    ios: {
       ...config.ios,
       bundleIdentifier: identifier,
+      googleServicesFile: process.env.GOOGLE_SERVICE_INFO,
    },
    android: {
       ...config.android,
@@ -28,6 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                : './assets/adaptive-icon-dev.png',
       },
       package: identifier,
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
    },
    icon:
       process.env.APP_ENV === 'production'

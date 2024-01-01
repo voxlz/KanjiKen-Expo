@@ -22,56 +22,69 @@ const UserLoginView: FC = () => {
 
    const signInWithEmail: SubmitHandler<Form> = (data) => {
       console.log('login attempt', data)
-      auth()
-         .signInWithEmailAndPassword(data.Email, data.Password)
-         .then(() => {
-            console.log('login attempt')
-            router.replace('/')
-         })
-         .catch((error) => {
-            const errorCode = error.code
-            const errorMessage = error.message
 
-            if (error.code === 'auth/invalid-email')
-               setError('Email', {
-                  message: 'Please enter a valid email adress',
-                  type: 'firebase',
-               })
-            else if (error.code === 'auth/missing-email')
-               setError('Email', {
-                  message: 'Please input an email adress',
-                  type: 'firebase',
-               })
-            else if (error.code === 'auth/wrong-password')
-               setError('Password', {
-                  message: 'Check your password',
-                  type: 'firebase',
-               })
-            else if (error.code === 'auth/invalid-credential')
-               setError('Password', {
-                  message: 'No such account exists',
-                  type: 'firebase',
-               })
-            else if (error.code === 'auth/user-not-found')
-               setError('Email', {
-                  message: 'No account with that email registered',
-                  type: 'firebase',
-               })
-            else {
-               setError('Email', {
-                  message: errorMessage,
-                  type: 'unhandled',
-               })
-            }
-
-            console.error('1 ' + errorCode + ' 2 ' + errorMessage)
+      if (!data.Email || data.Email === '')
+         setError('Email', {
+            message: 'Please input an email adress',
+            type: 'validation',
          })
+      else if (!data.Password || data.Password === '')
+         setError('Password', {
+            message: 'Please input a password',
+            type: 'validation',
+         })
+      else {
+         auth()
+            .signInWithEmailAndPassword(data.Email, data.Password)
+            .then(() => {
+               console.log('login attempt')
+               router.replace('/')
+            })
+            .catch((error) => {
+               const errorCode = error.code
+               const errorMessage = error.message
+
+               if (error.code === 'auth/invalid-email')
+                  setError('Email', {
+                     message: 'Please enter a valid email adress',
+                     type: 'firebase',
+                  })
+               else if (error.code === 'auth/missing-email')
+                  setError('Email', {
+                     message: 'Please input an email adress',
+                     type: 'firebase',
+                  })
+               else if (error.code === 'auth/wrong-password')
+                  setError('Password', {
+                     message: 'Check your password',
+                     type: 'firebase',
+                  })
+               else if (error.code === 'auth/invalid-credential')
+                  setError('Password', {
+                     message: 'No such account exists',
+                     type: 'firebase',
+                  })
+               else if (error.code === 'auth/user-not-found')
+                  setError('Email', {
+                     message: 'No account with that email registered',
+                     type: 'firebase',
+                  })
+               else {
+                  setError('Email', {
+                     message: errorMessage,
+                     type: 'unhandled',
+                  })
+               }
+
+               console.log('1 ' + errorCode + ' 2 ' + errorMessage)
+            })
+      }
    }
 
    useEffect(() => {
       setValue('Email', params['email'] as string)
       setValue('Password', params['password'] as string)
-   }, [])
+   }, [params, setValue])
 
    return (
       <View>
