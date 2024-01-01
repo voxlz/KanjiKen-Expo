@@ -34,9 +34,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# google-services.json
-# GoogleService-Info.plist
+google-services.json
+GoogleService-Info.plist
 android
 ios
 git-repo-access-key
 git-repo-access-key.pub
+keys

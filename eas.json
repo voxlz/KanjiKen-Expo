@@ -23,6 +23,16 @@
       }
    },
    "submit": {
-      "production": {}
+      "testing": {
+         "android": {
+            "serviceAccountKeyPath": "./keys/kanjiken-1702713848453-bd4fcda9ff8a.json",
+            "track": "alpha",
+            "releaseStatus": "draft"
+         },
+         "ios": {
+            "appleId": "torben.nordtorp@gmail.com",
+            "appleTeamId": "FPZ43YG989"
+         }
+      }
    }
 }

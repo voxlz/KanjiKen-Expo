@@ -70,6 +70,22 @@ adb logcat "*:E"
 
 When developing the KanjiKen-dict repo (/dict folder), use f5 to debug or control + f5 to run.
 
+## Submitting
+
+EAS allows for auto submissions. I've set this up for android builds for now. Use following command to push a build for testing
+
+```bash
+eas submit -p android --profile testing (--latest)
+```
+
+
+### iOS
+
+Run the following when you want to submit a newly created build to appstore connect.
+
+```bash
+eas submit -p ios --profile testing --latest
+```
 
 ## Admob
 

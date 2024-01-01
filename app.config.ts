@@ -17,7 +17,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
    ios: {
       ...config.ios,
       bundleIdentifier: identifier,
-      googleServicesFile: process.env.GOOGLE_SERVICE_INFO,
+      googleServicesFile:
+         process.env.GOOGLE_SERVICE_INFO ?? './keys/GoogleService-Info.plist',
    },
    android: {
       ...config.android,
