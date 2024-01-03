@@ -12,6 +12,7 @@ Use the the following versioning system: vs.m.b
 
 | #id | Prio | Description                                                                                              |
 | --- | ---- | -------------------------------------------------------------------------------------------------------- |
+| #?? | -    | Ads after dying / Refil?                                                                                 |
 | #23 | -    | XP level system to track progress                                                                        |
 | #22 | -    | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                            |
 | #22 | -    | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                   |
@@ -25,19 +26,33 @@ Use the the following versioning system: vs.m.b
 | #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
 | #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
 | #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                                  |
-| #?? | -    | Ads after dying / Refil?                                                                                 |
 
 ### Issues
 
-| #id | Prio | Description                                                                               |
-| --- | ---- | ----------------------------------------------------------------------------------------- |
-| #13 | -    | Show resonable choices for the first few kanji. Currently random.                         |
-| #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
-| #6  | -    | Duplicate characters all fade out in composition, even if only one was used.              |
-| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                                  |
-| #?? | ^    | Death now triggers between 2 exercises, instead of during one.                            |
+| #id | Prio | Description                                                                  |
+| --- | ---- | ---------------------------------------------------------------------------- |
+| #13 | -    | Show resonable choices for the first few kanji. Currently random.            |
+| #6  | -    | Duplicate characters all fade out in composition, even if only one was used. |
+| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                     |
+| #?? | ^    | Death now triggers between 2 exercises, instead of during one.               |
 
 ## Changelog
+
+### v0.5.0
+
+#### UpdateDesc
+
+#### Features
+
+| #id | Prio | Description |
+| --- | ---- | ----------- |
+
+
+#### Issues
+
+| #id | Prio | Description                                                                               |
+| --- | ---- | ----------------------------------------------------------------------------------------- |
+| #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
 
 ### v0.4.1
 

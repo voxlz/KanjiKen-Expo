@@ -1,4 +1,6 @@
 import { learnOrder } from '../../output/learnOrder'
+import { glyphDict } from '../data/glyphDict'
+import { Position } from './glyphDict'
 
 // Keep track of your progress on different memerables: glyphs, vocabulary, grammar?, sentences?
 export type ProgressDict = {
@@ -35,7 +37,7 @@ export enum LvL {
    'LVL2',
    'LVL3',
    'LVL4',
-   'LVL5',
+   'LVL5', // Learned
    'LVL6',
    'LVL7',
    'LVL8',
@@ -49,12 +51,46 @@ export const lvlsPerSkill: { [skill in Skills]: number } = {
    recognize: 10,
 }
 
+/** This defines unlock conditions for new skills of the same glyphs */
 export const requirePerSkill: {
    [skill in Skills]: { skill: Skills; lvl: number }[]
 } = {
    intro: [],
    compose: [{ skill: 'intro', lvl: 1 }],
    recognize: [{ skill: 'intro', lvl: 1 }],
+}
+
+type RequireType = {
+   [glyph in Learnable]?: {
+      level: number
+   }
+}
+
+// This object defined what needs to be present in the "progress" object before you should learn this character
+export const requiredProgress = (glyph: Learnable): RequireType => {
+   const dependecies: string[] = []
+
+   const isPos = (pos: string | Position): pos is Position => {
+      return typeof pos !== 'string'
+   }
+   const getDependeciesFromPosition = (pos: Position) => {
+      Object.values(pos).forEach((arr) =>
+         arr.forEach((posOrString) =>
+            isPos(posOrString)
+               ? getDependeciesFromPosition(posOrString)
+               : dependecies.push(posOrString)
+         )
+      )
+   }
+
+   const position = glyphDict[glyph].comps.position
+   position && getDependeciesFromPosition(position)
+
+   const components = dependecies.map((glyph) => [
+      glyph,
+      { level: learnedThreshold } satisfies RequireType[Learnable],
+   ])
+   return Object.fromEntries(components)
 }
 
 /**
@@ -67,3 +103,5 @@ export type Exercise = {
    skill: Skills
    reviewed_at: { date: Date; tries: number; confused_with: string[] }[] // Ancient -> Recent
 }
+
+export const learnedThreshold = 5

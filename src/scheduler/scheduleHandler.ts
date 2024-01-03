@@ -15,7 +15,7 @@ import {
    Learnable,
    LvL,
    lvlsPerSkill,
-   requirePerSkill,
+   requiredProgress,
    Skills,
 } from '../types/progress'
 import { clamp } from '../utils/js'
@@ -256,37 +256,68 @@ export default class ScheduleHandler {
 
    /** Get the next valid exercise the user should see. */
    getCurrent() {
+      // If schedule is empty, return undefined.
+      if (this.getUserData().schedule.length <= 0) {
+         return undefined
+      }
+
       // Find next valid element (With timeout for crash safety)
-      let i = 10000
+      let i = 100
       while (i > 0) {
          i -= 1
+         const userData = this.getUserData()
+         const nextExercise = userData.schedule[0]
 
-         // Ensure skill requirements are met
-         const next = this.getUserData().schedule[0]
-         const reqs = requirePerSkill[next.skill]
+         // Ensure dependecy requirements are met
+         const dependency = requiredProgress(nextExercise.glyph)
+         // console.log('dependency', dependency)
+         // console.log('progress', userData.progress)
 
-         const missingReq = reqs.find(
-            (req) =>
-               req.lvl >
-               (this.getUserData().progress[next.glyph]?.['skills'][
-                  req.skill
-               ] ?? 0)
-         )
+         const depsGlyphs = Object.keys(dependency) as Learnable[]
+         const missingComponents: Learnable[] = []
 
-         if (missingReq) {
-            const nextPossibleUnlockIdx = this.getUserData().schedule.findIndex(
-               (exe) => exe.glyph === next.glyph && exe.skill === next.skill
+         // Go through dependencies and check that at least one skill has reached Learned treashhold.
+         depsGlyphs.forEach((depGlyph) => {
+            const skillLvls = Object.values(
+               userData.progress[depGlyph]?.skills ?? {}
             )
-            const doesNotFullfillReqs = this.getUserData().schedule.shift()
-            if (doesNotFullfillReqs)
-               this.getUserData().schedule.splice(
-                  nextPossibleUnlockIdx,
-                  0,
-                  doesNotFullfillReqs
-               )
+            if (
+               skillLvls.some((lvl) => {
+                  const requiredLvl = dependency[depGlyph]!.level
+                  const actualLvl = Number(lvl)
+                  return actualLvl >= requiredLvl
+               })
+            ) {
+            } else {
+               missingComponents.push(depGlyph)
+            }
+         })
+
+         // If unseen dependecies, push this card back behind the missing component.
+         if (missingComponents.length > 0) {
+            const missingComp = missingComponents[0]
+            const idx = userData.schedule.findIndex(
+               (exe) => exe.glyph === missingComp
+            )
+            if (idx !== -1) {
+               const doesNotFullfillReqs = userData.schedule.shift()
+               if (doesNotFullfillReqs) {
+                  userData.schedule = userData.schedule.splice(
+                     idx,
+                     0,
+                     doesNotFullfillReqs
+                  )
+               }
+            } else {
+               break
+            }
          } else {
             break
          }
+      }
+
+      if (i === 100) {
+         console.error('Could not find valid exercise')
       }
 
       return this.getUserData().schedule[0]
