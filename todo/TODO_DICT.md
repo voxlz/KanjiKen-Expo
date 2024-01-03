@@ -19,6 +19,15 @@
 
 ## Changelog
 
+### v0.5.0
+
+#### Issues
+
+| #id | Prio | Description                                                                                           |
+| --- | ---- | ----------------------------------------------------------------------------------------------------- |
+| #?? | -    | Improved composition data of: 表 (Surface), 鬲 (Tripod)                                               |
+| #?? | -    | Fixed issue with 一 being considered a stroke while calculating composition, affecting 来 for example |
+
 ### v0.4.0
 
 #### Internal
