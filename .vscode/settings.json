@@ -1,6 +1,6 @@
 {
    "cSpell.words": ["corepack", "firestore", "nativewind", "prebuild"],
-   "python.testing.pytestArgs": [],
+   "python.testing.pytestArgs": ["${workspaceFolder}"],
    "python.testing.unittestEnabled": false,
    "python.testing.pytestEnabled": true,
    "python.testing.cwd": "${workspaceFolder}/dict"

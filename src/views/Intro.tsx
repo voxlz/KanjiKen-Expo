@@ -31,8 +31,9 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
    const onCorrectChoice = useContext(OnCorrectChoiceContext)
    const skillAnim = useContext(SkillAnimInstantResetContext)
    const scheduler = useContext(SchedulerContext)
-   const glyph = scheduler.getCurrent().glyph
-   const glyphInfo = glyphDict[glyph]
+   const glyph = scheduler.getCurrent()?.glyph
+   if (!glyph) console.warn('no glyph present', glyph)
+   const glyphInfo = glyphDict[glyph!]
 
    const [showMeaning, setShowMeaning] = useState(false)
    const fadeAnim = useSharedValue(0)
@@ -125,9 +126,9 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
             </View>
             <View
                style={{ height: 0.85714285714 * glyphWidth }}
-               className="flex-row max-w-full flex-shrink flex-wrap h-auto px-8 flex-grow-0"
+               className="flex-row max-w-full flex-shrink flex-wrap h-auto px-8 flex-grow-0 -mb-9"
             >
-               <View className="w-full ">
+               <View className="w-full  ">
                   <Button
                      text="Reveal Meaning"
                      onPress={() => {

@@ -7,6 +7,7 @@
 | #id | Prio | Description                                                                                                                             |
 | --- | ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | #?? | 1    | 30 Keywords missing are missing                                                                                                         |
+| #?? | 1    | 四 missing composition                                                                                                                  |
 | #?? | 1    | Unique keywords for all characters                                                                                                      |
 | #?? | 0    | Full-width glyphs for all characters (Commission a font person?)                                                                        |
 | #?? | 0    | Programmatically filter out radicals (non joyo) that have few occurrences (like <3) like 开  (only used in 形)                          |

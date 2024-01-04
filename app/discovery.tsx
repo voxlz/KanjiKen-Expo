@@ -57,9 +57,9 @@ const Discovery: FC = () => {
                         className="flex-row max-w-fullflex-shrink flex-wrap h-auto "
                      >
                         {item.item.map((alt: GlyphInfo, i: number) => {
-                           const lvl =
-                              (prog[alt.glyph]?.skills.recognize ?? 0) +
-                              (prog[alt.glyph]?.skills.compose ?? 0)
+                           const lvl = glyphDict[alt.glyph].comps.position
+                              ? prog[alt.glyph]?.skills.compose ?? 0
+                              : prog[alt.glyph]?.skills.recognize ?? 0
                            let degrees: number
                            let state: 'new' | 'learned' | 'maxed'
                            if (lvl < 5) {
