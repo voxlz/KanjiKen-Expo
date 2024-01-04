@@ -43,6 +43,13 @@ export default function Developer() {
             }}
          />
          <StyledButton
+            text="validate queue"
+            styleName="danger"
+            onPress={() => {
+               scheduler.validate()
+            }}
+         />
+         <StyledButton
             text="delete apple account"
             styleName="danger"
             onPress={async () => {

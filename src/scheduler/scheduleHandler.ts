@@ -156,17 +156,15 @@ export default class ScheduleHandler {
    validate = (customLearnOrder?: Learnable[]): Exercise[] => {
       const userData = this.getUserData()
       const newUserData = userData
-      console.log('Validating...')
-
       const order = customLearnOrder ?? learnOrder
+
+      console.log('Validating...')
 
       // Ensure order is correct by replacing present intro skills
       const learnedGlyphs = Object.keys(userData.progress) as Learnable[]
-
       const sortedUnlearnedGlyphs = order.filter(
          (glyph) => !learnedGlyphs.includes(glyph)
       )
-
       newUserData.schedule = newUserData.schedule.map((exe) => {
          if (exe.skill !== 'intro') return exe
          if (learnedGlyphs.includes(exe.glyph)) return exe
@@ -185,7 +183,22 @@ export default class ScheduleHandler {
          )
       }
 
+      // Data might have been updated, leaving some "stale" skills.
+      newUserData.schedule = newUserData.schedule.filter((exe) => {
+         if (exe.skill === 'recognize' && glyphDict[exe.glyph].comps.position) {
+            return false
+         } else if (
+            exe.skill === 'compose' &&
+            !glyphDict[exe.glyph].comps.position
+         ) {
+            return false
+         }
+         return true
+      })
+
       this.setUserData(newUserData)
+
+      console.log('Validated Queue')
 
       return newUserData.schedule
    }
