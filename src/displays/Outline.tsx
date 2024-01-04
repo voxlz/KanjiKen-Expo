@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
-import { Text, StyleProp, ViewStyle } from 'react-native'
+import { StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
+
+import TextView from '../components/TextView'
 
 type Props = {
    text?: string
@@ -23,12 +25,10 @@ const Outline: FC<Props> = ({ text, style, dashed = true }) => {
          ]}
          className="flex-grow flex-shrink bg-none items-center justify-center"
       >
-         <Text
-            style={{ fontFamily: text !== '?' ? 'klee-bold' : undefined }}
+         <TextView
             className="text-center text-ui-disabled text-4xl leading-none"
-         >
-            {text}
-         </Text>
+            text={text}
+         />
       </Animated.View>
    )
 }

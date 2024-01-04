@@ -20,7 +20,7 @@
 
 ## Changelog
 
-### v0.5.0
+### v0.4.2
 
 #### Issues
 

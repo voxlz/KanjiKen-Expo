@@ -3,7 +3,7 @@
       "name": "KanjiKen",
       "slug": "Kanjiken",
       "description": "A kanji trainer that makes learning all 2000+ japanese characters easy!",
-      "version": "0.5.0",
+      "version": "0.4.2",
       "android": {
          "versionCode": 7,
          "adaptiveIcon": {

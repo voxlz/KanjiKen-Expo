@@ -5,17 +5,17 @@ import { Text as NativeText, TextStyle } from 'react-native'
 import { font } from '../utils/fonts'
 
 type Props = {
-   children: string
+   text?: string
    style?: TextStyle
 }
 
 /** Wrapper around text to make auto-importing easier, ensure KanjiKen-font is used where possible. */
-const TextView: FC<StyledProps<Props>> = ({ children, style, className }) => (
+const TextView: FC<StyledProps<Props>> = ({ text, style, className }) => (
    <NativeText
-      style={[{ fontFamily: font(children, style?.fontFamily) }, style]}
+      style={[{ fontFamily: font(text, style?.fontFamily) }, style]}
       className={className}
    >
-      {children}
+      {text}
    </NativeText>
 )
 

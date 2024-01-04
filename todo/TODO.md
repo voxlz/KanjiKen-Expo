@@ -29,16 +29,15 @@ Use the the following versioning system: vs.m.b
 
 ### Issues
 
-| #id | Prio | Description                                                                  |
-| --- | ---- | ---------------------------------------------------------------------------- |
-| #13 | -    | Show resonable choices for the first few kanji. Currently random.            |
-| #6  | -    | Duplicate characters all fade out in composition, even if only one was used. |
-| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)                     |
-| #?? | ^    | Death now triggers between 2 exercises, instead of during one.               |
+| #id | Prio | Description                                                    |
+| --- | ---- | -------------------------------------------------------------- |
+| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)       |
+| #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
+| #?? | ^    | TEST SCALE BACK ON ON ANDROID                                  |
 
 ## Changelog
 
-### v0.5.0
+### v0.4.2
 
 #### UpdateDesc
 
@@ -47,12 +46,15 @@ Use the the following versioning system: vs.m.b
 | #id | Prio | Description |
 | --- | ---- | ----------- |
 
-
 #### Issues
 
-| #id | Prio | Description                                                                               |
-| --- | ---- | ----------------------------------------------------------------------------------------- |
-| #7  | -    | Don't introduce character before certain proficiency has been reached on it's components. |
+| #id | Prio | Description                                                                        |
+| --- | ---- | ---------------------------------------------------------------------------------- |
+| #7  | -    | Fixed character intro shown before user has learned it's components.               |
+| #13 | -    | Fixed bad choices for the first few kanji. Showed random characters before.        |
+| #13 | -    | Fixed missing character bug in the outline where dragged character used to be      |
+| #6  | -    | Fixed duplicate characters all fade out in composition, even if only one was used. |
+| #7  | -    | Improved queue validation when database changes. Prevents stale lessons.           |
 
 ### v0.4.1
 

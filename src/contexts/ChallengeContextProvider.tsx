@@ -98,20 +98,22 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
                break
          }
 
-         let findRandom = 8 - choices.length
-         do {
-            const seenGlyph = getRandomSeenGlyphInfo(scheduler)
-
-            // const duplicate = choices
-            //     .map((info) => info.glyph)
-            //     .includes(seenGlyph.glyph)
-            // const seenCount = Object.keys(scheduler.getProgress()).length
-            // console.log('seen', seenGlyph.glyph, duplicate, seenCount)
-            if (excercise.glyph !== seenGlyph.glyph) {
-               choices = choices.concat(seenGlyph)
-               findRandom -= 1
-            }
-         } while (findRandom > 0)
+         // Prepare choices
+         if (excercise.skill !== 'intro') {
+            let findRandom = 8 - choices.length
+            do {
+               const seenGlyph = getRandomSeenGlyphInfo(scheduler)
+               if (excercise.skill === 'compose') {
+                  if (excercise.glyph !== seenGlyph.glyph) {
+                     choices = choices.concat(seenGlyph)
+                     findRandom -= 1
+                  }
+               } else {
+                  choices = choices.concat(seenGlyph)
+                  findRandom -= 1
+               }
+            } while (findRandom > 0)
+         }
 
          const newExpectedChoice = onOrderIdxChange(
             answers,
@@ -164,18 +166,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
    )
 }
 
-const getRandomGlyphInfo = () => {
-   const possibleGlyphs = Object.keys(glyphDict) as Learnable[]
-   const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
-   const glyph = possibleGlyphs.at(randIdx())!
-   return glyphDict[glyph]
-}
-
 const getRandomSeenGlyphInfo = (scheduler: ScheduleHandler) => {
    const possibleGlyphs = Object.keys(scheduler.getProgress()) as Learnable[]
-   if (possibleGlyphs.length < 8) {
-      return getRandomGlyphInfo()
-   }
    const randIdx = () => Math.floor(Math.random() * possibleGlyphs.length)
    const glyph = possibleGlyphs.at(randIdx())!
    return glyphDict[glyph]

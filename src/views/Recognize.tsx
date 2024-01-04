@@ -12,7 +12,7 @@ import { useContext } from '../utils/react'
 /** Drag components to build a glyph */
 const Recognize: FC = () => {
    const scheduler = useContext(SchedulerContext)
-   const solution = glyphDict[scheduler.getCurrent().glyph]
+   const solution = glyphDict[scheduler.getCurrent()!.glyph]
    return (
       <>
          <KanjiSkillTemplate
@@ -24,12 +24,7 @@ const Recognize: FC = () => {
             }
             KanjiSuccComp={<KanjiBoxCorrect text={solution?.glyph} />}
             TextComp={<KanjiMeaning text={solution?.meanings.primary ?? ''} />}
-            ChoicesComp={
-               <DraggableChoicesButtons
-                  hintOnDrag={false}
-                  isCorrectAnswer={(glyph) => solution?.glyph === glyph}
-               />
-            }
+            ChoicesComp={<DraggableChoicesButtons hintOnDrag={false} />}
          />
       </>
    )

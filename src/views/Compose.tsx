@@ -30,14 +30,7 @@ const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
             }
             KanjiSuccComp={<KanjiBoxCorrect text={solution?.glyph} />}
             TextComp={<KanjiMeaning text={solution?.meanings.primary ?? ''} />}
-            ChoicesComp={
-               <DraggableChoicesButtons
-                  isCorrectAnswer={(glyph) =>
-                     solution?.comps.order.includes(glyph)
-                  }
-                  hintOnDrag
-               />
-            }
+            ChoicesComp={<DraggableChoicesButtons hintOnDrag />}
          />
       </>
    )

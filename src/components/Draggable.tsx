@@ -53,7 +53,6 @@ type Props = {
    anchor?: MeasureType // Default position / size
    children?: React.ReactNode
    glyph?: Learnable
-   isCorrectAnswer?: boolean
    setIsBeingDragged: (bool: boolean) => void
    isBeingDragged: boolean
    hintOnDrag: boolean
@@ -69,7 +68,6 @@ const Draggable: FC<Props> = ({
    children,
    anchor,
    glyph,
-   isCorrectAnswer = () => false,
    setIsBeingDragged,
    isBeingDragged,
    hintOnDrag = true,
@@ -85,8 +83,6 @@ const Draggable: FC<Props> = ({
    const transY = useSharedValue(0)
    const scale = useSharedValue(1)
 
-   // const [startBound, setStartBound] = useState<LayoutRectangle>(); // Remember initial size and position of this object
-   // const [droppedBefore, setDroppedBefore] = useState(false)
    const [dragState, setDragState] = useState<{
       currentSize: Size | undefined
       dragStartTranslate: { x: number; y: number }
@@ -180,7 +176,6 @@ const Draggable: FC<Props> = ({
 
    const calcAndUpdateHoverPos = useCallback(
       (drag: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
-         console.log('calc and update', width, drag.x, drag.y)
          const center = width / 2
 
          // Drag x & y seem kinda bad, but the following seems to keep the hit-box in the middle somewhat. Let's hope it's not screen specific
@@ -203,10 +198,9 @@ const Draggable: FC<Props> = ({
       () =>
          Gesture.Tap()
             .maxDistance(10)
+            .maxDuration(400)
             .runOnJS(true)
             .onStart(() => {
-               // console.log('click detected')
-               // const a = performance.now()
                prepForLayout()
                const dropInfo = findDropInfo(glyph)
                if (anchor && expectedChoice === glyph && dropInfo) {
@@ -215,12 +209,6 @@ const Draggable: FC<Props> = ({
                   dropMisstake()
                }
                setIsBeingDragged(false)
-               // const e = performance.now()
-               // console.log('click complete: ', e - a + ' ms')
-               // console.log('prepForLayout complete: ', b - a + ' ms')
-               // console.log('dropInfo complete: ', c - b + ' ms')
-               // console.log('dropSuccessful complete: ', d - c + ' ms')
-               // console.log('setIsBeingDragged complete: ', e - d + ' ms')
             }),
       [
          glyph,
@@ -363,7 +351,7 @@ const Draggable: FC<Props> = ({
          transform: [
             { translateX: transX.value },
             { translateY: transY.value },
-            // { scale: scale.value },
+            { scale: scale.value },
          ],
          zIndex: isBeingDragged ? 10 : 1,
          elevation: isBeingDragged ? 10 : 1,
@@ -395,7 +383,7 @@ const Draggable: FC<Props> = ({
          >
             <Animated.View
                className="flex-grow"
-               style={isCorrectAnswer ? animStyle : {}}
+               style={dragState.droppedBefore ? animStyle : {}}
             >
                {children}
             </Animated.View>

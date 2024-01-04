@@ -6,20 +6,15 @@ import {
    SeenCountContext,
    ChoicesContext,
 } from '../contexts/ChallengeContextProvider'
-import { Learnable } from '../types/progress'
 import { defaultGap } from '../utils/consts'
 import { useContext } from '../utils/react'
 
 type Props = {
    hintOnDrag: boolean
-   isCorrectAnswer: (glyph: Learnable) => boolean
 }
 
 /** Bottom row of dragable choices buttons, used in kanjiExcersiseTemplate */
-const DraggableChoicesButtons: FC<Props> = ({
-   hintOnDrag,
-   isCorrectAnswer,
-}) => {
+const DraggableChoicesButtons: FC<Props> = ({ hintOnDrag }) => {
    const choices = useContext(ChoicesContext)
    const seenCount = useContext(SeenCountContext)
    return (
@@ -32,7 +27,6 @@ const DraggableChoicesButtons: FC<Props> = ({
                <Choice
                   key={alt.glyph + i + seenCount}
                   altInfo={alt}
-                  isCorrectAnswer={isCorrectAnswer(alt.glyph)}
                   hintOnDrag={hintOnDrag}
                />
             )

@@ -11,12 +11,11 @@ import { useContext } from '../utils/react'
 
 type Props = {
    altInfo: GlyphInfo
-   isCorrectAnswer: boolean
    hintOnDrag: boolean
 }
 
 /** Draggable on top of an outline */
-const Choice: FC<Props> = ({ altInfo, isCorrectAnswer, hintOnDrag }) => {
+const Choice: FC<Props> = ({ altInfo, hintOnDrag }) => {
    const glyphWidth = useContext(GlyphWidthContext)
    // const expectedChoice = useContext(ExpectedChoiceContext)
 
@@ -56,7 +55,6 @@ const Choice: FC<Props> = ({ altInfo, isCorrectAnswer, hintOnDrag }) => {
             <Draggable
                anchor={anchor}
                glyph={glyph}
-               isCorrectAnswer={isCorrectAnswer}
                isBeingDragged={isBeingDragged}
                setIsBeingDragged={setIsBeingDragged}
                hintOnDrag={hintOnDrag}

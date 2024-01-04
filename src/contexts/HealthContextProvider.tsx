@@ -217,7 +217,6 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    }
 
    const resetTakeDamage = useCallback(() => {
-      console.log('Reset take damage. Should now be able to take damage')
       setTakeDamage(true)
    }, [])
 
