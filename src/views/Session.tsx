@@ -67,7 +67,7 @@ const Session: FC = () => {
       }
 
       // Check so that we have not died.
-      if (health <= 0) {
+      if (exercise && health <= 0) {
          onSessionEnd()
       } else {
          // Load the new or current challenge
@@ -115,7 +115,7 @@ const Session: FC = () => {
    // When session starts
    useEffect(() => {
       if (!exercise) {
-         console.log('session start', relativeHealth.value)
+         console.log('session start', relativeHealth.value, exercise)
          nextExercise()
          resetSkillAnim(true) // In case they exited during an exercise.
       }

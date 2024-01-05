@@ -333,6 +333,10 @@ export default class ScheduleHandler {
          console.error('Could not find valid exercise')
       }
 
+      if (this.getUserData().schedule[0] === undefined) {
+         console.warn('Schedule seems to be emtpy')
+      }
+
       return this.getUserData().schedule[0]
    }
 }

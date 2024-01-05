@@ -56,6 +56,10 @@ const Outline: FC<Props> = ({
          <TextView
             className="text-center text-ui-disabled text-4xl leading-none"
             text={text}
+            style={{
+               fontFamily:
+                  text?.trim() === '?' ? 'KanjiKen-Regular' : undefined,
+            }}
          />
       </Animated.View>
    )

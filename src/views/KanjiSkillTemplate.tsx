@@ -11,6 +11,7 @@ import {
    ContinueAnimInstantResetContext,
 } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 
 type Props = {
    KanjiComp: React.ReactNode
@@ -30,6 +31,7 @@ const KanjiSkillTemplate: FC<Props> = ({
 }) => {
    const animation = useContext(ContinueAnimContext)
    const animationInstantReset = useContext(ContinueAnimInstantResetContext)
+   const glyphWidth = useContext(GlyphWidthContext)
 
    // Animation
    const builderStyle = useAnimatedStyle(() => ({

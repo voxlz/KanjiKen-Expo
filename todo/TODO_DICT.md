@@ -12,6 +12,7 @@
 | #?? | 0    | Programmatically filter out radicals (non joyo) that have few occurrences (like <3) like 开  (only used in 形)                          |
 | #?? | 0    | Deal with characters that mix radicals and strokes. 皮 composition. (又 exists, rest not) 可 composition  (口 exists, rest not)         |
 | #?? | 0    | 井 (Well) keyword ambiguous                                                                                                             |
+| #?? | 0    | 郎 (son) make left-part into radical                                                                                                    |
 | #?? | 0    | No question marks (prefer warnings)                                                                                                     |
 | #?? | 0    | Order does not work if the same character appears twice (need to know which one is which in position)                                   |
 | #?? | 0    | lose is ambiguous. can mean "to fail" and "to lose" and is sometimes confused with loose, avoid these types of words?                   |

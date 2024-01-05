@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { View } from 'react-native'
 
-import DropLocation from './DropLocation'
+import DropLocation, { dropLocationGap } from './DropLocation'
 import { Position } from '../types/glyphDict'
 
 type Props = {
@@ -18,7 +18,9 @@ const KanjiComps: FC<Props> = ({ pos, showPositionHints, singleComp }) => {
       <View className="flex-grow flex-shrink">
          {Object.entries(pos ?? {}).map(([key, value], i) => (
             <View
-               style={{ gap: 12 }}
+               style={{
+                  gap: dropLocationGap,
+               }}
                className={
                   'flex-grow flex-shrink ' +
                   (key.startsWith('col') ? '' : 'flex-row')
