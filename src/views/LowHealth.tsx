@@ -19,6 +19,8 @@ import {
    TimeTillFullHealthContext,
    HealthModeContext,
    OnSessionStartContext,
+   HealthContext,
+   maxHealth,
 } from '../contexts/HealthContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { useInterval } from '../hooks/useInterval'
@@ -38,13 +40,23 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
    const [isLoading, setIsLoading] = useState(true)
 
    // UPDATE HEALTHBAR
-   const update = () => {
-      refreshHealthbar().then((health) => {
+   const update = useCallback(() => {
+      return refreshHealthbar().then((health) => {
          setEnoughHealth(health >= 33)
          setIsLoading(false)
+         return health
       })
-   }
-   useEffect(() => update(), [])
+   }, [refreshHealthbar])
+
+   // Do exactly once. Skip lowHealth Screen if health has regenerated fully.
+   useEffect(() => {
+      if (isLoading)
+         update().then((health) => {
+            console.log('Health', health)
+            if (health === 100) onSessionStart()
+         })
+   }, [isLoading, onSessionStart, update])
+
    useInterval(() => {
       if (healthMode === 'Regen') {
          update()

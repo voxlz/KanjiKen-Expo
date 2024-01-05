@@ -20,7 +20,7 @@ import { View } from 'react-native'
 
 import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
 import GlyphWidthContextProvider from '../src/contexts/GlyphWidthContextProvider'
-import HealthContextProvider from '../src/contexts/HealthContextProvider'
+import HealthBarStateProvider from '../src/contexts/HealthContextProvider'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import {} from '../src/globalState/DropInfo'
 import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
@@ -53,7 +53,7 @@ export default function Layout() {
       <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
          <GlyphWidthContextProvider>
             <SchedulerContextProvider>
-               <HealthContextProvider>
+               <HealthBarStateProvider>
                   <TaskAnimContextProvider>
                      <ChallengeContextProvider>
                         <StatusBar backgroundColor="white" />
@@ -69,7 +69,7 @@ export default function Layout() {
                         />
                      </ChallengeContextProvider>
                   </TaskAnimContextProvider>
-               </HealthContextProvider>
+               </HealthBarStateProvider>
             </SchedulerContextProvider>
          </GlyphWidthContextProvider>
       </View>

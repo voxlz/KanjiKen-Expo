@@ -29,10 +29,9 @@ Use the the following versioning system: vs.m.b
 
 ### Issues
 
-| #id | Prio | Description                                              |
-| --- | ---- | -------------------------------------------------------- |
-| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture) |
-| #?? | ^    | TEST SCALE BACK ON ON ANDROID                            |
+| #id | Prio | Description                   |
+| --- | ---- | ----------------------------- |
+| #?? | ^    | TEST SCALE BACK ON ON ANDROID |
 
 ## Changelog
 
@@ -56,6 +55,8 @@ Use the the following versioning system: vs.m.b
 | #7  | -    | Improved queue validation when database changes. Prevents stale lessons.                                |
 | #?? | ^    | Fixed death triggering immedialty. Now triggers between 2 exercises (so you can learn the one your on). |
 | #?? | ^    | Fixed not validating on data syncing                                                                    |
+| #30 | ↓    | Improved Dropoff hitboxes (Drag gesture) to be more forgiving, especially if only 1 drop  location.     |
+
 
 
 ### v0.4.1

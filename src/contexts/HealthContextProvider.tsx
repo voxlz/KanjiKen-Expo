@@ -32,10 +32,10 @@ export const NewExerciseHealthContext = createContext<() => void>()
 export const SetHealthRegenContext =
    createContext<(regenPerMin: number) => void>()
 
-const maxHealth = 30
+export const maxHealth = 30
 
 /** Provides the drag context to elements that need it */
-const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
+const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
    children,
 }) => {
    const scheduler = useContext(SchedulerContext)
@@ -96,15 +96,12 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    }
 
    /**
-    * Calculate how much health has been gained since timeOfDeath given current regen rate 
+    * Calculate how much health has been gained since timeOfDeath given current regen rate
     */
    const getRegenHealth = async () => {
       const regen = await getRegenObj()
       const healthPerSec = regen.healthPerMin / 60
       const secondsPassed = (Date.now() - regen.timeOfQuit) / 1000
-
-      console.log('Regen: seconds since onSessionEnd', secondsPassed)
-
       const value = regen.healthLeftAtQuit + healthPerSec * secondsPassed
       const max = maxHealth
       const min = 0
@@ -129,7 +126,6 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
       setHealth(() => newHealth)
 
-      console.log('REFRESH NEW HEALTH', newHealth)
       return (newHealth / maxHealth) * 100
    }
 
@@ -269,4 +265,4 @@ export type RegenObj = {
    healthPerMin: number
 }
 
-export default HealthContextProvider
+export default HealthBarStateProvider
