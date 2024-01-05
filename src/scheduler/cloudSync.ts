@@ -30,32 +30,34 @@ export const saveToCloud = (userData: UserData) => {
 }
 
 export const getFromCloud = async () => {
-   return await storage()
-      .ref(serverPath())
-      .getDownloadURL()
-      .then((downloadURL) =>
-         createDownloadResumable(
-            downloadURL,
-            cacheDirectory + `${auth().currentUser?.uid}.json.txt`
-         ).downloadAsync()
-      )
-      .then((downloadResult) => {
-         if (downloadResult) {
-            const { uri } = downloadResult
-            return readAsStringAsync(uri, {
-               encoding: EncodingType.Base64,
-            })
-         }
-      })
-      .then((str) => {
-         if (str) {
-            const userData = JSON.parse(decode(str)) as UserData
-            console.log('Get from cloud: Success')
-            return userData
-         }
-      })
-      .catch((err) => {
-         console.log('Nothing to get. Returning...', err)
-         return undefined
-      })
+   return auth().currentUser !== null
+      ? await storage()
+           .ref(serverPath())
+           .getDownloadURL()
+           .then((downloadURL) =>
+              createDownloadResumable(
+                 downloadURL,
+                 cacheDirectory + `${auth().currentUser?.uid}.json.txt`
+              ).downloadAsync()
+           )
+           .then((downloadResult) => {
+              if (downloadResult) {
+                 const { uri } = downloadResult
+                 return readAsStringAsync(uri, {
+                    encoding: EncodingType.Base64,
+                 })
+              }
+           })
+           .then((str) => {
+              if (str) {
+                 const userData = JSON.parse(decode(str)) as UserData
+                 console.log('Get from cloud: Success')
+                 return userData
+              }
+           })
+           .catch((err) => {
+              console.log('Nothing to get. Returning...', err)
+              return undefined
+           })
+      : undefined
 }
