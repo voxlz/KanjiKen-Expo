@@ -17,8 +17,8 @@ const UpperBar: FC<Props> = ({ skillTitle }) => {
    const onSessionEnd = useContext(OnSessionEndContext)
    const height = glyphWidth / 3
    return (
-      <View style={{ gap: 8 }} className="self-stretch mt-14 mb-8">
-         <View style={{ gap: 12 }} className="flex-row px-8 items-center">
+      <View style={{ gap: 4 }} className="self-stretch mt-14 mb-8">
+         <View style={{ gap: 16 }} className="flex-row px-8 items-center">
             <HealthBar />
             <ExitBtn
                height={height}

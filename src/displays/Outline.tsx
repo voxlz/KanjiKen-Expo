@@ -30,12 +30,12 @@ const Outline: FC<Props> = ({
       [scheduler]
    )
    const animatedState = useAnimatedStyle(() => {
-      const color = `rgba(174, 174, 174, ${isHovered?.value ? 1 : 0.8})`
+      const color = `rgba(185, 185, 185, ${isHovered?.value ? 1 : 0.7})`
       const bg = `rgba(243, 244, 246, 0.5)`
       return {
          borderColor: color,
          backgroundColor: isNext?.value && isNotRecognizeSkill ? bg : undefined,
-         transform: [{ scale: isHovered?.value ? 1.01 : 1 }],
+         transform: [{ scale: isHovered?.value ? 1.02 : 1 }],
       }
    }, [isNext, isHovered])
 

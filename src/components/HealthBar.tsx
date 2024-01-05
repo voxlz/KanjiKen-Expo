@@ -32,7 +32,7 @@ export function ExitBtn({
             router.back()
          }}
       >
-         <SVGImg width={height * 1.6} height={height * 1.6} />
+         <SVGImg width={height * 1.5} height={height * 1.5} />
       </Pressable>
    )
 }

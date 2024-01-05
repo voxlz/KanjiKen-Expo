@@ -12,7 +12,10 @@ const StatusBar: FC<Props> = ({ seenCount, text }) => (
       className="flex-row justify-between  px-9 basis-10 items-start"
       style={{ gap: 4 }}
    >
-      <Text style={{ fontFamily: 'noto-bold' }} className="text-xl capitalize">
+      <Text
+         style={{ fontFamily: 'noto-bold' }}
+         className="text-xl capitalize text-forest-900"
+      >
          {text}
       </Text>
       {/* <Text
