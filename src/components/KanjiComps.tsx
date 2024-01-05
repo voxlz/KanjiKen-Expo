@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { View } from 'react-native'
 
 import DropLocation from './DropLocation'
-import Outline from '../displays/Outline'
 import { Position } from '../types/glyphDict'
 
 type Props = {
@@ -34,9 +33,8 @@ const KanjiComps: FC<Props> = ({ pos, showPositionHints, singleComp }) => {
                            text={glyph}
                            key={j}
                            singleDrop={singleComp}
-                        >
-                           <Outline text={showPositionHints ? glyph : '?'} />
-                        </DropLocation>
+                           showPositionHints={showPositionHints}
+                        />
                      )
                   } else {
                      return (

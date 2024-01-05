@@ -1,20 +1,28 @@
-import React, { FC, useContext, useEffect, useRef } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { Animated, ViewProps } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
 
 import { ExpectedChoiceContext } from '../contexts/ChallengeContextProvider'
+import Outline from '../displays/Outline'
 import { useMeasure } from '../functions/useMeasure'
 import { updateDrops, hoverRef } from '../globalState/DropInfo'
+import { useInterval } from '../hooks/useInterval'
 
 type Props = {
-   children: React.ReactNode
    text: string
+   showPositionHints: boolean
    singleDrop?: boolean
 } & ViewProps
 
 export const dropLocationGap = 12
 
 /** Make this component a possible drop location */
-const DropLocation: FC<Props> = ({ children, text, singleDrop, ...props }) => {
+const DropLocation: FC<Props> = ({
+   text: glyph,
+   singleDrop,
+   showPositionHints,
+   ...props
+}) => {
    const expectedChoice = useContext(ExpectedChoiceContext)
 
    const { ref, onLayout, measure } = useMeasure()
@@ -22,7 +30,7 @@ const DropLocation: FC<Props> = ({ children, text, singleDrop, ...props }) => {
    useEffect(() => {
       if (measure)
          updateDrops({
-            glyph: text,
+            glyph,
             dropActual: measure,
             dropHitbox: singleDrop
                ? {
@@ -40,38 +48,34 @@ const DropLocation: FC<Props> = ({ children, text, singleDrop, ...props }) => {
                     y: measure.y - dropLocationGap / 2,
                  },
          })
-   }, [measure])
+   }, [glyph, measure, singleDrop])
 
-   // BACKGROUND COLOR - Does not currently work
-   const colorIndex = useRef(new Animated.Value(0)).current
-   const bgColor = colorIndex.interpolate({
-      inputRange: [0, 1, 2],
-      outputRange: [
-         'rgba(255, 255, 255, 1)', // default
-         'rgba(243, 244, 246, 1)', // next
-         'rgba(238, 244, 250, 1)', // hover
-      ],
-   })
-   const isHovered =
-      hoverRef &&
-      measure &&
-      hoverRef?.dropActual.x === measure?.x &&
-      hoverRef?.dropActual.y === measure?.y
-   const isNext = expectedChoice === text
-   colorIndex.setValue(isHovered ? 1 : isNext ? 2 : 0)
+   const isHovered = useSharedValue(false)
+   const isNext = useSharedValue(false)
+
+   useInterval(() => {
+      isHovered.value =
+         (hoverRef &&
+            measure &&
+            hoverRef?.dropActual.x === measure?.x &&
+            hoverRef?.dropActual.y === measure?.y) === true
+      isNext.value = (expectedChoice === glyph) === true
+   }, 1000 / 30)
 
    return (
-      // <HelpBox meaning={meaning}>
       <Animated.View
          className="flex-grow flex-shrink rounded-xl"
          {...props}
-         style={[props.style, { backgroundColor: bgColor }]}
+         style={[props.style]}
          ref={ref}
          onLayout={onLayout}
       >
-         {children}
+         <Outline
+            text={showPositionHints ? glyph : '?'}
+            isNext={isNext}
+            isHovered={isHovered}
+         />
       </Animated.View>
-      // </HelpBox>
    )
 }
 

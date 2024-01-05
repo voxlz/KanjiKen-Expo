@@ -55,9 +55,8 @@ Use the the following versioning system: vs.m.b
 | #7  | -    | Improved queue validation when database changes. Prevents stale lessons.                                |
 | #?? | ^    | Fixed death triggering immedialty. Now triggers between 2 exercises (so you can learn the one your on). |
 | #?? | ^    | Fixed not validating on data syncing                                                                    |
-| #30 | ↓    | Improved Dropoff hitboxes (Drag gesture) to be more forgiving, especially if only 1 drop  location.     |
-
-
+| #30 | ↓    | Improved Dropoff hitboxes (Drag gesture) to be more forgiving, especially if only 1 drop location.      |
+| #30 | ↓    | Added subtle feedback for when hovering over droplocation                                               |
 
 ### v0.4.1
 

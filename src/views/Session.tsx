@@ -25,9 +25,9 @@ import {
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { glyphDict } from '../data/glyphDict'
+import { clearDrops } from '../globalState/DropInfo'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
-import { clearDrops } from '../globalState/DropInfo'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {
