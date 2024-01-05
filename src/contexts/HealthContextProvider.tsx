@@ -118,7 +118,6 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
       const value = regen.healthLeftAtQuit + healthPerSec * secondsPassed
       const max = maxHealth
       const min = 0
-      // console.log('value', value, max, maxHealth, health)
 
       // Make sure this does not push health beyond max.
       return clamp({

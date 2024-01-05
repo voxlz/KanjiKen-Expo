@@ -61,13 +61,6 @@ const ChangeLog: FC = () => {
                const test = dictTodo.TODO.Changelog
                const dictIssueStr = test[key]?.Issues?.raw
 
-               if (!dictIssueStr) {
-                  console.warn(
-                     'No fixed issues found for the dictionary files for this update. Forgot to add #### Issues? Version: ',
-                     key
-                  )
-               }
-
                const version = {
                   version: key,
                   description: value.UpdateDesc?.raw,

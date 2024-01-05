@@ -7,7 +7,6 @@
 | #id | Prio | Description                                                                                                                             |
 | --- | ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | #?? | 1    | 30 Keywords missing are missing                                                                                                         |
-| #?? | 1    | 四 missing composition                                                                                                                  |
 | #?? | 1    | Unique keywords for all characters                                                                                                      |
 | #?? | 0    | Full-width glyphs for all characters (Commission a font person?)                                                                        |
 | #?? | 0    | Programmatically filter out radicals (non joyo) that have few occurrences (like <3) like 开  (only used in 形)                          |
@@ -26,9 +25,9 @@
 
 | #id | Prio | Description                                                                                           |
 | --- | ---- | ----------------------------------------------------------------------------------------------------- |
-| #?? | -    | Improved composition data of: 表 (Surface), 鬲 (Tripod)                                               |
+| #?? | -    | Improved composition data of: 表 (Surface), 鬲 (Tripod), 四 (Four)                                    |
 | #?? | -    | Fixed issue with 一 being considered a stroke while calculating composition, affecting 来 for example |
-| #?? | -    | Fixed 三 not composed by 二 and 一                                                                    |
+| #?? | -    | Fixed 三 not being composed by 二 and 一. Disgraceful!                                                |
 
 ### v0.4.0
 
