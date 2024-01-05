@@ -5,7 +5,7 @@ import HealthBar, { ExitBtn } from './HealthBar'
 import StatusBar from './StatusBar'
 import { SeenCountContext } from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
-import { setIsDeadContext as SetQuitContext } from '../contexts/HealthContextProvider'
+import { OnSessionEndContext } from '../contexts/HealthContextProvider'
 import { useContext } from '../utils/react'
 
 type Props = { skillTitle: string; glyphWidth: number }
@@ -14,7 +14,7 @@ type Props = { skillTitle: string; glyphWidth: number }
 const UpperBar: FC<Props> = ({ skillTitle }) => {
    const seenCount = useContext(SeenCountContext)
    const glyphWidth = useContext(GlyphWidthContext)
-   const quit = useContext(SetQuitContext)
+   const onSessionEnd = useContext(OnSessionEndContext)
    const height = glyphWidth / 3
    return (
       <View style={{ gap: 8 }} className="self-stretch mt-14 mb-8">
@@ -23,7 +23,7 @@ const UpperBar: FC<Props> = ({ skillTitle }) => {
             <ExitBtn
                height={height}
                onPress={() => {
-                  quit(true)
+                  onSessionEnd()
                }}
             />
          </View>

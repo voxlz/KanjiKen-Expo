@@ -7,8 +7,8 @@ export const dropInfoEqual = (newInfo?: DropInfo, oldInfo?: DropInfo) => {
    if (newInfo && oldInfo)
       return (
          newInfo.glyph === oldInfo.glyph &&
-         newInfo.x === oldInfo.x &&
-         newInfo.y === oldInfo.y
+         newInfo.dropActual.x === oldInfo.dropActual.x &&
+         newInfo.dropActual.y === oldInfo.dropActual.y
       )
    return false
 }

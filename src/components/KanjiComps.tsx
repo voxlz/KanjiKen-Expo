@@ -8,13 +8,13 @@ import { Position } from '../types/glyphDict'
 type Props = {
    pos: Position | undefined
    showPositionHints: boolean
+   singleComp?: boolean
 }
 
 /**
- * Places the dropLocations in accordance with position object.
+ * Places drop locations in accordance with position object in glyphDict.
  * */
-const KanjiComps: FC<Props> = ({ pos, showPositionHints }) => {
-   // console.log("KANJI COMPS UPDATE");
+const KanjiComps: FC<Props> = ({ pos, showPositionHints, singleComp }) => {
    return (
       <View className="flex-grow flex-shrink">
          {Object.entries(pos ?? {}).map(([key, value], i) => (
@@ -30,7 +30,11 @@ const KanjiComps: FC<Props> = ({ pos, showPositionHints }) => {
                   if (typeof strOrPos === 'string') {
                      const glyph = strOrPos.replace('?', '')
                      return (
-                        <DropLocation text={glyph} key={j}>
+                        <DropLocation
+                           text={glyph}
+                           key={j}
+                           singleDrop={singleComp}
+                        >
                            <Outline text={showPositionHints ? glyph : '?'} />
                         </DropLocation>
                      )
@@ -40,6 +44,7 @@ const KanjiComps: FC<Props> = ({ pos, showPositionHints }) => {
                            pos={strOrPos as Position}
                            key={j}
                            showPositionHints={showPositionHints}
+                           singleComp={singleComp}
                         />
                      )
                   }

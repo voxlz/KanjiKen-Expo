@@ -10,13 +10,13 @@ import KanjiBoxCorrect from '../displays/KanjiBoxCorrect'
 import KanjiMeaning from '../displays/KanjiMeaning'
 import { useContext } from '../utils/react'
 
-type Props = { glyphWidth: number; showPositionHints: boolean }
+type Props = { showPositionHints: boolean }
 
 /** Drag components to build a glyph */
-const Compose: FC<Props> = ({ glyphWidth, showPositionHints }) => {
+const Compose: FC<Props> = ({ showPositionHints }) => {
    const seenCount = useContext(SeenCountContext)
    const scheduler = useContext(SchedulerContext)
-   const solution = glyphDict[scheduler.getCurrent().glyph]
+   const solution = glyphDict[scheduler.getCurrent()!.glyph]
 
    return (
       <>

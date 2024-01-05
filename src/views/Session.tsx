@@ -18,14 +18,16 @@ import {
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import {
    RelativeHealthContext,
-   setIsDeadContext,
    NewExerciseHealthContext,
+   HealthContext,
+   OnSessionEndContext,
 } from '../contexts/HealthContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
+import { clearDrops } from '../globalState/DropInfo'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {
@@ -39,10 +41,10 @@ const Session: FC = () => {
    const expectedChoice = useContext(ExpectedChoiceContext)
    const resetSkillAnim = useContext(ResetSkillAnimContext)
    const glyphWidth = useContext(GlyphWidthContext)
-   const quit = useContext(setIsDeadContext)
    const newExerciseHealth = useContext(NewExerciseHealthContext)
-
+   const health = useContext(HealthContext)
    const relativeHealth = useContext(RelativeHealthContext)
+   const onSessionEnd = useContext(OnSessionEndContext)
 
    // State
    const [skillTitle, setSkillTitle] = useState('No title')
@@ -52,8 +54,11 @@ const Session: FC = () => {
       useState<ButtonStyles>('forest')
 
    const nextExercise = useCallback(() => {
-      // Ensure we take damage during this exercise
+      // Ensure we reset so that we can take damage during this exercise
       newExerciseHealth()
+
+      // Clear out previous dropareas.
+      clearDrops()
 
       // If we are currently on an exercise, mark as reviewd and go to next.
       if (exercise) {
@@ -62,44 +67,46 @@ const Session: FC = () => {
       }
 
       // Check so that we have not died.
-      if (relativeHealth.value === 0) {
-         quit(true)
-      }
+      if (health <= 0) {
+         onSessionEnd()
+      } else {
+         // Load the new or current challenge
+         const next = scheduler.getCurrent()
+         if (next) {
+            setExercise(next)
+            setChallenge?.(next)
 
-      // Regardless, let's load the current challenge
-      const next = scheduler.getCurrent()
-      setExercise(next)
-      setChallenge?.(next)
-
-      switch (next.skill) {
-         case 'compose':
-            setSkillTitle('Compose')
-            setContinueBtnText('Continue')
-            setContinueBtnStyle('forest')
-            break
-         case 'recognize':
-            setSkillTitle('Recognize')
-            setContinueBtnText('Continue')
-            setContinueBtnStyle('forest')
-            break
-         case 'intro':
-            setSkillTitle('New')
-            setContinueBtnText('Memorized')
-            setContinueBtnStyle('forest')
-            break
-         default:
-            setSkillTitle('ERR')
-            setContinueBtnText('ERR')
-            setContinueBtnStyle('forest')
-            break
+            switch (next.skill) {
+               case 'compose':
+                  setSkillTitle('Compose')
+                  setContinueBtnText('Continue')
+                  setContinueBtnStyle('forest')
+                  break
+               case 'recognize':
+                  setSkillTitle('Recognize')
+                  setContinueBtnText('Continue')
+                  setContinueBtnStyle('forest')
+                  break
+               case 'intro':
+                  setSkillTitle('New')
+                  setContinueBtnText('Memorized')
+                  setContinueBtnStyle('forest')
+                  break
+               default:
+                  setSkillTitle('ERR')
+                  setContinueBtnText('ERR')
+                  setContinueBtnStyle('forest')
+                  break
+            }
+         }
       }
 
       return undefined
    }, [
       exercise,
+      health,
       newExerciseHealth,
-      quit,
-      relativeHealth.value,
+      onSessionEnd,
       resetSkillAnim,
       scheduler,
       setChallenge,
@@ -124,7 +131,6 @@ const Session: FC = () => {
                {exercise.skill === 'compose' ? (
                   <Compose
                      key={seenCount}
-                     glyphWidth={glyphWidth}
                      showPositionHints={exercise.level === 0}
                   />
                ) : exercise.skill === 'recognize' ? (

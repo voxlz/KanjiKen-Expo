@@ -1,10 +1,9 @@
 import auth from '@react-native-firebase/auth'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import { View, Text } from 'react-native'
 
+import LoadingScreen from '../components/LoadingScreen'
 import ScheduleHandler from '../scheduler/scheduleHandler'
 import { createContext } from '../utils/react'
-import LoadingScreen from '../components/LoadingScreen'
 
 export const SchedulerContext = createContext<ScheduleHandler>()
 
@@ -21,7 +20,9 @@ const SchedulerContextProvider: FC<{ children?: ReactNode }> = ({
       const sync = () =>
          scheduler.syncLocal().then(() => {
             setLoaded(true)
-            scheduler.syncCloud()
+            scheduler.syncCloud().then(() => {
+               scheduler.validate()
+            })
          })
 
       scheduler.syncLocal().then(() => {

@@ -12,43 +12,42 @@ import ClockIcon from '../../assets/icons/ph_clock-duotone.svg'
 import SwordIcon from '../../assets/icons/ph_kanjiken-sword.svg'
 import StyledButton from '../components/StyledButton'
 import TextView from '../components/TextView'
+import { SetChallengeContext } from '../contexts/ChallengeContextProvider'
 import {
    RefreshHealthBarContext,
    SetHealthRegenContext,
    TimeTillFullHealthContext,
-   setIsDeadContext,
-   DeathContext,
+   HealthModeContext,
+   OnSessionStartContext,
 } from '../contexts/HealthContextProvider'
+import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { useInterval } from '../hooks/useInterval'
 import { useContext } from '../utils/react'
-import { SchedulerContext } from '../contexts/SchedulerContextProvider';
-import { SetChallengeContext } from '../contexts/ChallengeContextProvider';
 
 /** View before start of session, if not full health */
 const LowHealth: FC<PropsWithChildren> = ({ children }) => {
    const timeTillFullHealth = useContext(TimeTillFullHealthContext)
    const refreshHealthbar = useContext(RefreshHealthBarContext)
    const setHealthRegen = useContext(SetHealthRegenContext)
-   const setDeath = useContext(setIsDeadContext)
    const scheduler = useContext(SchedulerContext)
    const setChallenge = useContext(SetChallengeContext)
-   const death = useContext(DeathContext)
+   const healthMode = useContext(HealthModeContext)
+   const onSessionStart = useContext(OnSessionStartContext)
 
    const [enoughHealth, setEnoughHealth] = useState(true)
    const [isLoading, setIsLoading] = useState(true)
 
    // UPDATE HEALTHBAR
-   const update = (setDeathYes: boolean) => {
+   const update = () => {
       refreshHealthbar().then((health) => {
-         setDeathYes && setDeath(health < 33)
          setEnoughHealth(health >= 33)
          setIsLoading(false)
       })
    }
-   useEffect(() => update(true), [])
+   useEffect(() => update(), [])
    useInterval(() => {
-      if (death) {
-         update(false)
+      if (healthMode === 'Regen') {
+         update()
       }
    }, 250)
 
@@ -60,7 +59,7 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
 
    return (
       <>
-         {death && !isLoading ? (
+         {healthMode === 'Regen' && !isLoading ? (
             <View className="items-center justify-center w-full flex-grow ">
                <View
                   style={{ gap: 12 }}
@@ -75,15 +74,17 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
                         <TextView
                            className="text-black text-2xl"
                            style={{ fontFamily: 'noto-black' }}
-                        >
-                           {enoughHealth ? 'Good to go' : 'Low Health'}
-                        </TextView>
-                        <TextView style={{ fontFamily: 'noto-reg' }}>
-                           {timeTillFullHealth()
-                              ? 'Full health will finish restoring in ' +
-                                timeTillFullHealth()
-                              : 'Full health has been restored'}
-                        </TextView>
+                           text={enoughHealth ? 'Good to go' : 'Low Health'}
+                        />
+                        <TextView
+                           style={{ fontFamily: 'noto-reg' }}
+                           text={
+                              timeTillFullHealth()
+                                 ? 'Full health will finish restoring in ' +
+                                   timeTillFullHealth()
+                                 : 'Full health has been restored'
+                           }
+                        />
                      </View>
                   </View>
                   <StyledButton
@@ -96,8 +97,9 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
                      onPress={() => {
                         if (enoughHealth) {
                            setEnoughHealth(false)
-                           setDeath(false)
-                           setChallenge(scheduler.getCurrent())
+                           onSessionStart()
+                           const exercise = scheduler.getCurrent()
+                           if (exercise) setChallenge(exercise)
                         }
                      }}
                   />

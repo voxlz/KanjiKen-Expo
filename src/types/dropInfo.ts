@@ -18,4 +18,6 @@ export type MeasureType = LayoutType & {
 export type DropInfo = {
    glyph: string
    containsGlyph?: string // Is something already dropped here or not
-} & MeasureType
+   dropActual: MeasureType
+   dropHitbox: MeasureType
+}

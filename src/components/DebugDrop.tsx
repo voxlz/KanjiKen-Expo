@@ -10,13 +10,18 @@ const DebugDrop: FC = () => {
    const [hoverPos, setHoverPos] = useState<XY>({ x: 0, y: 0 })
    const [hoverInfos, setHoverInfos] = useState<DropInfo[]>(drops)
    useInterval(() => {
-      console.log('aaa')
+      // console.log('Update debug visual')
       setHoverPos(globalHoverPos ?? { x: 0, y: 0 })
       setHoverInfos(drops)
-   }, 1000)
+   }, 500)
    return (
       <View
-         style={{ elevation: -1, zIndex: -1 }}
+         style={{
+            elevation: 1,
+            zIndex: 1,
+            opacity: 0.5,
+            pointerEvents: 'none',
+         }}
          className="absolute w-full h-full"
       >
          <View
@@ -39,13 +44,33 @@ const DebugDrop: FC = () => {
             return (
                <View
                   style={{
-                     width: hoverInfo.width,
-                     height: hoverInfo.height,
+                     width: hoverInfo.dropHitbox.width,
+                     height: hoverInfo.dropHitbox.height,
                      position: 'absolute',
-                     top: hoverInfo.y,
-                     left: hoverInfo.x,
+                     top: hoverInfo.dropHitbox.y,
+                     left: hoverInfo.dropHitbox.x,
                      elevation: 80,
                      zIndex: 80,
+                     borderColor: 'rgb(20 83 45)',
+                     borderWidth: 1,
+                  }}
+                  className="bg-green-400 opacity-30"
+               />
+            )
+         })}
+         {hoverInfos.map((hoverInfo) => {
+            return (
+               <View
+                  style={{
+                     width: hoverInfo.dropActual.width,
+                     height: hoverInfo.dropActual.height,
+                     position: 'absolute',
+                     top: hoverInfo.dropActual.y,
+                     left: hoverInfo.dropActual.x,
+                     elevation: 80,
+                     zIndex: 80,
+                     borderColor: 'rgb(20 100 45)',
+                     borderWidth: 1,
                   }}
                   className="bg-green-400 opacity-30"
                />

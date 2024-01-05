@@ -18,6 +18,7 @@ const Recognize: FC = () => {
          <KanjiSkillTemplate
             KanjiComp={
                <KanjiComps
+                  singleComp
                   pos={{ col: [solution?.glyph] }}
                   showPositionHints={false}
                />

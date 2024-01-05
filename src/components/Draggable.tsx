@@ -115,12 +115,12 @@ const Draggable: FC<Props> = ({
       (hover: DropInfo, anchor: MeasureType) => {
          onCorrectChoice?.()
          const newSize = {
-            width: hover.width,
-            height: hover.height,
+            width: hover.dropActual.width,
+            height: hover.dropActual.height,
          }
          const newTrans = {
-            x: hover.x - anchor.x,
-            y: hover.y - anchor.y,
+            x: hover.dropActual.x - anchor.x,
+            y: hover.dropActual.y - anchor.y,
          }
 
          const newDragState = structuredClone(dragState)

@@ -8,16 +8,38 @@ import { updateDrops, hoverRef } from '../globalState/DropInfo'
 type Props = {
    children: React.ReactNode
    text: string
+   singleDrop?: boolean
 } & ViewProps
 
+export const dropLocationGap = 12
+
 /** Make this component a possible drop location */
-const DropLocation: FC<Props> = ({ children, text, ...props }) => {
+const DropLocation: FC<Props> = ({ children, text, singleDrop, ...props }) => {
    const expectedChoice = useContext(ExpectedChoiceContext)
 
    const { ref, onLayout, measure } = useMeasure()
 
    useEffect(() => {
-      if (measure) updateDrops({ glyph: text, ...measure })
+      if (measure)
+         updateDrops({
+            glyph: text,
+            dropActual: measure,
+            dropHitbox: singleDrop
+               ? {
+                    ...measure,
+                    height: measure.height + 200,
+                    width: measure.width + 200,
+                    x: measure.x - 100,
+                    y: measure.y - 100,
+                 }
+               : {
+                    ...measure,
+                    height: measure.height + dropLocationGap,
+                    width: measure.width + dropLocationGap,
+                    x: measure.x - dropLocationGap / 2,
+                    y: measure.y - dropLocationGap / 2,
+                 },
+         })
    }, [measure])
 
    // BACKGROUND COLOR - Does not currently work
@@ -33,8 +55,8 @@ const DropLocation: FC<Props> = ({ children, text, ...props }) => {
    const isHovered =
       hoverRef &&
       measure &&
-      hoverRef?.x === measure?.x &&
-      hoverRef?.y === measure?.y
+      hoverRef?.dropActual.x === measure?.x &&
+      hoverRef?.dropActual.y === measure?.y
    const isNext = expectedChoice === text
    colorIndex.setValue(isHovered ? 1 : isNext ? 2 : 0)
 

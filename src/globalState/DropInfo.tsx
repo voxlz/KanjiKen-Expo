@@ -14,6 +14,7 @@ export const findDrop = (glyph?: string) =>
 
 export const clearDrops = () => (drops = [])
 
+/** Create or Update drop location. */
 export const updateDrops = (newInfo: DropInfo) => {
    const idx = drops.findIndex((oldInfo) => dropInfoEqual(newInfo, oldInfo))
    drops =
@@ -27,10 +28,10 @@ export const updateHoverRef = (loc?: XY) => {
    const newHover = drops.find(
       (drop) =>
          loc &&
-         loc.x >= drop.x &&
-         loc.x <= drop.x + drop.width &&
-         loc.y >= drop.y &&
-         loc.y <= drop.y + drop.height
+         loc.x >= drop.dropHitbox.x &&
+         loc.x <= drop.dropHitbox.x + drop.dropHitbox.width &&
+         loc.y >= drop.dropHitbox.y &&
+         loc.y <= drop.dropHitbox.y + drop.dropHitbox.height
    )
    if (!dropInfoEqual(newHover, hoverRef)) {
       hoverRef = newHover

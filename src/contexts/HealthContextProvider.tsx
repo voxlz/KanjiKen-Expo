@@ -13,14 +13,18 @@ import { SchedulerContext } from './SchedulerContextProvider'
 import { clamp } from '../utils/js'
 import { createContext, useContext } from '../utils/react'
 
+type HealthMode = 'Session' | 'Regen'
+
+export const HealthContext = createContext<number>()
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
 export const AddHealthContext = createContext<(health: number) => void>()
 export const RefreshHealthBarContext = createContext<() => Promise<number>>()
+export const HealthModeContext = createContext<HealthMode>('Session')
+export const OnSessionEndContext = createContext<(health?: number) => void>()
+export const OnSessionStartContext = createContext<() => void>()
 export const TimeTillFullHealthContext =
    createContext<() => string | undefined>()
-export const DeathContext = createContext<boolean>()
-export const setIsDeadContext = createContext<(death: boolean) => void>()
 
 // Limit damage to once per exercise
 export const NewExerciseHealthContext = createContext<() => void>()
@@ -28,25 +32,20 @@ export const NewExerciseHealthContext = createContext<() => void>()
 export const SetHealthRegenContext =
    createContext<(regenPerMin: number) => void>()
 
+const maxHealth = 30
+
 /** Provides the drag context to elements that need it */
 const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    children,
 }) => {
+   const scheduler = useContext(SchedulerContext)
+
    // Keep track of stats
    const [health, _setHealth] = useState(30)
-   const [maxHealth] = useState(30)
    const [regenCache, setRegenCache] = useState<RegenObj>()
-   const [isDead, _setIsDead] = useState(false)
-   const scheduler = useContext(SchedulerContext)
    const [loading, setLoading] = useState(true)
    const [takeDamage, setTakeDamage] = useState(true)
-
-   const setIsDead = (newDead: boolean, newHealth?: number) => {
-      _setIsDead((oldDead) => {
-         if (newDead === true && oldDead !== newDead) onSessionEnd(newHealth)
-         return newDead
-      })
-   }
+   const [healthMode, setHealthMode] = useState<HealthMode>('Session')
 
    // Animation variables
    const healthProcent = useSharedValue((health / maxHealth) * 100)
@@ -72,27 +71,16 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
             duration: 500,
          })
       }
-   }, [health, healthProcent, loading, maxHealth])
+   }, [health, healthProcent, loading])
 
    /** Sets health according to some lambda. Saves health to disk */
    const setHealth = (someFunc: (oldHealth: number) => number) => {
       const newHealth = someFunc(health)
       AsyncStorage.setItem('health', JSON.stringify(newHealth))
       _setHealth(newHealth)
-
-      // if (newHealth <= 0) {
-      //    setIsDead(newHealth <= 0, newHealth)
-
-      //    // // Reset regen
-      //    // getRegenObj().then((regenObj) => {
-      //    //     regenObj.healthLeftAtQuit = 0
-      //    //     regenObj.timeOfQuit = Date.now()
-      //    //     setRegenObj(regenObj)
-      //    // })
-      // }
    }
 
-   // Get regen object from storage
+   /** Get regen object from storage */
    const getRegenObj = async (): Promise<RegenObj> => {
       const regenStr = await AsyncStorage.getItem('regen')
       if (!regenStr)
@@ -100,14 +88,16 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
       return JSON.parse(regenStr)
    }
 
-   // Set regen obj to storage
+   /** Set regen obj to storage */
    const setRegenObj = (regenObj: RegenObj) => {
       AsyncStorage.setItem('regen', JSON.stringify(regenObj)).then(() =>
          setRegenCache(regenObj)
       )
    }
 
-   /** Calculate how much health has been gained since timeOfDeath given current regen rate */
+   /**
+    * Calculate how much health has been gained since timeOfDeath given current regen rate 
+    */
    const getRegenHealth = async () => {
       const regen = await getRegenObj()
       const healthPerSec = regen.healthPerMin / 60
@@ -131,7 +121,7 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    const refreshHealthBar = async () => {
       const regen = await getRegenHealth()
       const newHealth: number = regen
-      if (newHealth <= 0) onDamage(newHealth, true)
+      if (newHealth <= 0) onDamage(newHealth)
       if (newHealth >= 0.33 * maxHealth)
          healthColor.value = withSpring(1, {
             duration: 500,
@@ -146,9 +136,13 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
    /** Change health */
    const addHealth = async (diff: number) => {
       console.log('added health', diff)
-      setHealth((oldHealth) => {
-         let newHealth = oldHealth
+      let newHealth: number
 
+      // Update Health
+      setHealth((oldHealth) => {
+         newHealth = oldHealth
+
+         // Check if you can take damage
          if (takeDamage) {
             newHealth = clamp({
                min: 0,
@@ -158,13 +152,13 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
             setTakeDamage(false)
          }
 
-         // You took damage
-         if (diff < 0) {
-            onDamage(newHealth, newHealth <= 0)
-         }
-
          return newHealth
       })
+
+      // You took damage
+      if (diff < 0) {
+         onDamage(newHealth!)
+      }
    }
 
    const setHealthRegen = (regenPerMin: number) => {
@@ -174,35 +168,52 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
       })
    }
 
-   // What should happen on death
-   const onSessionEnd = (newHealth?: number) => {
-      console.log('onSessionEnd')
-      scheduler.syncLocal()
-      scheduler.syncCloud()
-      getRegenObj().then((regenObj): void => {
-         regenObj.timeOfQuit = Date.now()
-         regenObj.healthLeftAtQuit = newHealth ?? health
-         setRegenObj(regenObj)
-         _setIsDead(true)
-      })
-   }
+   /**
+    * Session is over.
+    * User may have died or quit. Regardless this should sync data and put health into "REGEN" mode
+    **/
+   const onSessionEnd = useCallback(
+      (newHealth?: number) => {
+         console.log('onSessionEnd()')
+         scheduler.syncLocal()
+         scheduler.syncCloud()
+         getRegenObj().then((regenObj): void => {
+            regenObj.timeOfQuit = Date.now()
+            regenObj.healthLeftAtQuit = newHealth ?? health
+            setRegenObj(regenObj)
+            setHealthMode('Regen')
+         })
+      },
+      [health, scheduler]
+   )
 
-   // What should happen on damage
-   const onDamage = (newHealth: number, isDead: boolean) => {
+   /**
+    * Session is starting. User has triggered a new session start. Set health into "SESSION" mode.
+    */
+   const onSessionStart = useCallback(() => {
+      console.log('onSessionStart()')
+      setHealthMode('Session')
+   }, [])
+
+   /**
+    * User has taken damage.
+    * @param newHealth the new health. (Health and animations may be delayed)
+    */
+   const onDamage = (newHealth: number) => {
       console.log('onDamage')
+
+      // Give feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      if (healthColor.value !== 0) {
-         healthColor.value = 0
-         if (!isDead) {
-            // Still alive, simply flash red in healthbar
-            healthColor.value = withDelay(
-               300,
-               withSpring(1, {
-                  duration: 500,
-               })
-            )
-         }
-         setIsDead(isDead, newHealth)
+
+      // Update health color. Switch to red, If still alive, fade back to green
+      healthColor.value = 0
+      if (newHealth > 0) {
+         healthColor.value = withDelay(
+            300,
+            withSpring(1, {
+               duration: 500,
+            })
+         )
       }
    }
 
@@ -221,29 +232,33 @@ const HealthContextProvider: FC<{ children?: React.ReactNode }> = ({
 
    return (
       <NewExerciseHealthContext.Provider value={resetTakeDamage}>
-         <DeathContext.Provider value={isDead}>
-            <setIsDeadContext.Provider value={setIsDead}>
-               <AddHealthContext.Provider value={addHealth}>
-                  <HealthColorContext.Provider value={healthColor}>
-                     <RelativeHealthContext.Provider value={healthProcent}>
-                        <RefreshHealthBarContext.Provider
-                           value={refreshHealthBar}
-                        >
-                           <SetHealthRegenContext.Provider
-                              value={setHealthRegen}
+         <HealthModeContext.Provider value={healthMode}>
+            <AddHealthContext.Provider value={addHealth}>
+               <HealthColorContext.Provider value={healthColor}>
+                  <RelativeHealthContext.Provider value={healthProcent}>
+                     <RefreshHealthBarContext.Provider value={refreshHealthBar}>
+                        <SetHealthRegenContext.Provider value={setHealthRegen}>
+                           <TimeTillFullHealthContext.Provider
+                              value={timeTillFullHealth}
                            >
-                              <TimeTillFullHealthContext.Provider
-                                 value={timeTillFullHealth}
+                              <OnSessionStartContext.Provider
+                                 value={onSessionStart}
                               >
-                                 {children}
-                              </TimeTillFullHealthContext.Provider>
-                           </SetHealthRegenContext.Provider>
-                        </RefreshHealthBarContext.Provider>
-                     </RelativeHealthContext.Provider>
-                  </HealthColorContext.Provider>
-               </AddHealthContext.Provider>
-            </setIsDeadContext.Provider>
-         </DeathContext.Provider>
+                                 <OnSessionEndContext.Provider
+                                    value={onSessionEnd}
+                                 >
+                                    <HealthContext.Provider value={health}>
+                                       {children}
+                                    </HealthContext.Provider>
+                                 </OnSessionEndContext.Provider>
+                              </OnSessionStartContext.Provider>
+                           </TimeTillFullHealthContext.Provider>
+                        </SetHealthRegenContext.Provider>
+                     </RefreshHealthBarContext.Provider>
+                  </RelativeHealthContext.Provider>
+               </HealthColorContext.Provider>
+            </AddHealthContext.Provider>
+         </HealthModeContext.Provider>
       </NewExerciseHealthContext.Provider>
    )
 }

@@ -29,11 +29,10 @@ Use the the following versioning system: vs.m.b
 
 ### Issues
 
-| #id | Prio | Description                                                    |
-| --- | ---- | -------------------------------------------------------------- |
-| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture)       |
-| #?? | ^    | Death now triggers between 2 exercises, instead of during one. |
-| #?? | ^    | TEST SCALE BACK ON ON ANDROID                                  |
+| #id | Prio | Description                                              |
+| --- | ---- | -------------------------------------------------------- |
+| #30 | ↓    | Dropoff hitboxes could be more forgiving. (Drag gesture) |
+| #?? | ^    | TEST SCALE BACK ON ON ANDROID                            |
 
 ## Changelog
 
@@ -48,13 +47,16 @@ Use the the following versioning system: vs.m.b
 
 #### Issues
 
-| #id | Prio | Description                                                                        |
-| --- | ---- | ---------------------------------------------------------------------------------- |
-| #7  | -    | Fixed character intro shown before user has learned it's components.               |
-| #13 | -    | Fixed bad choices for the first few kanji. Showed random characters before.        |
-| #13 | -    | Fixed missing character bug in the outline where dragged character used to be      |
-| #6  | -    | Fixed duplicate characters all fade out in composition, even if only one was used. |
-| #7  | -    | Improved queue validation when database changes. Prevents stale lessons.           |
+| #id | Prio | Description                                                                                             |
+| --- | ---- | ------------------------------------------------------------------------------------------------------- |
+| #7  | -    | Fixed character intro shown before user has learned it's components.                                    |
+| #13 | -    | Fixed bad choices for the first few kanji. Showed random characters before.                             |
+| #13 | -    | Fixed missing character bug in the outline where dragged character used to be                           |
+| #6  | -    | Fixed duplicate characters all fade out in composition, even if only one was used.                      |
+| #7  | -    | Improved queue validation when database changes. Prevents stale lessons.                                |
+| #?? | ^    | Fixed death triggering immedialty. Now triggers between 2 exercises (so you can learn the one your on). |
+| #?? | ^    | Fixed not validating on data syncing                                                                    |
+
 
 ### v0.4.1
 
