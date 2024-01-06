@@ -11,7 +11,8 @@ export type FCC<P = object> = FC<PropsWithChildren<P>>
 
 export function useContext<T>(context: React.Context<T>) {
    const value = _useContext(context)
-   if (value === undefined) throw new Error('context must be within provider')
+   if (value === undefined)
+      throw new Error('context must be within provider' + typeof context)
    return value
 }
 

@@ -9,6 +9,7 @@ import {
    withTiming,
 } from 'react-native-reanimated'
 
+import { TriesContext } from './ChallengeContextProvider'
 import { SchedulerContext } from './SchedulerContextProvider'
 import { clamp } from '../utils/js'
 import { createContext, useContext } from '../utils/react'
@@ -18,16 +19,14 @@ type HealthMode = 'Session' | 'Regen'
 export const HealthContext = createContext<number>()
 export const RelativeHealthContext = createContext<SharedValue<number>>()
 export const HealthColorContext = createContext<SharedValue<number>>()
-export const AddHealthContext = createContext<(health: number) => void>()
+export const AddHealthContext =
+   createContext<(health: number) => Promise<void>>()
 export const RefreshHealthBarContext = createContext<() => Promise<number>>()
 export const HealthModeContext = createContext<HealthMode>('Session')
 export const OnSessionEndContext = createContext<(health?: number) => void>()
 export const OnSessionStartContext = createContext<() => void>()
 export const TimeTillFullHealthContext =
    createContext<() => string | undefined>()
-
-// Limit damage to once per exercise
-export const NewExerciseHealthContext = createContext<() => void>()
 
 export const SetHealthRegenContext =
    createContext<(regenPerMin: number) => void>()
@@ -39,12 +38,12 @@ const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
    children,
 }) => {
    const scheduler = useContext(SchedulerContext)
+   const tries = useContext(TriesContext)
 
    // Keep track of stats
    const [health, _setHealth] = useState(30)
    const [regenCache, setRegenCache] = useState<RegenObj>()
    const [loading, setLoading] = useState(true)
-   const [takeDamage, setTakeDamage] = useState(true)
    const [healthMode, setHealthMode] = useState<HealthMode>('Session')
 
    // Animation variables
@@ -131,7 +130,6 @@ const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
 
    /** Change health */
    const addHealth = async (diff: number) => {
-      console.log('added health', diff)
       let newHealth: number
 
       // Update Health
@@ -139,14 +137,17 @@ const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
          newHealth = oldHealth
 
          // Check if you can take damage
-         if (takeDamage) {
+         if (tries === 1) {
             newHealth = clamp({
                min: 0,
                value: oldHealth + diff,
                max: maxHealth,
             })
-            setTakeDamage(false)
          }
+
+         console.log(
+            newHealth === oldHealth ? 'negated damage' : 'added health' + diff
+         )
 
          return newHealth
       })
@@ -196,8 +197,6 @@ const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
     * @param newHealth the new health. (Health and animations may be delayed)
     */
    const onDamage = (newHealth: number) => {
-      console.log('onDamage')
-
       // Give feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
 
@@ -222,40 +221,34 @@ const HealthBarStateProvider: FC<{ children?: React.ReactNode }> = ({
       return `~${minLeft.toFixed(0)} min`
    }
 
-   const resetTakeDamage = useCallback(() => {
-      setTakeDamage(true)
-   }, [])
-
    return (
-      <NewExerciseHealthContext.Provider value={resetTakeDamage}>
-         <HealthModeContext.Provider value={healthMode}>
-            <AddHealthContext.Provider value={addHealth}>
-               <HealthColorContext.Provider value={healthColor}>
-                  <RelativeHealthContext.Provider value={healthProcent}>
-                     <RefreshHealthBarContext.Provider value={refreshHealthBar}>
-                        <SetHealthRegenContext.Provider value={setHealthRegen}>
-                           <TimeTillFullHealthContext.Provider
-                              value={timeTillFullHealth}
+      <HealthModeContext.Provider value={healthMode}>
+         <AddHealthContext.Provider value={addHealth}>
+            <HealthColorContext.Provider value={healthColor}>
+               <RelativeHealthContext.Provider value={healthProcent}>
+                  <RefreshHealthBarContext.Provider value={refreshHealthBar}>
+                     <SetHealthRegenContext.Provider value={setHealthRegen}>
+                        <TimeTillFullHealthContext.Provider
+                           value={timeTillFullHealth}
+                        >
+                           <OnSessionStartContext.Provider
+                              value={onSessionStart}
                            >
-                              <OnSessionStartContext.Provider
-                                 value={onSessionStart}
+                              <OnSessionEndContext.Provider
+                                 value={onSessionEnd}
                               >
-                                 <OnSessionEndContext.Provider
-                                    value={onSessionEnd}
-                                 >
-                                    <HealthContext.Provider value={health}>
-                                       {children}
-                                    </HealthContext.Provider>
-                                 </OnSessionEndContext.Provider>
-                              </OnSessionStartContext.Provider>
-                           </TimeTillFullHealthContext.Provider>
-                        </SetHealthRegenContext.Provider>
-                     </RefreshHealthBarContext.Provider>
-                  </RelativeHealthContext.Provider>
-               </HealthColorContext.Provider>
-            </AddHealthContext.Provider>
-         </HealthModeContext.Provider>
-      </NewExerciseHealthContext.Provider>
+                                 <HealthContext.Provider value={health}>
+                                    {children}
+                                 </HealthContext.Provider>
+                              </OnSessionEndContext.Provider>
+                           </OnSessionStartContext.Provider>
+                        </TimeTillFullHealthContext.Provider>
+                     </SetHealthRegenContext.Provider>
+                  </RefreshHealthBarContext.Provider>
+               </RelativeHealthContext.Provider>
+            </HealthColorContext.Provider>
+         </AddHealthContext.Provider>
+      </HealthModeContext.Provider>
    )
 }
 

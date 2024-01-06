@@ -23,7 +23,7 @@ import GlyphWidthContextProvider from '../src/contexts/GlyphWidthContextProvider
 import HealthBarStateProvider from '../src/contexts/HealthContextProvider'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
 import {} from '../src/globalState/DropInfo'
-import TaskAnimContextProvider from '../src/contexts/TaskAnimContextProvider'
+import AnimationContextProvider from '../src/contexts/TaskAnimContextProvider'
 
 export const version = Constants.expoConfig?.version
 
@@ -53,9 +53,9 @@ export default function Layout() {
       <View className="flex-1  bg-white" onLayout={onLayoutRootView}>
          <GlyphWidthContextProvider>
             <SchedulerContextProvider>
-               <HealthBarStateProvider>
-                  <TaskAnimContextProvider>
-                     <ChallengeContextProvider>
+               <AnimationContextProvider>
+                  <ChallengeContextProvider>
+                     <HealthBarStateProvider>
                         <StatusBar backgroundColor="white" />
                         <Stack
                            screenOptions={{
@@ -67,9 +67,9 @@ export default function Layout() {
                            }}
                            initialRouteName="/home"
                         />
-                     </ChallengeContextProvider>
-                  </TaskAnimContextProvider>
-               </HealthBarStateProvider>
+                     </HealthBarStateProvider>
+                  </ChallengeContextProvider>
+               </AnimationContextProvider>
             </SchedulerContextProvider>
          </GlyphWidthContextProvider>
       </View>

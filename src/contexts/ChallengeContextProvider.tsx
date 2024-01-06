@@ -21,6 +21,9 @@ export const SeenCountContext = CC<number>() // Keep track of challenges seen
 export const ChoicesContext = CC<GlyphInfo[]>() // Keep track of question choice alternatives
 export const OnCorrectChoiceContext = CC<() => void>() // Keep track of question choice alternatives
 export const ExpectedChoiceContext = CC<string>() // Keep track of next correct choice, and if we are finished.
+export const TriesContext = CC<number>() // Keep track of next correct choice, and if we are finished.
+export const SetTriesContext =
+   CC<(updateFunc: (old: number) => number) => void>() // Keep track of next correct choice, and if we are finished.
 
 const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
    children,
@@ -37,6 +40,8 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
       seenCount: 0,
       choices: [] as GlyphInfo[],
    })
+
+   const [tries, setTries] = useState(1)
 
    const onOrderIdxChange = useCallback(
       (
@@ -124,10 +129,6 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
          clearDrops()
 
          // Update state
-         // setChoices(shuffle(choices))
-         // setAnswerOrder(answers)
-         // setOrderIdx(0)
-         // setSeenCount((id) => id + 1)
          const newExeState = structuredClone(exeState)
          newExeState.choices = shuffle(choices)
          newExeState.answerOrderIdx = 0
@@ -157,7 +158,11 @@ const ChallengeContextProvider: FC<{ children?: ReactNode }> = ({
             <ExpectedChoiceContext.Provider value={exeState.expectedAnswer}>
                <SeenCountContext.Provider value={exeState.seenCount}>
                   <ChoicesContext.Provider value={exeState.choices}>
-                     {children}
+                     <TriesContext.Provider value={tries}>
+                        <SetTriesContext.Provider value={setTries}>
+                           {children}
+                        </SetTriesContext.Provider>
+                     </TriesContext.Provider>
                   </ChoicesContext.Provider>
                </SeenCountContext.Provider>
             </ExpectedChoiceContext.Provider>

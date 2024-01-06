@@ -6,12 +6,12 @@ import Animated, {
    useAnimatedStyle,
 } from 'react-native-reanimated'
 
+import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import {
    ContinueAnimContext,
    ContinueAnimInstantResetContext,
 } from '../contexts/TaskAnimContextProvider'
 import { useContext } from '../utils/react'
-import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 
 type Props = {
    KanjiComp: React.ReactNode

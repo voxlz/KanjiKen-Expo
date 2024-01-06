@@ -14,11 +14,12 @@ import {
    SetChallengeContext,
    SeenCountContext,
    ExpectedChoiceContext,
+   SetTriesContext,
+   TriesContext,
 } from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import {
    RelativeHealthContext,
-   NewExerciseHealthContext,
    HealthContext,
    OnSessionEndContext,
 } from '../contexts/HealthContextProvider'
@@ -40,10 +41,11 @@ const Session: FC = () => {
    const expectedChoice = useContext(ExpectedChoiceContext)
    const resetSkillAnim = useContext(ResetSkillAnimContext)
    const glyphWidth = useContext(GlyphWidthContext)
-   const newExerciseHealth = useContext(NewExerciseHealthContext)
    const health = useContext(HealthContext)
    const relativeHealth = useContext(RelativeHealthContext)
    const onSessionEnd = useContext(OnSessionEndContext)
+   const setTries = useContext(SetTriesContext)
+   const tries = useContext(TriesContext)
 
    // State
    const [skillTitle, setSkillTitle] = useState('No title')
@@ -53,18 +55,21 @@ const Session: FC = () => {
       useState<ButtonStyles>('forest')
 
    const nextExercise = useCallback(() => {
-      // Ensure we reset so that we can take damage during this exercise
-      newExerciseHealth()
-
       // Clear out previous dropareas.
       clearDrops()
 
       // If we are currently on an exercise, mark as reviewd and go to next.
       if (exercise) {
          resetSkillAnim()
-         // TODO: remove hardcoded tries
-         scheduler.onReview(1)
+         scheduler.onReview(tries)
+         console.log('reviewed with tries', tries)
       }
+
+      // Reset tries to 1
+      setTries((old) => {
+         console.log('set tries from to', old, 1)
+         return 1
+      })
 
       // Check so that we have not died.
       if (exercise && health <= 0) {
@@ -106,11 +111,12 @@ const Session: FC = () => {
    }, [
       exercise,
       health,
-      newExerciseHealth,
       onSessionEnd,
       resetSkillAnim,
       scheduler,
       setChallenge,
+      setTries,
+      tries,
    ])
 
    // When session starts

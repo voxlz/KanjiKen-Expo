@@ -1,17 +1,12 @@
 import auth from '@react-native-firebase/auth'
 import { router, useLocalSearchParams } from 'expo-router'
-import React, { FC, useCallback, useContext, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { View, Pressable, Text } from 'react-native'
 
-import login from './login'
-import GoogleLogo from '../../assets/logos/google.svg'
-import TwitterLogo from '../../assets/logos/twitter.svg'
-import Button from '../../src/components/Button'
 import StyledButton from '../../src/components/StyledButton'
 import InputText from '../../src/login/InputText'
-import { LineBreak, BorderBoxBtn } from '../../src/login/LoginHelperComponents'
-import { signInWithGoogle, signInWithApple } from '../../src/login/LoginLogic'
+import { LineBreak } from '../../src/login/LoginHelperComponents'
 import SignInProviders from '../../src/login/SignInProviders'
 
 interface FormRegister {

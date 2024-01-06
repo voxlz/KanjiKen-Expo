@@ -1,6 +1,6 @@
+import { Position } from './glyphDict'
 import { learnOrder } from '../../output/learnOrder'
 import { glyphDict } from '../data/glyphDict'
-import { Position } from './glyphDict'
 
 // Keep track of your progress on different memerables: glyphs, vocabulary, grammar?, sentences?
 export type ProgressDict = {

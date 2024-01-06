@@ -105,5 +105,4 @@ describe('Test onReview() of scheduler', () => {
          expect(scheduler.getCurrent()?.level).toBe(0)
       })
    })
-
 })

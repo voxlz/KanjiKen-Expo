@@ -24,6 +24,7 @@ import GlyphHint from './GlyphHint'
 import {
    ExpectedChoiceContext,
    OnCorrectChoiceContext,
+   SetTriesContext,
 } from '../contexts/ChallengeContextProvider'
 import { GlyphWidthContext } from '../contexts/GlyphWidthContextProvider'
 import { AddHealthContext } from '../contexts/HealthContextProvider'
@@ -78,6 +79,7 @@ const Draggable: FC<Props> = ({
    const addHealth = useContext(AddHealthContext)
    const width = useContext(GlyphWidthContext)
    const animationInstantReset = useContext(ContinueAnimInstantResetContext)
+   const setTries = useContext(SetTriesContext)
 
    const transX = useSharedValue(0)
    const transY = useSharedValue(0)
@@ -168,11 +170,11 @@ const Draggable: FC<Props> = ({
       }
    }, [anchor, dragState, moveTo])
 
-   const dropMisstake = useCallback(() => {
+   const onMisstake = useCallback(() => {
       console.log('drop user misstake')
-      addHealth(-10)
+      addHealth(-10).then(() => setTries((old) => old + 1))
       dropCancelled()
-   }, [addHealth, dropCancelled])
+   }, [addHealth, dropCancelled, setTries])
 
    const calcAndUpdateHoverPos = useCallback(
       (drag: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
@@ -206,7 +208,7 @@ const Draggable: FC<Props> = ({
                if (anchor && expectedChoice === glyph && dropInfo) {
                   dropSuccessful(dropInfo, anchor)
                } else if (expectedChoice !== 'FINISH') {
-                  dropMisstake()
+                  onMisstake()
                }
                setIsBeingDragged(false)
             }),
@@ -216,7 +218,7 @@ const Draggable: FC<Props> = ({
          expectedChoice,
          setIsBeingDragged,
          dropSuccessful,
-         dropMisstake,
+         onMisstake,
       ]
    )
 
@@ -285,7 +287,7 @@ const Draggable: FC<Props> = ({
                   !hover?.containsGlyph &&
                   hover
                ) {
-                  dropMisstake()
+                  onMisstake()
                }
                // Drop cancelled.
                else {
@@ -309,7 +311,7 @@ const Draggable: FC<Props> = ({
          glyph,
          anchor,
          dropSuccessful,
-         dropMisstake,
+         onMisstake,
          dropCancelled,
       ]
    )

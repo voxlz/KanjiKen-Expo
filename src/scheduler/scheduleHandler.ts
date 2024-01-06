@@ -195,8 +195,6 @@ export default class ScheduleHandler {
          return exe
       })
 
-      console.log('newUserData.progress', newUserData.progress)
-
       // Remove stale glyphs from progress. (So that we don't add stale exercises back later)
       newUserData.progress = Object.fromEntries(
          Object.entries(newUserData.progress)
@@ -225,8 +223,6 @@ export default class ScheduleHandler {
                },
             ])
       )
-
-      console.log('AFTER newUserData.progress', newUserData.progress)
 
       // Check progress and add missing exercises to queue. (Intro gets handled above. Focus on other skills)
       Object.entries(newUserData.progress).forEach(
