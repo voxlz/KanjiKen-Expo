@@ -83,19 +83,21 @@ describe('Test onReview() of scheduler', () => {
          ])
          expect(scheduler.getSchedule()[9].level).toBe(5)
       })
-      test('should lose a level if more than one try', () => {
+   })
+   describe('Level Ajustment', () => {
+      test('should lose a level it took more than one try', () => {
          const scheduler = new ScheduleHandler({
             schedule: [createExercise('⺋', 'compose', 4)],
          })
          scheduler.onReview(2)
          expect(scheduler.getCurrent()?.level).toBe(3)
       })
-      test('should lose a level if more than one try again', () => {
+      test('should lose 2 levels it took more than two tries', () => {
          const scheduler = new ScheduleHandler({
             schedule: [createExercise('⺋', 'compose', 4)],
          })
          scheduler.onReview(99)
-         expect(scheduler.getCurrent()?.level).toBe(3)
+         expect(scheduler.getCurrent()?.level).toBe(2)
       })
       test('should never let level go into minus', () => {
          const scheduler = new ScheduleHandler({

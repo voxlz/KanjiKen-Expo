@@ -316,7 +316,12 @@ export default class ScheduleHandler {
          const maxLvl = lvlsPerSkill[exercise.skill]
          const newLevel = clamp({
             min: 0,
-            value: tries === 1 ? exercise.level + 1 : exercise.level - 1,
+            value:
+               tries === 1
+                  ? exercise.level + 1
+                  : tries === 2
+                    ? exercise.level - 1
+                    : exercise.level - 2,
             max: maxLvl,
          })
 

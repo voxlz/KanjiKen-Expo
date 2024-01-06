@@ -139,7 +139,7 @@ const Intro: FC<Props> = ({ glyphWidth }) => {
                            })
                            setTimeout(() => {
                               onCorrectChoice?.()
-                           }, 1000)
+                           }, 500)
                         }
                      }}
                      styleName="normal"

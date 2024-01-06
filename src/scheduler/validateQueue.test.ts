@@ -142,7 +142,6 @@ describe('Validate queue after dictionary update', () => {
    })
    describe('Duplicated / Missing Skills', () => {
       test('remove lower level duplicates', () => {
-         console.log('TEST')
          learnOrder = ['大']
          scheduler = new ScheduleHandler({
             schedule: [
