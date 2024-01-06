@@ -24,7 +24,6 @@ import {
 } from '../contexts/HealthContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
-import { glyphDict } from '../data/glyphDict'
 import { clearDrops } from '../globalState/DropInfo'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
@@ -63,7 +62,8 @@ const Session: FC = () => {
       // If we are currently on an exercise, mark as reviewd and go to next.
       if (exercise) {
          resetSkillAnim()
-         scheduler.onReview(1, exercise.level, glyphDict[exercise.glyph])
+         // TODO: remove hardcoded tries
+         scheduler.onReview(1)
       }
 
       // Check so that we have not died.
@@ -72,6 +72,7 @@ const Session: FC = () => {
       } else {
          // Load the new or current challenge
          const next = scheduler.getCurrent()
+
          if (next) {
             setExercise(next)
             setChallenge?.(next)

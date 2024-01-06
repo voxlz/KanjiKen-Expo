@@ -17,6 +17,7 @@
 | #?? | 0    | Order does not work if the same character appears twice (need to know which one is which in position)                                   |
 | #?? | 0    | lose is ambiguous. can mean "to fail" and "to lose" and is sometimes confused with loose, avoid these types of words?                   |
 | #?? | -1   | 愛 has 4 vertical components. Invent new radical? (𤔠, 𩰣, 爱, 受 all also have the first 2 components, but none of them are joyo kanji.) |
+| #?? | 0    | 亼 has missing kvg entry                                                                                                                |
 
 ## Changelog
 

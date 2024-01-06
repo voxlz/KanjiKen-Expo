@@ -8,7 +8,6 @@ import { createExercise } from './exercise'
 import { getFromDisk, saveToDisk } from './localSync'
 import { UserData, userDataProgressCount } from './userDataUtils'
 import { learnOrder } from '../../output/learnOrder'
-import { GlyphInfo } from '../contexts/ChallengeContextProvider'
 import { glyphDict } from '../data/glyphDict'
 import {
    Exercise,
@@ -18,7 +17,7 @@ import {
    requiredProgress,
    Skills,
 } from '../types/progress'
-import { clamp } from '../utils/js'
+import { clamp, uniqueBy } from '../utils/js'
 
 export type Progress = {
    [glyph in Learnable]?: {
@@ -184,16 +183,111 @@ export default class ScheduleHandler {
       }
 
       // Data might have been updated, leaving some "stale" skills.
-      newUserData.schedule = newUserData.schedule.filter((exe) => {
+      newUserData.schedule = newUserData.schedule.map((exe) => {
          if (exe.skill === 'recognize' && glyphDict[exe.glyph].comps.position) {
-            return false
+            return createExercise(exe.glyph, 'compose', exe.level)
          } else if (
             exe.skill === 'compose' &&
             !glyphDict[exe.glyph].comps.position
          ) {
-            return false
+            return createExercise(exe.glyph, 'recognize', exe.level)
          }
-         return true
+         return exe
+      })
+
+      console.log('newUserData.progress', newUserData.progress)
+
+      // Remove stale glyphs from progress. (So that we don't add stale exercises back later)
+      newUserData.progress = Object.fromEntries(
+         Object.entries(newUserData.progress)
+            .filter(([glyph]) => order.includes(glyph as Learnable))
+            .map(([glyph, prog]) => [
+               glyph,
+               {
+                  skills: Object.fromEntries(
+                     uniqueBy(
+                        Object.entries(prog.skills).map(([skill, lvl]) => {
+                           if (skill === 'intro') return [skill, lvl]
+                           else {
+                              const hasPos =
+                                 !!glyphDict[glyph as Learnable].comps.position
+                              return [
+                                 (hasPos
+                                    ? 'compose'
+                                    : 'recognize') satisfies Skills,
+                                 lvl,
+                              ]
+                           }
+                        }),
+                        (tuple) => tuple[0]
+                     )
+                  ),
+               },
+            ])
+      )
+
+      console.log('AFTER newUserData.progress', newUserData.progress)
+
+      // Check progress and add missing exercises to queue. (Intro gets handled above. Focus on other skills)
+      Object.entries(newUserData.progress).forEach(
+         ([
+            glyph,
+            {
+               skills: { compose, intro, recognize },
+            },
+         ]) => {
+            if (
+               compose &&
+               !newUserData.schedule.find(
+                  (exe) => exe.glyph === glyph && exe.skill === 'compose'
+               )
+            ) {
+               newUserData.schedule.unshift(
+                  createExercise(glyph as Learnable, 'compose', compose)
+               )
+            }
+            if (
+               recognize &&
+               !newUserData.schedule.find(
+                  (exe) => exe.glyph === glyph && exe.skill === 'recognize'
+               )
+            ) {
+               newUserData.schedule.unshift(
+                  createExercise(glyph as Learnable, 'recognize', recognize)
+               )
+            }
+            if (
+               (intro === 1 || intro === 0) &&
+               !newUserData.schedule.find((exe) => exe.glyph === glyph)
+            ) {
+               const gly = glyph as Learnable
+               newUserData.schedule.unshift(
+                  intro === 1
+                     ? createExercise(
+                          gly,
+                          glyphDict[gly].comps.position
+                             ? 'compose'
+                             : 'recognize',
+                          0
+                       )
+                     : createExercise(gly, 'intro', 0)
+               )
+            }
+         }
+      )
+
+      // Remove duplicates, keep the one with higher level
+      newUserData.schedule = newUserData.schedule.filter((exe, i) => {
+         const inFront = newUserData.schedule
+            .slice(0, i)
+            .concat(newUserData.schedule.slice(i + 1))
+         const betterThanThis = inFront.find(
+            (e) =>
+               e.glyph === exe.glyph &&
+               e.skill === exe.skill &&
+               e.level >= exe.level
+         )
+         return !betterThanThis
       })
 
       this.setUserData(newUserData)
@@ -218,7 +312,7 @@ export default class ScheduleHandler {
    }
 
    // Let's start with a very basic scheduler. Every time you review something, it get's pushed back 2^(lvl+1) slots.
-   onReview(tries: number, currLvl: number, glyphInfo: GlyphInfo) {
+   onReview(tries: number) {
       // Remove reviewed element
       const exercise = this.getUserData().schedule.shift()
 
@@ -226,8 +320,7 @@ export default class ScheduleHandler {
          const maxLvl = lvlsPerSkill[exercise.skill]
          const newLevel = clamp({
             min: 0,
-            value:
-               tries === 1 ? currLvl + 1 : tries === 2 ? currLvl : currLvl - 1,
+            value: tries === 1 ? exercise.level + 1 : exercise.level - 1,
             max: maxLvl,
          })
 
@@ -255,7 +348,9 @@ export default class ScheduleHandler {
             const newIndex = 3
             userData.schedule.splice(newIndex, 0, {
                ...generalInfo(exercise.glyph),
-               skill: glyphInfo.comps.position ? 'compose' : 'recognize',
+               skill: glyphDict[exercise.glyph].comps.position
+                  ? 'compose'
+                  : 'recognize',
             })
          }
 
