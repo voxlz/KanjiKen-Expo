@@ -1,71 +1,108 @@
 {
-    "project_info": {
-        "project_number": "664861145037",
-        "project_id": "kanjiken-expo",
-        "storage_bucket": "kanjiken-expo.appspot.com"
-    },
-    "client": [
-        {
-            "client_info": {
-                "mobilesdk_app_id": "1:664861145037:android:57fe255da89b8ee3653684",
-                "android_client_info": {
-                    "package_name": "com.voxlz.KanjiKen"
-                }
-            },
-            "oauth_client": [
-                {
-                    "client_id": "664861145037-anqq9j9clcb58vu917sid63fgeqbc6dv.apps.googleusercontent.com",
-                    "client_type": 1,
-                    "android_info": {
-                        "package_name": "com.voxlz.KanjiKen",
-                        "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-                    }
-                },
-                {
-                    "client_id": "664861145037-ig2s1kvpk6cnj6864ftmpoo6gcti0c8q.apps.googleusercontent.com",
-                    "client_type": 1,
-                    "android_info": {
-                        "package_name": "com.voxlz.KanjiKen",
-                        "certificate_hash": "0816a6318cb1654f74624a75156f15d5086278d2"
-                    }
-                },
-                {
-                    "client_id": "664861145037-ua8o4dm8feh1p3pg78cngfrump27g5go.apps.googleusercontent.com",
-                    "client_type": 1,
-                    "android_info": {
-                        "package_name": "com.voxlz.KanjiKen",
-                        "certificate_hash": "e50168a89fb25f7675cd22f11a5a06608077198a"
-                    }
-                },
-                {
-                    "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
-                    "client_type": 3
-                }
-            ],
-            "api_key": [
-                {
-                    "current_key": "AIzaSyBSj6MB-Cuc32ExC_QafDDEa5SgCrMXumY"
-                }
-            ],
-            "services": {
-                "appinvite_service": {
-                    "other_platform_oauth_client": [
-                        {
-                            "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
-                            "client_type": 3
-                        },
-                        {
-                            "client_id": "664861145037-chcke5vrmqs3qjkqv3r6kvb382b534aq.apps.googleusercontent.com",
-                            "client_type": 2,
-                            "ios_info": {
-                                "bundle_id": "com.voxlz.KanjiKen",
-                                "app_store_id": "6471281018"
-                            }
-                        }
-                    ]
-                }
-            }
+  "project_info": {
+    "project_number": "664861145037",
+    "project_id": "kanjiken-expo",
+    "storage_bucket": "kanjiken-expo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664861145037:android:57fe255da89b8ee3653684",
+        "android_client_info": {
+          "package_name": "com.voxlz.KanjiKen"
         }
-    ],
-    "configuration_version": "1"
+      },
+      "oauth_client": [
+        {
+          "client_id": "664861145037-anqq9j9clcb58vu917sid63fgeqbc6dv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voxlz.KanjiKen",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "664861145037-ig2s1kvpk6cnj6864ftmpoo6gcti0c8q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voxlz.KanjiKen",
+            "certificate_hash": "0816a6318cb1654f74624a75156f15d5086278d2"
+          }
+        },
+        {
+          "client_id": "664861145037-ua8o4dm8feh1p3pg78cngfrump27g5go.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voxlz.KanjiKen",
+            "certificate_hash": "e50168a89fb25f7675cd22f11a5a06608077198a"
+          }
+        },
+        {
+          "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSj6MB-Cuc32ExC_QafDDEa5SgCrMXumY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "664861145037-chcke5vrmqs3qjkqv3r6kvb382b534aq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.voxlz.KanjiKen",
+                "app_store_id": "6471281018"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664861145037:android:08416794cd20bbe7653684",
+        "android_client_info": {
+          "package_name": "com.voxlz.KanjiKen.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSj6MB-Cuc32ExC_QafDDEa5SgCrMXumY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664861145037-kp5gtqeo02bjoha74nqeglg8q5b1vdo7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "664861145037-chcke5vrmqs3qjkqv3r6kvb382b534aq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.voxlz.KanjiKen",
+                "app_store_id": "6471281018"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
