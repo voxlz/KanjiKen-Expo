@@ -35,71 +35,6 @@ const InputText = <Form extends FieldValues>({
    btnText,
    btnPress,
 }: Props<Form>) => {
-   // const error = errors[field as Path<Form>]
-   // const [showAutocomplete, setShowAutocomplete] = useState(false)
-   // const [selectIndex, setSelectIndex] = useState(predictions ? 0 : -1)
-
-   // const handleInput = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-   //     if (e.key === 'Tab' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-   //         if (
-   //             predictions &&
-   //             predictions.length !== 0 &&
-   //             showAutocomplete &&
-   //             selectIndex < predictions.length &&
-   //             selectIndex >= -1
-   //         ) {
-   //             const minus = Math.max(selectIndex - 1, -1)
-   //             if (e.shiftKey || e.key === 'ArrowUp') {
-   //                 if (minus !== -1) {
-   //                     setSelectIndex(minus)
-   //                     e.preventDefault()
-   //                 } else {
-   //                     setShowAutocomplete(false)
-   //                     setSelectIndex(-1)
-   //                 }
-   //             } else {
-   //                 if (selectIndex + 1 !== predictions.length) {
-   //                     setSelectIndex(selectIndex + 1)
-   //                     e.preventDefault()
-   //                 } else {
-   //                     setSelectIndex(-1)
-   //                 }
-   //             }
-   //         } else {
-   //             setShowAutocomplete(false)
-   //             setSelectIndex(-1)
-   //         }
-   //     } else if (e.key === 'Enter') {
-   //         if (selectIndex !== -1) {
-   //             console.log(
-   //                 'selectIndex',
-   //                 selectIndex,
-   //                 field,
-   //                 predictions?.[selectIndex] ?? ''
-   //             )
-   //             e.preventDefault()
-
-   //             // Only set value if there is prediction, don't clear field.
-   //             if (predictions?.[selectIndex])
-   //                 setValue?.(field, predictions[selectIndex] as any)
-
-   //             setShowAutocomplete(false)
-   //             setSelectIndex(-1)
-   //         }
-   //     } else if (e.key === 'Escape') {
-   //         e.preventDefault()
-   //         setShowAutocomplete(false)
-   //         setSelectIndex(-1)
-   //     }
-   // }
-   /** messes up pressing enter atm */
-   // useEffect(() => {
-   //   if (predictions) {
-   //     console.log("set select index if predictions change", predictions)
-   //     setSelectIndex(0)
-   //   }
-   // }, [predictions])
-
    return (
       <View className="flex-grow flex-col ">
          <Controller
@@ -146,11 +81,6 @@ const InputText = <Form extends FieldValues>({
                            {'' + error?.message}
                         </Text>
                      )}
-                     {/* {errors && errors[name]?.type === 'validate' && (
-                                <Text className="mt-2 text-sm font-bold text-red-800">
-                                    Not a number
-                                </Text>
-                            )} */}
                   </View>
                )
             }}

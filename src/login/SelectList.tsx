@@ -19,9 +19,7 @@ const SelectList: FC<Props> = ({ list, onSelect, selected }) => (
                   (selected === i ? ' bg-blue-200' : '')
                }
                onPointerDown={() => onSelect(alt)}
-            >
-               {/* <FuriganaText text={alt} /> */}
-            </Pressable>
+             />
          </View>
       ))}
    </View>
