@@ -24,12 +24,14 @@ import {
    RelativeHealthContext,
    HealthContext,
    OnSessionEndContext,
+   maxHealth,
 } from '../contexts/HealthContextProvider'
 import { SchedulerContext } from '../contexts/SchedulerContextProvider'
 import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../contexts/TaskAnimContextProvider'
 import { clearDrops } from '../globalState/DropInfo'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
+import { router } from 'expo-router'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {
@@ -64,7 +66,12 @@ const Session: FC = () => {
    // Load ad on startup
    useEffect(() => load(), [load])
    // Load ad on closed ad
-   useEffect(() => (isClosed ? load() : undefined), [isClosed, load])
+   useEffect(() => {
+      if (isClosed) {
+         load()
+         onSessionEnd(maxHealth)
+      }
+   }, [isClosed, load, onSessionEnd])
 
    const nextExercise = useCallback(() => {
       // Clear out previous dropareas.
@@ -85,8 +92,10 @@ const Session: FC = () => {
 
       // Check so that we have not died.
       if (exercise && health <= 0) {
-         onSessionEnd()
-         if (isLoaded) show({ immersiveModeEnabled: true })
+         if (isLoaded) {
+            show({ immersiveModeEnabled: true })
+            router.back()
+         }
       } else {
          // Load the new or current challenge
          const next = scheduler.getCurrent()

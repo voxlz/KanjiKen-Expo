@@ -69,9 +69,10 @@ const LowHealth: FC<PropsWithChildren> = ({ children }) => {
    }, [])
    useFocusEffect(startRegen)
 
+   const showLowHealthUI = healthMode === 'Regen' && !isLoading && false
    return (
       <>
-         {healthMode === 'Regen' && !isLoading ? (
+         {showLowHealthUI ? (
             <View className="items-center justify-center w-full flex-grow ">
                <View
                   style={{ gap: 12 }}
