@@ -78,7 +78,6 @@ EAS allows for auto submissions. I've set this up for android builds for now. Us
 eas submit -p android --profile testing (--latest)
 ```
 
-
 ### iOS
 
 Run the following when you want to submit a newly created build to appstore connect.
@@ -89,13 +88,13 @@ eas submit -p ios --profile testing --latest
 
 ## Admob
 
-https://ninza7.medium.com/monetize-your-react-native-expo-apps-with-google-admob-f12950a233a4
+<https://ninza7.medium.com/monetize-your-react-native-expo-apps-with-google-admob-f12950a233a4>
 
 If admob page does not load, disable adblock.
 
 ## Apple auth: I've used the following article
 
-https://medium.com/nerd-for-tech/apple-google-authentication-in-expo-apps-using-firebase-997125440032
+<https://medium.com/nerd-for-tech/apple-google-authentication-in-expo-apps-using-firebase-997125440032>
 
 ## Add new secrets to Expo
 

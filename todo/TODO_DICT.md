@@ -10,7 +10,6 @@
 | #?? | 1    | Unique keywords for all characters                                                                                                      |
 | #?? | 0    | Full-width glyphs for all characters (Commission a font person?)                                                                        |
 | #?? | 0    | Programmatically filter out radicals (non joyo) that have few occurrences (like <3) like 开  (only used in 形)                          |
-| #?? | 0    | Deal with characters that mix radicals and strokes. 皮 composition. (又 exists, rest not) 可 composition  (口 exists, rest not)         |
 | #?? | 0    | 井 (Well) keyword ambiguous                                                                                                             |
 | #?? | 0    | 郎 (son) make left-part into radical                                                                                                    |
 | #?? | 0    | No question marks (prefer warnings)                                                                                                     |
@@ -18,8 +17,20 @@
 | #?? | 0    | lose is ambiguous. can mean "to fail" and "to lose" and is sometimes confused with loose, avoid these types of words?                   |
 | #?? | -1   | 愛 has 4 vertical components. Invent new radical? (𤔠, 𩰣, 爱, 受 all also have the first 2 components, but none of them are joyo kanji.) |
 | #?? | 0    | 亼 has missing kvg entry                                                                                                                |
+| #?? | 0    | 者 should have composition. How to deal                                                                                                 |
+| #?? | 0    | Deal with characters that mix radicals and strokes:                                                                                     |
+    皮 composition. (又 exists, rest not)
 
 ## Changelog
+
+### v0.4.3
+
+#### Issues
+
+| #id | Prio | Description                                                                         |
+| --- | ---- | ----------------------------------------------------------------------------------- |
+| #?? | -    | Updated composition data of 事 (Matter), 言 (Say), 豕 (Pig), 者 (Someone), 壬 (9th) |
+| #?? | -    | Added characters ㇚(Hook), ㇒ (Slash)                                               |
 
 ### v0.4.2
 

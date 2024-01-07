@@ -1,8 +1,17 @@
 {
    "cSpell.words": ["corepack", "firestore", "nativewind", "prebuild"],
-   "python.testing.pytestArgs": ["${workspaceFolder}"],
+   "python.testing.pytestArgs": ["${workspaceFolder}/dict"],
    "python.testing.unittestEnabled": false,
    "python.testing.pytestEnabled": true,
-   "python.testing.cwd": "${workspaceFolder}/dict"
+   "python.testing.cwd": "${workspaceFolder}/dict",
+   "explorer.autoRevealExclude": {
+      "**/kanji": true
+   },
+   "[typescriptreact]": {},
+   "[python]": {
+      "diffEditor.ignoreTrimWhitespace": false,
+      "editor.formatOnType": true,
+      "editor.wordBasedSuggestions": "off"
+   }
    // "python.testing.unittestArgs": ["-v", "-s", ".", "-p", "*_test.py"]
 }

@@ -10,28 +10,33 @@ Use the the following versioning system: vs.m.b
 
 ### Features
 
-| #id | Prio | Description                                                                                              |
-| --- | ---- | -------------------------------------------------------------------------------------------------------- |
-| #?? | -    | Ads after dying / Refil?                                                                                 |
-| #23 | -    | XP level system to track progress                                                                        |
-| #22 | -    | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                            |
-| #22 | -    | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                   |
-| #10 | -    | Show similar kanji as alternatives                                                                       |
-| #26 | -    | Progress overview view                                                                                   |
-| #27 | -    | Kanji level Placement / Fluency test                                                                     |
-| #28 | -    | Hint system on mistake                                                                                   |
-| #12 | -    | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition) |
-| #31 | -    | Dictionary skill filter                                                                                  |
-| #24 | -    | Daily Streak Counter system                                                                              |
-| #9  | -    | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
-| #11 | -    | Add dictionary definition to english word. (High english proficiency should not be required)             |
-| #15 | ↓    | Confirmation on dangerous actions. (Like deleting save)                                                  |
+| #id | Prio | Desn | Description                                                                                              |
+| --- | ---- | ---- | -------------------------------------------------------------------------------------------------------- |
+| #?? | -    | No   | Ads after dying / Refil?                                                                                 |
+| #23 | -    | No   | XP level system to track progress                                                                        |
+| #22 | -    | Yes  | Word exercises (Learn kanji pronunciation + Basic vocabulary)                                            |
+| #22 | -    | No   | Hiragana + Katakana exercises (Learn pronunciation + Basic vocabulary)                                   |
+| #10 | -    |      | Show similar kanji as alternatives                                                                       |
+| #26 | -    |      | Progress overview view                                                                                   |
+| #27 | -    |      | Kanji level Placement / Fluency test                                                                     |
+| #28 | -    |      | Hint system on mistake                                                                                   |
+| #12 | -    |      | Help popup. Show help popups when as they are relevant. (SRS usage, Order matters, Radical  composition) |
+| #31 | -    | Yes  | Dictionary skill filter                                                                                  |
+| #24 | -    |      | Daily Streak Counter system                                                                              |
+| #9  | -    |      | Daily goal: Introduce a "win" condition! (15 min / day)                                                  |
+| #11 | -    | No   | Add dictionary definition to english word. (High english proficiency should not be required)             |
+| #15 | ↓    | No   | Confirmation on dangerous actions. (Like deleting save)                                                  |
 
 ### Issues
 
-| #id | Prio | Description                   |
-| --- | ---- | ----------------------------- |
-| #?? | ^    | TEST SCALE BACK ON ON ANDROID |
+| #id | Prio | Description                                                                                                             |
+| --- | ---- | ----------------------------------------------------------------------------------------------------------------------- |
+| #?? | ^    | TEST SCALE BACK ON ON ANDROID                                                                                           |
+| #?? | ^    | Apple auth (malformed or timed out) error message                                                                       |
+| #?? | ^    | Empty Discovery shows "Loading"                                                                                         |
+| #?? | ^    | Undiscovered kanji should be "disabled"                                                                                 |
+| #?? | ^    | People click on the reveal kanji as it comes in. Potential solutions: Don't have reveal button, have skip or continue?? |
+| #?? | 0    | Don't show dependency kanji in choices, as it gives away the anwswer                                                    |
 
 ## Changelog
 
