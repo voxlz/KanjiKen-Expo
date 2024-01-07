@@ -3,8 +3,10 @@ import auth from '@react-native-firebase/auth'
 import { router, useFocusEffect } from 'expo-router'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
+import { useInterstitialAd } from 'react-native-google-mobile-ads'
 
 import { version } from './_layout'
+import { adRequestConfig, adUnitId } from '../src/adsConfig'
 import StyledButton from '../src/components/StyledButton'
 import { SchedulerContext } from '../src/contexts/SchedulerContextProvider'
 import { useContext } from '../src/utils/react'
@@ -34,6 +36,24 @@ const Home: FC = () => {
          }
       })
    }, [])
+
+   // ADS
+   const { isLoaded, isClosed, load, show } = useInterstitialAd(
+      adUnitId,
+      adRequestConfig
+   )
+   useEffect(() => {
+      // Start loading the interstitial straight away
+      load()
+   }, [load])
+
+   useEffect(() => {
+      if (isClosed) {
+         // Action after the ad is closed
+         console.log('closed')
+         load()
+      }
+   }, [isClosed, load])
 
    useFocusEffect(updateUserInfo)
 
@@ -108,23 +128,17 @@ const Home: FC = () => {
                      onPress={() => router.push('/developer')}
                   />
                )}
+               {(userEmail === 'torben.media@gmail.com' ||
+                  userEmail === 'torben.nordtorp@gmail.com') && (
+                  <StyledButton
+                     text="Show Ad"
+                     styleName="disabled"
+                     onPress={() => {
+                        if (isLoaded) show({ immersiveModeEnabled: true })
+                     }}
+                  />
+               )}
             </View>
-            {/* <View>
-                    <StyledButton
-                        styleName="normal"
-                        text="Erase Progress"
-                        onPress={() => {
-                            console.log('deleted progress')
-                            AsyncStorage.multiRemove(['progress', 'schedule'])
-                            scheduler.clear()
-                            scheduler.loadFromDisk().then(() => {
-                                scheduler.initSchedule(
-                                    learnOrder.map((glyph) => glyphDict[glyph])
-                                )
-                            })
-                        }}
-                    />
-                </View> */}
          </View>
          <View className="items-center justify-center mb-6">
             <Text className="text-md text-ui-light">KanjiKen v{version}</Text>

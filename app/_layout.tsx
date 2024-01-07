@@ -22,12 +22,12 @@ import ChallengeContextProvider from '../src/contexts/ChallengeContextProvider'
 import GlyphWidthContextProvider from '../src/contexts/GlyphWidthContextProvider'
 import HealthBarStateProvider from '../src/contexts/HealthContextProvider'
 import SchedulerContextProvider from '../src/contexts/SchedulerContextProvider'
-import {} from '../src/globalState/DropInfo'
 import AnimationContextProvider from '../src/contexts/TaskAnimContextProvider'
 
 export const version = Constants.expoConfig?.version
 
 export default function Layout() {
+   // FONTS
    const [fontsLoaded] = useFonts({
       'noto-thin': NotoSansJP_100Thin,
       'noto-light': NotoSansJP_300Light,
@@ -40,6 +40,7 @@ export default function Layout() {
       'KanjiKen-Regular': require('./../assets/fonts/KanjiKen-Regular.ttf'),
    })
 
+   // SPLASH
    const onLayoutRootView = useCallback(async () => {
       if (fontsLoaded) {
          await SplashScreen.hideAsync()

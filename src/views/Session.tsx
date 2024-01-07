@@ -1,11 +1,13 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { useInterstitialAd } from 'react-native-google-mobile-ads'
 import Animated from 'react-native-reanimated'
 
 import Compose from './Compose'
 import Intro from './Intro'
 import LowHealth from './LowHealth'
 import Recognize from './Recognize'
+import { adUnitId, adRequestConfig } from '../adsConfig'
 import BottomBar from '../components/BottomBar'
 import { ButtonStyles } from '../components/Button'
 import LoadingScreen from '../components/LoadingScreen'
@@ -54,6 +56,16 @@ const Session: FC = () => {
    const [continueBtnStyle, setContinueBtnStyle] =
       useState<ButtonStyles>('forest')
 
+   // Ads
+   const { isLoaded, isClosed, load, show } = useInterstitialAd(
+      adUnitId,
+      adRequestConfig
+   )
+   // Load ad on startup
+   useEffect(() => load(), [load])
+   // Load ad on closed ad
+   useEffect(() => (isClosed ? load() : undefined), [isClosed, load])
+
    const nextExercise = useCallback(() => {
       // Clear out previous dropareas.
       clearDrops()
@@ -74,6 +86,7 @@ const Session: FC = () => {
       // Check so that we have not died.
       if (exercise && health <= 0) {
          onSessionEnd()
+         if (isLoaded) show({ immersiveModeEnabled: true })
       } else {
          // Load the new or current challenge
          const next = scheduler.getCurrent()
@@ -111,11 +124,13 @@ const Session: FC = () => {
    }, [
       exercise,
       health,
+      isLoaded,
       onSessionEnd,
       resetSkillAnim,
       scheduler,
       setChallenge,
       setTries,
+      show,
       tries,
    ])
 
