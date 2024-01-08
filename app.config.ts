@@ -12,7 +12,7 @@ const iosFirebaseFile =
 export default ({ config }: ConfigContext): ExpoConfig => ({
    ...config,
    slug: config.slug!,
-   name: isPROD ? config.name! : config.name! + ' (DEV)',
+   name: `${config.name} ${isPROD ? '' : '(DEV)'}`,
    icon: `./assets/icon${isPROD ? '' : '-dev'}.png`,
    ios: {
       ...config.ios,

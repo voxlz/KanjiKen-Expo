@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { useInterstitialAd } from 'react-native-google-mobile-ads'
@@ -31,7 +32,6 @@ import { ResetFinishAnimationContext as ResetSkillAnimContext } from '../context
 import { clearDrops } from '../globalState/DropInfo'
 import { Exercise } from '../types/progress'
 import { useContext } from '../utils/react'
-import { router } from 'expo-router'
 
 /** The general challenge view for doing kanji exercises */
 const Session: FC = () => {
@@ -94,6 +94,7 @@ const Session: FC = () => {
       if (exercise && health <= 0) {
          if (isLoaded) {
             show({ immersiveModeEnabled: true })
+            onSessionEnd(maxHealth)
             router.back()
          }
       } else {

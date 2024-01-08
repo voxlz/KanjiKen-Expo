@@ -27,10 +27,11 @@
 
 #### Issues
 
-| #id | Prio | Description                                                                         |
-| --- | ---- | ----------------------------------------------------------------------------------- |
-| #?? | -    | Updated composition data of 事 (Matter), 言 (Say), 豕 (Pig), 者 (Someone), 壬 (9th) |
-| #?? | -    | Added characters ㇚(Hook), ㇒ (Slash)                                               |
+| #id | Prio | Description                                                                                                                         |
+| --- | ---- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| #?? | -    | Updated composition data of: 事 (Matter), 言 (Say), 豕 (Pig), 者 (Someone), 壬 (9th), 下 (Below), 行 (Going), 上 (Above), 出 (Exit) |
+| #?? | -    | Added characters ㇚(Hook)                                                                                                           |
+| #?? | -    | Prefere katakana versions of: ト (to), イ (i), ノ (no)                                                                              |
 
 ### v0.4.2
 
